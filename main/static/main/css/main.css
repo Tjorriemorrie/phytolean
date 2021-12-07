@@ -1,0 +1,26 @@
+.booking-cta {
+    background: darkslategrey;
+}
+
+#bookingForm .form-group {
+    margin-top: 0.7em;
+}
+
+#div_id_punctual label {
+    display: inline;
+}
+
+
+#footer {
+    margin-top: 5em;
+}
+
+
+fieldset {
+    margin-top: 2em;
+}
+
+
+textarea.form-control {
+    height: 8em;
+}

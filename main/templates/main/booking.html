@@ -1,0 +1,21 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book Your Free Discovery Session - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+  <h3>Book Your Free Discovery Session</h3>
+  <p>Please complete the booking form below for your free discovery session!</p>
+  <br/>
+
+{#  {{ form.non_field_errors }}#}
+{#  {{ form.errors }}#}
+{#  <form method="post" class="form">#}
+{#    {% csrf_token %}#}
+{#    {{ form|crispy }}#}
+{#    <input class="btn btn-primary" type="submit" value="Submit">#}
+{#  </form>#}
+  {% crispy form %}
+
+{% endblock %}
