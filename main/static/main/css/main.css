@@ -1,26 +1,129 @@
-.booking-cta {
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Droid+Serif');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300&display=swap');
+
+:root {
+    --clr-grain: #d7cec7;
+    --clr-blackboard: #565656;
+    --clr-oxblood: #76323F;
+    --clr-tan: #C09F80;
+    --primary-clr: var(--clr-grain);
+    --secondary-clr: var(--clr-tan);
+}
+
+html, body {
+    font-family: 'Droid Serif', serif;
+    font-size: 20px;
+    /*background: var(--primary-clr);*/
+}
+
+.oswald {
+}
+
+.main-nav, h1, h2, h3, h4, h5, h6 {
+    font-family: 'Oswald', sans-serif;
+    /*font-family: 'Open sans', sans-serif;*/
+}
+
+.img-70 {
+    height: 70vh
+}
+.img-stretch {
+    width: 100%;
+    height: auto;
+}
+
+.container-fluid {
+    padding: 0;
+}
+.big-body {
+    min-height: 60rem;
+    padding: 1rem;
+}
+.half-high {
+    height: 140px;
+    width: auto;
+}
+
+.main-nav {
+    /*background-color: var(--secondary-clr);*/
+    background-color: rgba(255, 255, 255, 0.6);
+    font-size: 1.4rem;
+    padding: 0 1.7rem;
+}
+
+.navbar-brand {
+    font-size: 1.8rem;
+}
+
+
+/*.bg-woman-pool {*/
+/*    background: url(/static/main/img/pexels-andrea-piacquadio-3764492.jpg) no-repeat center center fixed;*/
+/*    -webkit-background-size: cover;*/
+/*    -moz-background-size: cover;*/
+/*    -o-background-size: cover;*/
+/*    background-size: cover;*/
+/*    height: 10rem;*/
+/*}*/
+
+
+.discovery-cta {
     background: darkslategrey;
 }
 
-#bookingForm .form-group {
+
+#discoveryForm .form-group {
     margin-top: 0.7em;
 }
+
 
 #div_id_punctual label {
     display: inline;
 }
 
-
-#footer {
+.footer {
+    /*background-color: var(--clr-blackboard);*/
     margin-top: 5em;
+    padding: 1rem;
 }
-
 
 fieldset {
     margin-top: 2em;
 }
 
-
 textarea.form-control {
     height: 8em;
+}
+
+.home-cvr-txt {
+    margin: 4rem 6rem;
+    /*top: 4rem;*/
+    /*left: 5rem;*/
+    color: white;
+    text-shadow: 0 0 20px black;
+}
+
+.dd-ticks dd::before {
+    content: "✔ ";
+}
+
+ul li {
+    padding: 0.3rem 0.1rem;
+}
+
+.bg-lightblue {
+    background-color: lightblue;
+}
+.bg-lightgreen {
+    background-color: lightgreen;
+}
+
+q {
+  quotes: "“" "”" "‘" "’";
+}
+q::before {
+    content: open-quote;
+}
+q::after {
+    content: close-quote;
 }

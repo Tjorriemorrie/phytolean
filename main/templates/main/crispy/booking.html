@@ -1,0 +1,43 @@
+{% load static %}
+{% load crispy_forms_filters %}
+{% load l10n %}
+
+{% block link_extra %}
+  <link href="{% static 'main/css/booking.css' %}" rel="stylesheet"/>
+{% endblock %}
+
+<div {% if field_class %}class="{{ field_class }}"{% endif %}{% if flat_attrs %}
+  {{ flat_attrs|safe }}{% endif %}>
+
+  <table class="booking-table table text-center">
+    <thead>
+    <tr>
+      {% for day in days %}
+        <th>{{ day|date:'l, M j' }}</th>
+      {% endfor %}
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in slots %}
+      <tr>
+        {% for slot in row %}
+          <td>
+            {% if slot.is_valid %}
+              <input id="{{ field.html_name }}_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" type="radio" class="" name="{{ field.html_name }}" value="{{ slot.slot|date:'U' }}" {% include "bootstrap4/layout/attrs.html" with widget=option %} required>
+            {% endif %}
+            <label class="{% if not slot.is_valid %}na{% endif %}" for="{{ field.html_name }}_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
+              {% if slot.is_valid %}
+                {{ slot.slot|date:'H:i' }}
+              {% else %}
+                <del>{{ slot.slot|date:'H:i' }}</del>
+              {% endif %}
+            </label>
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  {% include 'bootstrap4/layout/help_text.html' %}
+</div>

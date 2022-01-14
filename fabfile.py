@@ -100,7 +100,7 @@ def deploy(ctx):
         f'./manage.py collectstatic --no-input',
     ]
     conn.run(' && '.join(cmds), echo=True)
-    conn.run(f'sed -i "s/DEBUG = True/DEBUG = False/g" {dir}/phytolean/settings.py', echo=True)
+    # conn.run(f'sed -i "s/DEBUG = True/DEBUG = False/g" {dir}/phytolean/settings.py', echo=True)
     conn.run(f'rm {dir}/deploy.tar.gz', echo=True)
 
     systemctl(ctx, 'start nginx')

@@ -6,16 +6,11 @@
 {% block content %}
 
   <h3>Book Your Free Discovery Session</h3>
-  <p>Please complete the booking form below for your free discovery session!</p>
+  <p>Please select from the time slots available.</p>
   <br/>
 
-{#  {{ form.non_field_errors }}#}
-{#  {{ form.errors }}#}
-{#  <form method="post" class="form">#}
-{#    {% csrf_token %}#}
-{#    {{ form|crispy }}#}
-{#    <input class="btn btn-primary" type="submit" value="Submit">#}
-{#  </form>#}
+  {{ form.non_field_errors }}
+  {{ form.errors }}
   {% crispy form %}
 
 {% endblock %}

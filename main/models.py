@@ -1,7 +1,24 @@
+from random import randint
+
 from django.db import models
 
+STATUS_NEW = 'new'
+STATUS_APPROVED = 'approved'
+STATUS_DENIED = 'denied'
+STATUS_COMPLETED = 'completed'
+STATUS_INVALID = 'invalid'
+STATUS_BOOKED = 'booked'
 
-class Booking(models.Model):
+
+class Discovery(models.Model):
+    STATUS_CHOICES = (
+        (STATUS_NEW, STATUS_NEW),
+        (STATUS_APPROVED, STATUS_APPROVED),
+        (STATUS_DENIED, STATUS_DENIED),
+        (STATUS_BOOKED, STATUS_BOOKED),
+        (STATUS_COMPLETED, STATUS_COMPLETED),
+    )
+
     source = models.CharField(
         max_length=200,
         verbose_name='How did you find out about us?')
@@ -11,14 +28,21 @@ class Booking(models.Model):
     last_name = models.CharField(
         max_length=30,
         verbose_name='You last name')
+    age = models.PositiveSmallIntegerField(
+        verbose_name='How old are you?')
+    sex = models.CharField(
+        max_length=20,
+        choices=[
+            ('Male', 'Male'),
+            ('Female', 'Female')
+        ],
+        verbose_name='Your biological sex')
     email = models.CharField(
         max_length=100,
         verbose_name='Your email address')
     cell = models.CharField(
         max_length=20,
         verbose_name='Your phone number')
-    age = models.PositiveSmallIntegerField(
-        verbose_name='How old are you?')
     reason = models.TextField(
         verbose_name='What brings you here to see us?')
     timing = models.TextField(
@@ -83,5 +107,41 @@ class Booking(models.Model):
     punctual = models.BooleanField(
         verbose_name='As a coach, we deeply value and respect your time. If we invite you to book a call, can you commit to showing up at the scheduled time for our call, fully present without distractions?')
 
+    # email notifications
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default=STATUS_NEW)
+    has_sent_new_email = models.BooleanField(default=False)  # submitted discovery
+    has_sent_booking_email = models.BooleanField(default=False)  # form approved - link to booking
+    has_sent_appointment_email = models.BooleanField(default=False)  # booking made, emailed time
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f'<Discovery id={self.id} {self.last_name} {self.created_at}>'
+
+    def is_new(self) -> bool:
+        return self.status in (STATUS_NEW,)
+
+
+class Booking(models.Model):
+    BOOKING_CHOICES = (
+        (STATUS_NEW, STATUS_NEW),
+        (STATUS_BOOKED, STATUS_BOOKED),
+        (STATUS_COMPLETED, STATUS_COMPLETED),
+    )
+
+    discovery = models.ForeignKey(
+        Discovery, on_delete=models.CASCADE, related_name='bookings', null=True)
+
+    slug = models.SlugField(unique=True)
+    start_at = models.DateTimeField(null=True, blank=True)
+    end_at = models.DateTimeField(null=True, blank=True)
+    duration = models.IntegerField(null=True, blank=True)
+    status = models.CharField(max_length=30, choices=BOOKING_CHOICES, default=STATUS_NEW)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @staticmethod
+    def gen_slug():
+        return randint(100_000_000, 999_999_999)

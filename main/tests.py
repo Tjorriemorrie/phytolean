@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.test import TestCase, Client, override_settings
 
-from main.models import Booking
+from main.models import Discovery
 
 
 # @override_settings(CAPTCHA_TEST_MODE=True)
@@ -75,8 +75,8 @@ class BookingTest(TestCase):
             data=data,
             follow=True
         )
-        booking = Booking.objects.last()
-        assert 'Booking received!' in str(res.content)
+        booking = Discovery.objects.last()
+        assert 'Discovery received!' in str(res.content)
         assert booking.association == 'assocy'
 
     def test_booking_view_required(self):

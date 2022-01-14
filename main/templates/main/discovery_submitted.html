@@ -1,0 +1,16 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Free Discovery Session Requested - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+  <div class="jumbotron">
+    <h1 class="display-4">Discovery request received!</h1>
+    <p class="lead">Thank you for your interest in our services.</p>
+    <hr class="my-4">
+    <p>We will contact you soon to make an appointment for the discovery session.
+    Check your email in the next day or so!</p>
+  </div>
+
+{% endblock %}

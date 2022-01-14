@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import socket
 import sys
 from pathlib import Path
 
@@ -213,3 +214,18 @@ CRISPY_TEMPLATE_PACK = 'bootstrap4'
 CRISPY_FAIL_SILENTLY = not DEBUG
 
 CAPTCHA_TEST_MODE = bool(len(sys.argv) > 1 and sys.argv[1] == 'test')
+
+# EMAIL
+# email_address = 'jacoj82@gmail.com' if DEBUG else 'phytolean@gmail.com'
+# email_pwd = '' if DEBUG else ''  # ''
+email_address = 'phytolean@gmail.com'
+email_pwd = ''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = email_address
+DEFAULT_FROM_EMAIL = email_address
+EMAIL_HOST_PASSWORD = email_pwd
+EMAIL_FROM = email_address
+EMAIL_TO = [email_address]

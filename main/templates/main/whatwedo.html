@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+
+{% block title %}What we do - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+  {% include 'main/navbar.html' with nav=nav %}
+
+  <div class="container-fluid big-body">
+    <h3>What we do</h3>
+  </div>
+
+  <br/>
+
+  {% include 'main/footer.html' %}
+</div>
+{% endblock %}

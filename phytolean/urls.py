@@ -21,14 +21,19 @@ from main import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home_view, name='home'),
+
+    path('captcha/', include('captcha.urls')),
+
+    path('book-discovery-session', views.discovery_view, name='discovery'),
+    path('discovery-session-submitted', views.discovery_submitted_view, name='discovery_submitted'),
+    path('make-booking/<slug:slug>', views.make_booking_view, name='booking'),
+    path('booking-submitted', views.booking_submitted_view, name='booking_submitted'),
+
     path('about', views.about_view, name='about'),
+    path('what-we-do', views.what_we_do_view, name='whatwedo'),
     path('how-it-works', views.howitworks_view, name='howitworks'),
     path('transformative-works-courses-events', views.events_view, name='events'),
     path('happy-clients', views.clients_view, name='clients'),
     path('empowering-resources', views.resources_view, name='resources'),
-    path('book-discovery-session', views.booking_view, name='booking'),
-    path('discovery-session-booked', views.booked_view, name='booked'),
     path('contact-us', views.contact_view, name='contact'),
-
-    path('captcha/', include('captcha.urls')),
 ]
