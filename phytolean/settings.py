@@ -216,10 +216,8 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 CAPTCHA_TEST_MODE = bool(len(sys.argv) > 1 and sys.argv[1] == 'test')
 
 # EMAIL
-# email_address = 'jacoj82@gmail.com' if DEBUG else 'phytolean@gmail.com'
-# email_pwd = '' if DEBUG else ''  # ''
-email_address = 'phytolean@gmail.com'
-email_pwd = ''
+email_address = os.getenv('EMAIL_ADDRESS')
+email_pwd = os.getenv('EMAIL_PASSWORD')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
