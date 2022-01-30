@@ -16,20 +16,20 @@
           <a class="nav-link {% if nav == 'whatwedo' %}active{% endif %}" href="{% url 'whatwedo' %}">What we do</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if nav == 'about' %}active{% endif %}" href="{% url 'about' %}">About</a>
+          <a class="nav-link {% if nav == 'foryou' %}active{% endif %}" href="{% url 'foryou' %}">Why this is for you</a>
         </li>
-        {#        <li class="nav-item">#}
-{#          <a class="nav-link {% if nav == 'events' %}active{% endif %}" href="{% url 'events' %}">Transformative Workshops, Courses and Events</a>#}
-{#        </li>#}
-{#        <li class="nav-item">#}
-{#          <a class="nav-link {% if nav == 'clients' %}active{% endif %}" href="{% url 'clients' %}">Happy Clients / Testimonials</a>#}
-{#        </li>#}
+        <li class="nav-item">
+          <a class="nav-link {% if nav == 'about' %}active{% endif %}" href="{% url 'about' %}">More about us</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if nav == 'faq' %}active{% endif %}" href="{% url 'faq' %}">FAQ</a>
+        </li>
 {#        <li class="nav-item">#}
 {#          <a class="nav-link {% if nav == 'resources' %}active{% endif %}" href="{% url 'resources' %}">Empowering Resources</a>#}
 {#        </li>#}
-{#        <li class="nav-item">#}
-{#          <a class="nav-link {% if nav == 'contact' %}active{% endif %}" href="{% url 'contact' %}">Contact Us</a>#}
-{#        </li>#}
+          <li class="nav-item">
+            <a class="nav-link {% if nav == 'contact' %}active{% endif %}" href="{% url 'getintouch' %}">Get In Touch</a>
+          </li>
       </ul>
     </div>
   </div>

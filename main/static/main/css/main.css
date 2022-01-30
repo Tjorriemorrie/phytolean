@@ -23,6 +23,7 @@ html, body {
 .main-nav, h1, h2, h3, h4, h5, h6 {
     font-family: 'Oswald', sans-serif;
     /*font-family: 'Open sans', sans-serif;*/
+    display: block;
 }
 
 .img-70 {
@@ -126,4 +127,9 @@ q::before {
 }
 q::after {
     content: close-quote;
+}
+
+.gray-img {
+    -webkit-filter: grayscale(100%);
+    filter: grayscale(100%);
 }

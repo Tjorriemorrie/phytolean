@@ -32,11 +32,11 @@ def howitworks_view(request):
     return render(request, 'main/howitworks.html', ctx)
 
 
-def events_view(request):
+def for_you_view(request):
     ctx = {
-        'nav': 'events',
+        'nav': 'foryou',
     }
-    return render(request, 'main/events.html', ctx)
+    return render(request, 'main/foryou.html', ctx)
 
 
 def clients_view(request):
@@ -107,3 +107,10 @@ def booking_submitted_view(request):
         'nav': 'discovery',
     }
     return render(request, 'main/booking_submitted.html', ctx)
+
+
+def faq_view(request):
+    ctx = {
+        'nav': 'faq',
+    }
+    return render(request, 'main/faq.html', ctx)

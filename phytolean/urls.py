@@ -32,8 +32,9 @@ urlpatterns = [
     path('about', views.about_view, name='about'),
     path('what-we-do', views.what_we_do_view, name='whatwedo'),
     path('how-it-works', views.howitworks_view, name='howitworks'),
-    path('transformative-works-courses-events', views.events_view, name='events'),
+    path('why-this-is-for-you', views.for_you_view, name='foryou'),
     path('happy-clients', views.clients_view, name='clients'),
     path('empowering-resources', views.resources_view, name='resources'),
-    path('contact-us', views.contact_view, name='contact'),
+    path('faq', views.faq_view, name='faq'),
+    path('contact-us', views.contact_view, name='getintouch'),
 ]
