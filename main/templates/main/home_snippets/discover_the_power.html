@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class="row py-5" style="background: var(--clr-lightblue)">
+    <div class="col-7 px-5 pt-3">
+        <h3>Discover the power of a world-class health and behaviour based nutrition
+            coaching programme, built on a proven method &mdash; that works.</h3>
+        <br/>
+        <p class="text-justify">PhytoLean is a world-class health and behaviour based
+            nutrition coaching programme and weight loss consultancy service providing
+            online and in-person support. We specialize in holistic lifestyle adjustment,
+            behaviour modifications and integrative nutrition. We provide a natural,
+            sustainable way to weight loss to keep the weight off, while promoting optimal
+            health and well-being. We utilize powerful and proven techniques incorporated
+            into programmes developed by leading professionals in their respective
+            fields.</p>
+        <p class="text-justify">We support a gentle, kind and loving way to bring your
+            body back into balance through a holistic lifestyle approach. We use the power
+            of whole foods, healing and nourishing plants to promote toxin elimination,
+            restoration of organs and body systems. We use a behavior-based model that
+            emphasizes skill building, daily practice and a progressive series of actions.
+            We help you lose weight in a healthy sustainable way.</p>
+        <p class="text-justify">As the body moves towards well-being on the wellness
+            continuum weight loss is a natural consequence and by product of health. Once
+            the body regains its vitality and energy we celebrate our body and its optimal
+            functionality/working capacity through movement or exercise. Exercise is not
+            mandatory to participate in this programme. We assist in bringing alignment
+            through the use of integrative nutrition and cutting edge techniques in
+            lifestyle medicine and behavioural modification to bring out the best version of who
+            you can be. Sounds good? Then we are delighted to have you here and we would
+            love to work with you!</p>
+
+        {% with txt='Schedule a free 30 min discovery session to discuss a plan to kickstart your weight loss!' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+    <div class="col-5 px-5 pt-3 align-self-center">
+        <img class="img-fluid w-100" src="{% static 'main/img/home/brooke-lark-qdyBKWSzpSI-unsplash.jpg' %}">
+    </div>
+</div>

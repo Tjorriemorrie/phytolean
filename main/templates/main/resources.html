@@ -3,9 +3,26 @@
 {% block title %}Empowering Resources - {{ block.super }}{% endblock %}
 
 {% block content %}
+<div class="container-fluid">
+    {% include 'main/navbar.html' with nav=nav %}
 
-  <h3>Empowering Resources</h3>
-  <p>recipes</p>
-  <p>additional info</p>
+    <div class="container-fluid big-body">
 
+        <hr/>
+        {% include 'main/resources_snippets/bread.html' %}
+
+        <hr/>
+        {% include 'main/resources_snippets/breakfast.html' %}
+
+        <hr/>
+        {% include 'main/resources_snippets/grain.html' %}
+
+        <hr/>
+        {% include 'main/resources_snippets/juicing.html' %}
+
+    </div>
+
+    <br/>
+    {% include 'main/footer.html' %}
+</div>
 {% endblock %}

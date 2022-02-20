@@ -1,0 +1,45 @@
+{% load static %}
+
+<div class="row py-5" style="background: var(--clr-plantwhite)">
+    <div class="col-6">
+        <img class="img-fluid" src="{% static 'main/img/services/pexels-vita-shelyagova-6843858.jpg' %}"/>
+    </div>
+    <div class="col-6">
+        <h2>Our Different programs</h2>
+        <h5>We are all different with different needs. That’s why we need different approaches and individualized programs to meet our clients’ unique needs.</h5>
+        <h4>Basic Weight loss program</h4>
+        <ul>
+            <li>For those who want to slim on their own time and make changes on their own schedule.</li>
+            <li>They want to enhance their weight loss with personal coaching and support.</li>
+            <li>They need the flexibility to meet online, over the phone or in person.</li>
+            <li>They prefer making small changes at a time.</li>
+            <li>They want to be part of a weight loss community and support and accountability group.</li>
+        </ul>
+        <h4>Specialized weight loss program</h4>
+        <ul>
+            <li>Tailored and specialized for your individual weight loss obstacles, your specific underlying health conditions, metabolic syndromes or endocrine dysregulation hampering weight loss in the past.</li>
+            <li>If you have tried everything without success this is the program for you! If you have difficulty losing weight, we will help you identify why. If you have tried every diet under the sun and feel absolutely stuck and do not understand why nothing is working, this program is designed to break through the obstacles and barriers keeping you from getting the results you want.</li>
+        </ul>
+        <h4>The advanced accelerated weight loss program</h4>
+        <ul>
+            <li>Going on a holiday and in desperate need of a beach body?</li>
+            <li>Need to fit into that dress size for your special wedding day or have a formal event where you need to shine?</li>
+            <li>This program is for individuals with specific weight loss or aesthetic goals who need to get results fast.</li>
+            <li>Generally professional athletes with specific performance, recovery or endurance goals with a lot of self discipline fall into this category as well as models who earn a living through their appearance.</li>
+            <li>We discuss the timeline for change and desired results to determine realistic and achievable outcomes.</li>
+        </ul>
+        <p>The accelerated weight loss program is for those who need to lose weight fast. As we want you to keep off the weight, the same weight loss maintenance program is recommended and will be available to participants at the same discounted rate. There is no shame in needing to get those results fast, but let’s maintain those results indefinitely.</p>
+        <h5>Weight loss maintenance program</h5>
+        <p>Make the most of your weight loss journey by keeping the weight off:</p>
+        <ul>
+            <li>Maintain your weight once you have reached your weight loss goals.</li>
+            <li>Work with your accountability coach and partner to stay on track and address any hick ups or hang ups along the way.</li>
+            <li>Discounted rates to honour your commitment to keep the weight off.</li>
+        </ul>
+
+        {% with txt='Book a Free 30min online session now with one of our weight loss specialists to learn what programme is the right fit for your needs.' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+</div>

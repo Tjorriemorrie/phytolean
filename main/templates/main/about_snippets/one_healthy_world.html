@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="row pt-5">
+    <div class="col px-5 pt-3">
+        <p><img class="img-fluid w-100" src="{% static 'main/img/one_healthy_world_banner.png' %}"></p>
+    </div>
+</div>
+<div class="row pb-5">
+    <div class="col-8 px-5 pt-3">
+        <br/>
+        <p>As the new year begins, we are excited to collaborate in partnership with the Physicians committee for responsible medicine bringing you the best in nutritional knowledge to take charge of your health with diet changes and support from nutrition experts from around the world. The expert panel providing you with the science behind good nutrition include Neal Barnard, MD, FACC ; Josh Cullimore, MD, MPH; Jennifer Paul, MPH, RDN;  Gemma Newman, MBBCH, DRCOG, DFSRH, MRCGP; Leila Dehghan, MD, MSc, ANutr; Sarah Bentley, Cookery School Director; Shireen Kassam MBBS, FRCPATH, PHD, DipIBLM; Hayley Tait, MB,ChB, MRCS, MRCGP;  Chef Cola, Executive Chef; Dr. Juliette Roex, Lead Student Advisor for Doctors for Nutrition, GP in training; Dr. Heleen Roex, Co-founder of Doctors for Nutrition, Pediatrician, and FFL instructor; Rohini Bajekal, Nutritionist, MA, Oxon MSc, Dip, IBLM ; Karen Smith, RD, CDCES including others.</p>
+        <p>One Healthy World is brought to you by the Physicians Committee for Responsible Medicine and their partners worldwide. Our collaboration and partnership with them strives to provide resources for those interested in improving their eating habits and their health,  those who are ready to lose weight, have more energy, look and feel younger, and overcome diabetes, high cholesterol, high blood pressure, and other health challenges!  For more information about their panel of expertise please visit https://www.pcrm.org/about-us</p>
+        <p>We at PhytoLean are proud to have incorporated core foundational principles of the global expertise panel into our program through our partnership empowering you to take charge of your health with diet changes and support from leading nutrition experts from around the world as we strive for one healthy world. </p>
+
+        {% with txt='Schedule a free 30 min discovery session to discuss a plan to kickstart your weight loss!' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+    <div class="col-4 px-5 pt-3">
+        <p><img class="img-fluid w-100" src="{% static 'main/img/physicians_committee.png' %}"></p>
+    </div>
+</div>

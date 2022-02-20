@@ -1,0 +1,10 @@
+{% if schedule_enabled %}
+    {% if txt %}
+        <p>{{ txt }}</p>
+    {% endif %}
+    <p>
+        <a href="{% url 'discovery' %}">
+            <button class="btn btn-primary">SCHEDULE NOW</button>
+        </a>
+    </p>
+{% endif %}

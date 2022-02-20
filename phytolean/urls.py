@@ -5,10 +5,10 @@ The `urlpatterns` list routes URLs to views. For more information please see:
 Examples:
 Function views
     1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+    2. Add a URL to urlpatterns:  path('', views.home_snippets, name='home_snippets')
 Class-based views
     1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home_snippets')
 Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
@@ -30,11 +30,12 @@ urlpatterns = [
     path('booking-submitted', views.booking_submitted_view, name='booking_submitted'),
 
     path('about', views.about_view, name='about'),
-    path('what-we-do', views.what_we_do_view, name='whatwedo'),
+    path('services', views.services_view, name='services'),
     path('how-it-works', views.howitworks_view, name='howitworks'),
     path('why-this-is-for-you', views.for_you_view, name='foryou'),
     path('happy-clients', views.clients_view, name='clients'),
     path('empowering-resources', views.resources_view, name='resources'),
     path('faq', views.faq_view, name='faq'),
     path('contact-us', views.contact_view, name='getintouch'),
+    path('resources', views.resources_view, name='resources'),
 ]

@@ -1,0 +1,42 @@
+{% load static %}
+
+<div class="row py-5">
+    <div class="col-7">
+        <h2>What changes might be noticed after as little as 10 days:</h2>
+        <h5 class="py-3">Our clients are delighted to see changes and report</h5>
+        <dl class="dd-ticks">
+            <dd>Clearer skin, less breakouts</dd>
+            <dd>Better concentration, clearer thinking, increased mental performance</dd>
+            <dd>Better spiritual awareness and connection have been reported</dd>
+            <dd>Reduced Sinus issues, allergies or rashes</dd>
+            <dd>Reduced abdominal cramps</dd>
+            <dd>More energy, better sleeping patterns</dd>
+            <dd>Cm loss around the waist area</dd>
+            <dd>Leaner more toned muscles even without exercise</dd>
+            <dd>Our programme promote fat loss, not water or muscle loss</dd>
+            <dd>Feeling less bloated, constipated or sluggish.</dd>
+            <dd>Not feeling “heavy or tired” after a meal.</dd>
+            <dd>Reduced cravings and unhealthy eating habits after 14 days.</dd>
+            <dd>Reduced aches and pains in joints, better mobility</dd>
+        </dl>
+
+        <h4 class="pt-2">We are constantly hearing from those on the programme at an early stage, how they are noticing not just a weight loss but an improvement in their general health and well-being. They are delighted to share that their doctor has either reduced their medication or they are no longer in need of it. The most common improvements we hear on a daily basis are:</h4>
+        <br/>
+        <ul>
+            <li>Blood pressure and cholesterol in a normal range</li>
+            <li>Reduction or no need for certain medications</li>
+            <li>No longer pre-diabetic or type 2 diabetic</li>
+            <li>Improved sleep</li>
+            <li>Fewer aches and pains</li>
+            <li>Increased energy and fitness levels</li>
+        </ul>
+
+        {% with txt='Don’t become a statistic! Do not wait, start losing weight!' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+    <div class="col-5">
+        <img class="img-fluid" src="{% static 'main/img/services/dane-wetton-zdLdgGbi9Ow-unsplash.jpg' %}"/>
+    </div>
+</div>

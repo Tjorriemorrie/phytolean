@@ -1,0 +1,31 @@
+{% extends 'main/base.html' %}
+
+{% block title %}What we do - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container-fluid big-body">
+
+        <div class="jumbotron"  style="background: var(--clr-deepocean)">
+            <h2 class="display-4"> Medically proven and supported by Evidence based research our approach to weight loss is proudly one of the top four programs in the world to consider currently for weight loss. </h2>
+        </div>
+
+        {% include 'main/services_snippets/specialization.html' %}
+
+        {% include 'main/services_snippets/food.html' %}
+
+        {% include 'main/services_snippets/support.html' %}
+
+        {% include 'main/services_snippets/programs.html' %}
+
+        {% include 'main/services_snippets/changes.html' %}
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
+{% endblock %}

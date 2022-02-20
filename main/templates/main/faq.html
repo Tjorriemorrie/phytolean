@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}FAQ - {{ block.super }}{% endblock %}
 
@@ -9,9 +10,9 @@
 
     <div class="container-fluid big-body">
 
-        <div class="row" style="background-color:lightyellow">
-            <div class="col">
-                <h3>FAQ</h3>
+        <div class="row py-5" style="background: var(--clr-lightblue)">
+            <div class="col-6">
+                <h1 class="pb-3">FAQ</h1>
                 <dl>
                     <dt>Can I have the free initial consultation online?</dt>
                     <dd>Yes, you are more than welcome to schedule a free no obligation session online. If you prefer to meet in person or are in the local area of Hartebeespoortdam you can arrange to have a face to face, one on one session if that is preferred. Whatever works best and is most convenient.</dd>
@@ -53,8 +54,19 @@
                     <dd>Yes! Our programme is especially designed to accommodate special food requirements, cultural considerations and individual preferences.</dd>
                 </dl>
             </div>
+            <div class="col-6">
+                <img class="img-fluid" src="{% static 'main/img/faq/pexels-ella-olsson-1640777.jpg' %}"/>
+                <br/><br/>
+                <img class="img-fluid" src="{% static 'main/img/faq/pexels-ella-olsson-1640770.jpg' %}"/>
+            </div>
         </div>
 
+        <div class="row py-5">
+            <div class="col px-3">
+                <h1 class="pb-4">Success Stories</h1>
+                {% include 'main/faq_snippets/success_stories.html' %}
+            </div>
+        </div>
 
     </div>
     <br/>

@@ -10,31 +10,36 @@
 
     <div class="container-fluid big-body">
 
-        <div class="row py-5" style="background: lightyellow">
-            <div class="col">
-                <p>Who will benefit from the PhytoLean Program:</p>
+        <div class="row py-5">
+            <div class="col-7">
+                <h2 class="pb-4">Who Will Benefit from the PhytoLean Program:</h2>
                 <ul>
                     <li>Participants that want to learn how to lose weight and experience a more healthy lifestyle. All ages and genders are welcome. Children, professional athletes, adults and the elderly have all benefitted from our program.</li>
                     <li>Everyone that want to slim down in a healthy way while boosting their immunity for optimal health and vitality.</li>
                     <li>If you are currently suffering from chronic diseases like diabetes, heart disease, high blood pressure, high cholesterol, had surgery etc. you can participate in this program while continuing with your medication or other treatments.</li>
                     <li>Anyone who want to lose weight and slim down or live a healthier lifestyle while retaining muscle mass but losing fat.</li>
                 </ul>
+                <br/>
+                <br/>
                 <p>Through adherence of this program you will start to notice a reduction of centimetres around your waistline first and you will appear more toned. Gradual weight loss and health improvement generally takes a little longer as is understandable. Measuring your weight might be deceptive. Many fad diets lose kilograms quick as they might cause a massive reduction in muscle and water loss in the body. The poor participants believe in the amazing instantaneous result, unaware that they are not achieving the lasting results they are after. Only to feel defeated once they regain the weight or to double their weight.</p>
                 <p>Rest assured, our program is committed at targeting the adipose tissue (fat) without water and muscle loss.</p>
                 <p>Requirements:</p>
-                <ul>
-                    <li>Willingness to lose weight in a healthy natural way. </li>
-                    <li>This programme is ideal for all types of clients and situations.</li>
-                    <li>A teachable spirit open to new knowledge and information never considered before.</li>
-                    <li>A commitment and motivation to improving their way of life.</li>
-                    <li>A willingness to learn self-control or good healthy habits.</li>
-                    <li>Open to considering being part of a support group to work on possible emotional or mental blocks when it comes to eating. (Not compulsory)</li>
-                    <li>Willing to put into practice what is learned for the specified time period in order to get the desired results.</li>
-                </ul>
-                <p>Get started and book your free consultation here.</p>
-                <p>
-                    <button class="btn btn-primary">SCHEDULE NOW</button>
-                </p>
+                <dl class="dd-ticks pl-3">
+                    <dd>Willingness to lose weight in a healthy natural way.</dd>
+                    <dd>This programme is ideal for all types of clients and situations.</dd>
+                    <dd>A teachable spirit open to new knowledge and information never considered before.</dd>
+                    <dd>A commitment and motivation to improving their way of life.</dd>
+                    <dd>A willingness to learn self-control or good healthy habits.</dd>
+                    <dd>Open to considering being part of a support group to work on possible emotional or mental blocks when it comes to eating. (Not compulsory)</dd>
+                    <dd>Willing to put into practice what is learned for the specified time period in order to get the desired results.</dd>
+                </dl>
+
+                {% with txt='Get started and book your free consultation here.' %}
+                    {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+                {% endwith %}
+            </div>
+            <div class="col-5">
+                <img class="img-fluid" src="{% static 'main/img/foryou/pexels-monstera-6621227.jpg' %}"/>
             </div>
         </div>
 

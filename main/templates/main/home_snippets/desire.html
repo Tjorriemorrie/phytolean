@@ -1,0 +1,50 @@
+{% load static %}
+
+<div class="row p-5">
+    <div class="col">
+        <h3 class="text-capitalize">Craving Change?</h3>
+        <br/>
+
+        <div class="row">
+            <div class="col-8">
+                <div class="row">
+                    <div class="col-5">
+                        <ul>
+                            <li>Do you have a special holiday planned and need a beach body?</li>
+                            <li>Do you wish to lose the weight gained after childbirth?</li>
+                            <li>Want to wear your favourite clothes again?</li>
+                            <li>Do you want to keep up with your kids without the restraint of the extra burdensome weight you have to carry around?</li>
+                            <li>Do you want to fit in that dress size on your special wedding day?</li>
+                            <li>Do you want to become pregnant and are interested in fertility nutrition?</li>
+                            <li>Does an accident or previous injury make it difficult to exercise?</li>
+                        </ul>
+                    </div>
+                    <div class="col-5">
+                        <ul>
+                            <li>Need to get back into the dating game with a lean figure?</li>
+                            <li>Want to live an active healthy lifestyle but your busy life gets in the way?</li>
+                            <li>Want the physique back that you had when you were younger?</li>
+                            <li>Have you tried everything? But without lasting results?</li>
+                            <li>Do you crave change and are willing to do what it takes to get the results you want but are not sure where to start?</li>
+                            <li>Have you tried dieting on your own without success?</li>
+                            <li>Have all your previous diets failed you?</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-4">
+                <img class="img-fluid" src="{% static 'main/img/home/aleksandr-ledogorov-G-JJy-Yv_dA-unsplash.jpg' %}"/>
+            </div>
+
+            <p class="text-justify">We help you figure out what your challenges and obstacles are to having the body of your dreams.  Then help you to overcome them with proven and  effective strategies. </p>
+            <p class="text-justify">Take the first step on your weight loss and wellness journey and learn more about how we can assist you to obtain the health and weight loss results you crave.</p>
+        </div>
+
+
+        {% with txt='Book a complimentary, absolutely FREE 30 min session with us online to help turn your weight loss vision into reality.' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+</div>

@@ -7,14 +7,26 @@
     --clr-blackboard: #565656;
     --clr-oxblood: #76323F;
     --clr-tan: #C09F80;
+    /*--clr-teal: #B4D0E7;*/
+    --clr-green: rgb(44, 154, 119);
+    --clr-lightblue: #E1F2F7;
+    --clr-lightbrown: rgb(240, 231, 227);
     --primary-clr: var(--clr-grain);
     --secondary-clr: var(--clr-tan);
+    --clr-mistyocean: rgb(191, 221, 223);
+    --clr-deepocean: rgb(112, 189, 194);
+    --clr-forestgreen: rgb(154, 183, 170);
+    --clr-phytolean: rgb(22, 144, 105);
+    --clr-groenenblou: rgb(200, 240, 240);
+    --clr-watertree: rgb(161, 211, 222);
+    --clr-plantwhite: rgb(238, 249, 245);
+    --clr-mupink: rgb(252, 249, 252);
 }
 
 html, body {
     font-family: 'Droid Serif', serif;
     font-size: 20px;
-    /*background: var(--primary-clr);*/
+    /*background: var(--clr-brown);*/
 }
 
 .oswald {
@@ -57,6 +69,12 @@ html, body {
     font-size: 1.8rem;
 }
 
+/*
+.row > div {
+    padding-left: 3rem;
+    padding-right: 3rem;
+}
+*/
 
 /*.bg-woman-pool {*/
 /*    background: url(/static/main/img/pexels-andrea-piacquadio-3764492.jpg) no-repeat center center fixed;*/
@@ -67,6 +85,25 @@ html, body {
 /*    height: 10rem;*/
 /*}*/
 
+.dam-cover {
+    background: url(/static/main/img/hartebeespoort-top.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    text-shadow: 0 0 2px white;
+    height: 40rem;
+}
+
+.ocean-cover {
+    background: url(/static/main/img/fotos/vinoth-ragunathan-cvQ6wD3bPYE-unsplash.jpg) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    text-shadow: 0 0 2px white;
+    height: 40rem;
+}
 
 .discovery-cta {
     background: darkslategrey;
@@ -104,20 +141,25 @@ textarea.form-control {
     text-shadow: 0 0 20px black;
 }
 
+dt {
+    padding-top: 1rem;
+    font-size: 1.3rem;
+}
+
 .dd-ticks dd::before {
     content: "✔ ";
 }
 
-ul li {
-    padding: 0.3rem 0.1rem;
+.dd-ticks dd {
+    text-indent: 30px;
 }
 
-.bg-lightblue {
-    background-color: lightblue;
+/*
+ul li {
+    padding: 0.3rem 0.1rem;
+    margin-left: 30px;
 }
-.bg-lightgreen {
-    background-color: lightgreen;
-}
+*/
 
 q {
   quotes: "“" "”" "‘" "’";
@@ -130,6 +172,14 @@ q::after {
 }
 
 .gray-img {
-    -webkit-filter: grayscale(100%);
-    filter: grayscale(100%);
+    -webkit-filter: grayscale(1%);
+    filter: grayscale(1%);
+}
+
+.success-story {
+    width: 400px;
+}
+
+.w20 {
+    width: 20%;
 }

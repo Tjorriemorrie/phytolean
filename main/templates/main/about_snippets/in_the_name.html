@@ -1,0 +1,24 @@
+{% load static %}
+
+<div class="row py-5">
+    <div class="col-6">
+        <h3>What’s in the name PhytoLean?</h3>
+
+        <h5 class="py-4">The healing Power of Nature- Boost your Immunity, slim down, protect your health, promote anti-aging and longevity.</h5>
+
+        <p>We utilize powerful chemicals that prevent and fight disease. Phytonutrients are found in plants. “Phyto” comes from the Greek Phyton meaning “plant”.  There are over 10 000 phytonutrients and Myconutrients discovered. These can help with DNA repair, scavenging for free radicals as anti-oxidants. This means these powerful plant particles have ani-aging and longevity properties. They influence and regulate hormonal functions, and regulated hormones play a huge role in normal weight maintenance.</p>
+        <p>Furthermore, they boost immune function, helping fight bacteria, viruses and other pathogens. It is no wonder that diets that contain more of these powerful phyto-nutrients have demonstrated scientifically in studies that they have immense benefits in illness prevention, duration of illness and severity.  Boosting your immunity is fundamental today in our global situation and can prove valuable and even essential in fighting off disease and disease prevention. These powerful plant compounds can lower blood clotting and coagulation proving very valuable in our day and age.</p>
+        <p>These wonderful particles from Nature’s medicine pharmacy most importantly also inhibit fat synthesis and storage! For this reason, making use of these powerful plant “phyto” chemicals to get lean and stay lean was the inspiration behind the name of our weight loss programme and product line “PhytoLean”.</p>
+        <p>Here at PhytoLean we believe in optimal body balance through Nature’s synergy, harnessing the power of plants. Powerful science working WITH Nature provides a gentle yet effective natural and sustainable weight loss solution for all.</p>
+        <p>Invest in your health today, boost your immunity and slim while fighting the effects of aging.</p>
+        <br/>
+
+        {% with txt='Schedule a free 30 min discovery session to discuss a plan to kickstart your weight loss!' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+    <div class="col-5">
+        <img class="img-fluid" src="{% static 'main/img/about/pexels-cottonbro-4065878.jpg' %}"/>
+    </div>
+</div>

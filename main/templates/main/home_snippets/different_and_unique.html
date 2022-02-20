@@ -1,0 +1,33 @@
+{% load static %}
+
+<div class="row py-5" style="background: var(--clr-lightbrown)">
+
+    <div class="col-5 px-5 pt-3 align-self-center">
+        <img class="img-fluid w-100" src="{% static 'main/img/home/fibonacci_spiral.jpg' %}">
+    </div>
+
+    <div class="col-7 px-5 pt-3">
+        <h3>What Makes Our Programme Different and Unique</h3>
+
+        <br/>
+
+        <dl class="dd-ticks">
+            <dd>No carb counting!</dd>
+            <dd>No required medications!</dd>
+            <dd>No invasive or painful procedures!</dd>
+            <dd>A cost effective and sustainable solution!</dd>
+            <dd>Promotes health and well-being!</dd>
+            <dd>No exercise required!</dd>
+            <dd>No starvation diets!</dd>
+            <dd>Eat until satiated!</dd>
+            <dd>Feel focused and energetic!</dd>
+            <dd>No regain of weight and lasting results with adherence to program!</dd>
+            <dd>Gain your health &amp; body back and live weight free!</dd>
+        </dl>
+
+        {% with txt='Stop stress eating from today onwards &amp;amp; regain your health, happiness, confidence and figure. The longer you WAIT, the more you gain the WEIGHT! Act now and schedule a complimentary free discovery session to learn how we can support you to reach your weight loss and wellness goals.' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+    </div>
+
+</div>

@@ -227,3 +227,6 @@ DEFAULT_FROM_EMAIL = email_address
 EMAIL_HOST_PASSWORD = email_pwd
 EMAIL_FROM = email_address
 EMAIL_TO = [email_address]
+
+
+SCHEDULE_ENABLED = False
