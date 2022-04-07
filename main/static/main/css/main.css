@@ -183,3 +183,38 @@ q::after {
 .w20 {
     width: 20%;
 }
+
+
+/** home services boxes */
+.services-container {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+.service-box {
+    border-radius: 2rem;
+    margin: 1rem;
+    padding: 2rem;
+    width: 100%;
+}
+
+/** equal boxes */
+.flexbox {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row nowrap;
+    align-items: stretch;
+}
+.flexbox-item {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.flexbox-img {
+    flex-basis: 40%;
+}
+.flexbox-txt {
+    flex-basis: 60%;
+}

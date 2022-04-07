@@ -6,11 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Phytolean{% endblock %}</title>
     <link rel="icon" href="{% static 'main/favicon.ico' %}">
-    <link href="{% static 'main/bootstrap-4.6.1-dist/css/bootstrap.min.css' %}" rel="stylesheet"/>
-    <link href="{% static 'main/bootstrap-icons-1.5.0/bootstrap-icons.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/plugins/bootstrap-4.6.1-dist/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/plugins/bootstrap-icons-1.8.1/bootstrap-icons.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/plugins/slick-master/slick/slick.css' %}" rel="stylesheet"/>
+    <link href="{% static 'main/plugins/slick-master/slick/slick-theme.css' %}" rel="stylesheet"/>
     <link href="{% static 'main/css/main.css' %}" rel="stylesheet"/>
     {% block link_extra %}{% endblock %}
-    <script src="{% static 'main/bootstrap-4.6.1-dist/js/bootstrap.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'main/plugins/jquery-3.6.0.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'main/plugins/bootstrap-4.6.1-dist/js/bootstrap.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'main/plugins/slick-master/slick/slick.min.js' %}" type="text/javascript"></script>
     {% block script_extra %}{% endblock %}
 </head>
 <body>

@@ -1,0 +1,40 @@
+{% load static %}
+
+<div class="row pb-5">
+    <div class="col-12 px-3 pt-5">
+        <h1 class="text-center pb-5">Our Approach</h1>
+
+        <div class="services-container">
+            <div class="service-box" style="background: var(--clr-lightblue)">
+                <h1 class="text-right"><i class="bi bi-chat-left-text"></i></h1>
+                <h2 class="pb-2">Expert Guidance</h2>
+                <p>Chat with a certified nutritionist to receive expert guidance on a weekly step by step structured and personalized action plan.</p>
+                <p>Book a video call with a fitness expert, general practitioner, life coach, psychologist, naturopath or Natural Healthcare practitioner from our wellness team. Our structured program is designed to work for you and get you the results you are after. </p>
+            </div>
+            <div class="service-box" style="background: var(--clr-lightbrown)">
+                <h1 class="text-right"><i class="bi bi-phone"></i></h1>
+                <h2 class="pb-2">Keep Connected with a Health App</h2>
+                <p>Allows you to chat with your certified nutritionist and lifestyle behaviour coach. Help to keep you accountable with food dairies and remind you of agreed apon action steps you chose to reach your goals.</p>
+                <p> This keeps you excited and your accountability partner keeps you going even when the motivation wears off.</p>
+            </div>
+            <div class="service-box" style="background: var(--clr-watertree)">
+                <h1 class="text-right"><i class="bi bi-people"></i></h1>
+                <h2 class="pb-2">Workshops & Support Groups</h2>
+                <p>We present health and wellness workshops on a variety of topics.</p>
+                <p> Join sessions with your family or with people that share similar goals.</p>
+                <p>Small groups with no more than 15 participants assure that you will not get lost in the crowd.</p>
+            </div>
+            <div class="service-box" style="background: var(--clr-plantwhite)">
+                <h1 class="text-right"><i class="bi bi-clipboard-heart"></i></h1>
+                <h2 class="pb-2">Advanced Skincare Nutrition</h2>
+                <p>We focus on a complete transformation to reverse and slow the signs of aging by incorporating the best science and products.</p>
+                <p>Advanced rejuvenation and anti-aging skincare; beauty and skin health from the inside out.</p>
+            </div>
+        </div>
+
+        {% with txt='Stop stress eating from today on and regain your life, happiness, confidence and figure! The longer you wait, the more you pile on the weight! Act now as a limited amount of spots are available.' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+</div>

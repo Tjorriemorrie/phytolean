@@ -1,0 +1,29 @@
+{% load static %}
+
+<div class="row py-5">
+    <div class="col-12 px-5 pt-3">
+
+        <h2 class="my-5">PhytoLean has dedicated itself to helping women who want exercise and nutrition to enhance their life — not control it.</h2>
+        <div class="flexbox">
+            <div class="flexbox-item flexbox-img">
+                <img class="img-fluid" src="{% static 'main/img/home/pexels-nathan-cowley-1153367.jpg' %}">
+            </div>
+            <div class="flexbox-item flexbox-txt">
+                <p>Our PhytoLean Program was designed as the antidote to all of the typical obsessive, restrictive, exhausting diet and exercise programs out there, which are too difficult to sustain for any real length of time.</p>
+                <p>At PhytoLean we know:</p>
+                <ul>
+                    <li class="pb-2">It’s possible to eat food you love that leaves you feeling satisfied — and still get results.</li>
+                    <li class="pb-2">It’s possible to spend less time in the gym, not feel exhausted when it’s over, still achieve your goals!</li>
+                    <li class="pb-2">You don’t always have to do more. You can actually do less and still get incredible results.</li>
+                    <li class="pb-2">Women need coaches who understand their unique needs and challenges. A coaching program designed by women, for women, run by women.</li>
+                </ul>
+                <p>That’s why we created the PhytoLean Natural Weight Loss Program supporting Holistic Wellness.</p>
+            </div>
+        </div>
+
+        {% with txt='Stop stress eating from today on and regain your life, happiness, confidence and figure! The longer you wait, the more you pile on the weight! Act now as a limited amount of spots are available.' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+</div>
