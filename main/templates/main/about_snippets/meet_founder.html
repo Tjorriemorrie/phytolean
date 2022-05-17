@@ -1,0 +1,24 @@
+{% load static %}
+
+<div class="row py-5">
+    <div class="col-12 px-5 pt-3">
+
+        <div class="row pt-4">
+            <div class="col-6">
+                <img class="img-fluid" src="{% static 'main/img/about/headshot.jpg' %}">
+            </div>
+            <div class="col-6">
+                <h2 class="pb-3">Meet our Inspired Founder</h2>
+                <p>Nerine is the managing Director for BSF Health Solutions and the creator of the acclaimed PhytoLean weight loss program. With over seventeen years of experience working in the health and wellness industry,  she loves sharing her passion for living a balanced and healthy lifestyle. She has collaborated with higher educational institutions, experts in their respective fields and associations to bring you the best nutritional information globally available.</p>
+                <p>Nerine holds a Bachelors in Health Sciences (Naturopathy), A Masters in Psychology with a focus on behavioural change psychology and eating psychology, and is currently completing her Ph.D. in Natural Medicine. She has lectured at university level and presented as a guest speaker at the acclaimed International ACRE conference. She is a certified clinical weight loss specialist accredited through the complementary medical association and registered with the ASCHP as well as the IAHTNP as a registered naturopathic practitioner.</p>
+                <p>She holds advanced certificates in integrative nutrition, lifestyle medicine, original and biblical traditional medicinal approaches and ethnomedicine practices.</p>
+                <p>Her online weight loss consultancy helps busy working moms reclaim their health, confidence, and figures while utilizing immune boosting nutrition.</p>
+            </div>
+        </div>
+
+        {% with txt='Stop stress eating from today on and regain your life, happiness, confidence and figure! The longer you wait, the more you pile on the weight! Act now as a limited amount of spots are available.' %}
+            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+        {% endwith %}
+
+    </div>
+</div>
