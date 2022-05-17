@@ -75,6 +75,12 @@ class Discovery(models.Model):
         verbose_name='What would you like to achieve? How do you want to feel? What do you want to be doing differently?')
     elaboration = models.TextField(
         verbose_name='Can you tell me about your situation?')
+    diagnosis = models.TextField(
+        verbose_name='Have you been diagnosed with a condition (diagnosis)?')
+    medications = models.TextField(
+        verbose_name='List the medications or supplements you are currently using:')
+    vaccinations = models.TextField(
+        verbose_name='Have you received the covid vaccinations? Which brand and how many?')
     duration = models.TextField(
         verbose_name='How long have you been trying to lose weight?')
     expansion = models.TextField(

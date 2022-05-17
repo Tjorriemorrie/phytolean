@@ -4,13 +4,24 @@
 {% block title %}Book Your Free Discovery Session - {{ block.super }}{% endblock %}
 
 {% block content %}
+<div class="container-fluid">
 
-  <h3>Book Your Free Discovery Session</h3>
-  <p>Please complete the booking form below for your free discovery session!</p>
-  <br/>
+    {% include 'main/navbar.html' with nav=nav %}
 
-  {{ form.non_field_errors }}
-  {{ form.errors }}
-  {% crispy form %}
+    <div class="container-fluid big-body">
 
+        <h3>Book Your Free Discovery Session</h3>
+        <p>Please complete the booking form below for your free discovery session!</p>
+        <br/>
+
+        {{ form.non_field_errors }}
+        {{ form.errors }}
+        {% crispy form %}
+
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
 {% endblock %}

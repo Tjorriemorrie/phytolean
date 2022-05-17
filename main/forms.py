@@ -5,7 +5,7 @@ from typing import List, Tuple, Dict, Any, Union
 
 from captcha.fields import CaptchaField
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Submit, Layout, Field, Fieldset, Div
+from crispy_forms.layout import Submit, Layout, Field, Fieldset, Div, HTML
 from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.utils.timezone import now
@@ -81,6 +81,9 @@ class DiscoveryForm(forms.ModelForm):
                 Field('expectation'),
                 Field('driver'),
                 Field('elaboration'),
+                Field('diagnosis'),
+                Field('medications'),
+                Field('vaccinations'),
                 Field('duration'),
                 Field('expansion'),
                 Field('priorities'),
@@ -120,6 +123,7 @@ class DiscoveryForm(forms.ModelForm):
                 Field('punctual'),
             ),
             Field('captcha'),
+            HTML('<br/><p style="color: var(--clr-phytolean)"><strong>All information will be kept confidential.</strong></p>'),
         )
 
         self.helper.add_input(Submit('submit', 'Submit'))

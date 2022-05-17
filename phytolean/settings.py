@@ -229,4 +229,4 @@ EMAIL_FROM = email_address
 EMAIL_TO = [email_address]
 
 
-SCHEDULE_ENABLED = False
+SCHEDULE_ENABLED = True

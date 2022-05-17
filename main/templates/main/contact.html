@@ -16,7 +16,12 @@
 
                 <h1>Get in touch /  Lets connect</h1>
                 <p>Get in Touch with our friendly caring team excited to get you started on your weight loss journey.</p>
-                <p>Thank you for your inquiry. We value every inquiry and we want to personally respond to each e-mail. As we might be in consultation, training or presenting workshops to our wonderful clients, please allow us to respond within 24 business hours. We will get back to you as soon as possible.</p>
+
+                {% with txt='What should I do to make my appointment? Complete this form to make your appointment.' %}
+                    {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+                {% endwith %}
+
+                <p>Alternatively you can contact us below. We value every inquiry and we want to personally respond to each message. As we might be in consultation, training or presenting workshops to our wonderful clients, please allow us to respond within 24 business hours. We will get back to you as soon as possible.</p>
                 <p><i class="bi bi-link-45deg"></i> Website: <a href="">phytolean.co.za</a></p>
                 <p><i class="bi bi-envelope-open"></i> E-mail: <a href="mailto:phytolean@gmail.com">phytolean@gmail.com</a></p>
                 <p><i class="bi bi-whatsapp"></i> WhatsApp: <a href="tel:+27768180808">076 818 0808</a></p>
@@ -27,10 +32,6 @@
             <div class="col">
                 <h2>Weight Loss Hartebeespoort Dam</h2>
                 <p>If you are in the area and want to see us in person at our weight loss consultancy, please shoot us a message! We would love to hear from you. We are proudly located in Harties to serve our local community in the beautiful area of Hartebesspoortdam and surrounds. Located in Schoemansville near Collonial Arch, we assist locals in reclaiming the body of their dreams along with our amazing online clients.</p>
-
-                {% with txt='So lets connect without delay and get you started today.' %}
-                    {% include 'main/snippets/schedule_btn.html' with txt=txt %}
-                {% endwith %}
 
                 <div class="dam-cover">
                     <div class="p-3">
