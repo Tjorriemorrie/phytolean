@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}Empowering Resources - {{ block.super }}{% endblock %}
 
@@ -14,18 +15,18 @@
             <div class="card-group">
 
                 <div class="card">
-                    <img src="" class="card-img-top" alt="">
+                    <img height="300px" src="{% static '/main/img/resources/bread/teaspoons.png' %}" class="card-img-top" alt="">
                     <div class="card-body">
-                        <h5 class="card-title">The Life-Changing Loaf of Bread</h5>
+                        <h5 class="card-title"><strong>The Life-Changing Loaf of Bread</strong></h5>
                         <p class="card-text">This dense bread is high in protein and fiber; it's also gluten-free and vegan.</p>
                         <a href="{% url 'resources_source' src='bread' %}" class="card-link">Read more</a>
                     </div>
                 </div>
 
                 <div class="card">
-                    <img src="" class="card-img-top" alt="">
+                    <img height="300px" src="{% static '/main/img/resources/breakfast/bread_spreads.png' %}" class="card-img-top" alt="">
                     <div class="card-body">
-                        <h5 class="card-title">The Healing Breakfast</h5>
+                        <h5 class="card-title"><strong>The Healing Breakfast</strong></h5>
                         <p class="card-text">They don’t say breakfast is the most important meal of the day for nothing. It is indeed the
                                 meal that fuels us up and gears us for the rest of the day. So what would we ideally want
                                 in a good breakfast? One that provides our bodies with the correct nutrients it needs as
@@ -38,9 +39,9 @@
                 </div>
 
                 <div class="card">
-                    <img src="" class="card-img-top" alt="">
+                    <img height="300px" src="{% static '/main/img/resources/grain/bowls.png' %}" class="card-img-top" alt="">
                     <div class="card-body">
-                        <h5 class="card-title">The Three Grain Super Cereal</h5>
+                        <h5 class="card-title"><strong>The Three Grain Super Cereal</strong></h5>
                         <p class="card-text">The three grain cereal is a quick, easy, very nutritious and digestible
                                 breakfast.  This super porridge is stacked with fiber, with a low
                                 glycemic index for sustained energy release and the fortified grains
@@ -52,9 +53,9 @@
                 </div>
 
                 <div class="card">
-                    <img src="" class="card-img-top" alt="">
+                    <img height="300px" src="{% static '/main/img/resources/juicing/mixing_opt.jpg' %}" class="card-img-top" alt="">
                     <div class="card-body">
-                        <h5 class="card-title">Why Juice?</h5>
+                        <h5 class="card-title"><strong>Why Juice?</strong></h5>
                         <p class="card-text">Personally I love juicing and Smoothies. The benefits of juicing are the
                                 keys to giving you a radiant, energetic life, and truly optimal health. Juicing is
                                 an awesome way to get nutrients into your body as they are absorbed straight into
