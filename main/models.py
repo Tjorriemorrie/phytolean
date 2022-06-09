@@ -128,6 +128,9 @@ class Discovery(models.Model):
     def is_new(self) -> bool:
         return self.status in (STATUS_NEW,)
 
+    def full_name(self) -> str:
+        return ' '.join([self.first_name, self.last_name])
+
 
 class Booking(models.Model):
     BOOKING_CHOICES = (

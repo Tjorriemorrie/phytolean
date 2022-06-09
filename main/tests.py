@@ -2,6 +2,7 @@ from unittest.mock import patch
 
 from django.test import TestCase, Client, override_settings
 
+from main.constants import DISCOVERY_SUCCESS_MSG
 from main.models import Discovery
 
 
@@ -20,6 +21,7 @@ class BookingTest(TestCase):
             'email': 'emaily',
             'cell': 'celly',
             'age': 12,
+            'sex': 'Male',
             'reason': 'reasony',
             'timing': 'timingy',
 
@@ -45,6 +47,9 @@ class BookingTest(TestCase):
             'expectation': 'expecty',
             'driver': 'drivey',
             'elaboration': 'elaby',
+            'diagnosis': 'diagny',
+            'medications': 'medicay',
+            'vaccinations': 'vaccinay',
             'duration': 'dury',
             'expansion': 'expansy',
             'priorities': 'prio',
@@ -75,8 +80,10 @@ class BookingTest(TestCase):
             data=data,
             follow=True
         )
+
+        assert DISCOVERY_SUCCESS_MSG in str(res.content)
+
         booking = Discovery.objects.last()
-        assert 'Discovery received!' in str(res.content)
         assert booking.association == 'assocy'
 
     def test_booking_view_required(self):

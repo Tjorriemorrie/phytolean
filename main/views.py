@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
+from main.constants import DISCOVERY_SUCCESS_MSG
 from main.forms import DiscoveryForm, BookingForm
 from main.models import Booking, STATUS_BOOKED
 from phytolean import settings
@@ -89,6 +90,7 @@ def discovery_view(request):
 
 def discovery_submitted_view(request):
     ctx = _get_ctx({
+        'msg': DISCOVERY_SUCCESS_MSG,
         'nav': 'discovery',
     })
     return render(request, 'main/discovery_submitted.html', ctx)

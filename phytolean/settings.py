@@ -216,17 +216,7 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 CAPTCHA_TEST_MODE = bool(len(sys.argv) > 1 and sys.argv[1] == 'test')
 
 # EMAIL
-email_address = os.getenv('EMAIL_ADDRESS')
-email_pwd = os.getenv('EMAIL_PASSWORD')
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = email_address
-DEFAULT_FROM_EMAIL = email_address
-EMAIL_HOST_PASSWORD = email_pwd
-EMAIL_FROM = email_address
-EMAIL_TO = [email_address]
-
+MAILJET_API_KEY = os.getenv('MAILJET_API_KEY')
+MAILJET_API_SECRET = os.getenv('MAILJET_API_SECRET')
 
 SCHEDULE_ENABLED = True

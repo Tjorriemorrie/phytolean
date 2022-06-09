@@ -1,12 +1,16 @@
 import logging
 from textwrap import dedent
 
-from django.core.mail import send_mail
+from mailjet_rest import Client
 
 from main.models import Discovery, Booking
-from phytolean import settings
+from phytolean.settings import MAILJET_API_KEY, MAILJET_API_SECRET, DEBUG
 
 logger = logging.getLogger(__name__)
+
+
+class EmailError(Exception):
+    """Base email error."""
 
 
 def send_new_discovery_email(discovery: Discovery):
@@ -14,27 +18,46 @@ def send_new_discovery_email(discovery: Discovery):
     subject = f'{discovery.first_name} {discovery.last_name} requested a discovery session'
     message = dedent(f"""
         A discovery session was requested!
-        
+
         Please change status of form to approved or denied (if spam).
         It is at the bottom of the form in the admin page.
-        
+
         https://phytolean.co.za/admin/main/discovery/{discovery.id}/change/
 
         If approved they will receive an email to make their booking.
     """)
-    send_mail(
-        subject,
-        message,
-        settings.EMAIL_FROM,
-        settings.EMAIL_TO,
-        fail_silently=not settings.DEBUG,
-    )
-    logger.info('New discovery email sent.')
+    data = {
+        'Messages': [
+            {
+                'From': {
+                    'Email': 'phytolean@gmail.com',
+                    'Name': 'Phytolean'
+                },
+                'To': [
+                    {
+                        'Email': 'phytolean@gmail.com',
+                        'Name': 'Phytolean'
+                    }
+                ],
+                'Subject': subject,
+                'TextPart': message,
+                'CustomID': 'NewDiscoveryEmail',
+            }
+        ]
+    }
+    mailjet = Client(auth=(MAILJET_API_KEY, MAILJET_API_SECRET), version='v3.1')
+    res = mailjet.send.create(data=data)
+    if res.status_code != 200:
+        res_data = res.json()
+        logger.error(f'Could not send email: {res_data}')
+        if DEBUG:
+            raise EmailError(res_data)
+    logger.info('New discovery email done.')
 
 
 def send_booking_email(discovery: Discovery, booking: Booking):
     logger.info('Sending booking email...')
-    subject = f'Phytolean discovery session booking'
+    subject = 'Phytolean discovery session booking'
     message = dedent(f"""
         Hi {discovery.first_name},
 
@@ -45,19 +68,39 @@ def send_booking_email(discovery: Discovery, booking: Booking):
         Regards,
         Phytolean
     """)
-    send_mail(
-        subject,
-        message,
-        settings.EMAIL_FROM,
-        settings.EMAIL_TO,
-        fail_silently=not settings.DEBUG,
-    )
+    data = {
+        'Messages': [
+            {
+                'From': {
+                    'Email': 'phytolean@gmail.com',
+                    'Name': 'Phytolean'
+                },
+                'To': [
+                    {
+                        'Email': discovery.email,
+                        'Name': discovery.full_name(),
+                    }
+                ],
+                'Reply-To': 'phytolean@gmail.com',
+                'Subject': subject,
+                'TextPart': message,
+                'CustomID': 'SendBookingEmail',
+            }
+        ]
+    }
+    mailjet = Client(auth=(MAILJET_API_KEY, MAILJET_API_SECRET), version='v3.1')
+    res = mailjet.send.create(data=data)
+    if res.status_code != 200:
+        res_data = res.json()
+        logger.error(f'Could not send email: {res_data}')
+        if DEBUG:
+            raise EmailError(res_data)
     logger.info('Booking email sent.')
 
 
 def send_appointment_email(discovery: Discovery, booking: Booking):
     logger.info('Sending appointment email...')
-    subject = f'Phytolean discovery session booked'
+    subject = 'Phytolean discovery session booked'
     message = dedent(f"""
         Hi {discovery.first_name},
 
@@ -67,14 +110,34 @@ def send_appointment_email(discovery: Discovery, booking: Booking):
         Regards,
         Phytolean
     """)
-    send_mail(
-        subject,
-        message,
-        settings.EMAIL_FROM,
-        settings.EMAIL_TO,
-        fail_silently=not settings.DEBUG,
-    )
-    logger.info('Appointment email sent.')
+    data = {
+        'Messages': [
+            {
+                'From': {
+                    'Email': 'phytolean@gmail.com',
+                    'Name': 'Phytolean'
+                },
+                'To': [
+                    {
+                        'Email': discovery.email,
+                        'Name': discovery.full_name(),
+                    }
+                ],
+                'Reply-To': 'phytolean@gmail.com',
+                'Subject': subject,
+                'TextPart': message,
+                'CustomID': 'SendAppointmentEmail',
+            }
+        ]
+    }
+    mailjet = Client(auth=(MAILJET_API_KEY, MAILJET_API_SECRET), version='v3.1')
+    res = mailjet.send.create(data=data)
+    if res.status_code != 200:
+        res_data = res.json()
+        logger.error(f'Could not send email: {res_data}')
+        if DEBUG:
+            raise EmailError(res_data)
+    logger.info('Appointment email done')
 
 
 def send_appointment_email_notification(discovery: Discovery, booking: Booking):
@@ -83,14 +146,34 @@ def send_appointment_email_notification(discovery: Discovery, booking: Booking):
     message = dedent(f"""
         New discovery session booked!
         
-        For {discovery.first_name} {discovery.last_name}
+        For {discovery.full_name()}
         at {booking.start_at:'%a %-d %b at %H:%I'}.
     """)
-    send_mail(
-        subject,
-        message,
-        settings.EMAIL_FROM,
-        settings.EMAIL_TO,
-        fail_silently=not settings.DEBUG,
-    )
-    logger.info('Appointment email notified.')
+    data = {
+        'Messages': [
+            {
+                'From': {
+                    'Email': 'phytolean@gmail.com',
+                    'Name': 'Phytolean'
+                },
+                'To': [
+                    {
+                        'Email': 'phytolean@gmail.com',
+                        'Name': 'Phytolean',
+                    }
+                ],
+                'Reply-To': 'phytolean@gmail.com',
+                'Subject': subject,
+                'TextPart': message,
+                'CustomID': 'SendNotificationEmail',
+            }
+        ]
+    }
+    mailjet = Client(auth=(MAILJET_API_KEY, MAILJET_API_SECRET), version='v3.1')
+    res = mailjet.send.create(data=data)
+    if res.status_code != 200:
+        res_data = res.json()
+        logger.error(f'Could not send email: {res_data}')
+        if DEBUG:
+            raise EmailError(res_data)
+    logger.info('Appointment email notified done')
