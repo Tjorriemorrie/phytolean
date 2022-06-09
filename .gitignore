@@ -135,3 +135,6 @@ logs/
 .idea/
 
 *.tar.gz
+
+# static files
+/static

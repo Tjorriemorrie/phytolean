@@ -3,26 +3,85 @@
 {% block title %}Empowering Resources - {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
-    {% include 'main/navbar.html' with nav=nav %}
+    <div class="container-fluid">
+        {% include 'main/navbar.html' with nav=nav %}
 
-    <div class="container-fluid big-body">
+        <div class="container-fluid big-body">
 
-        <hr/>
-        {% include 'main/resources_snippets/bread.html' %}
+            <h2>Resources</h2>
+            <br/>
 
-        <hr/>
-        {% include 'main/resources_snippets/breakfast.html' %}
+            <div class="card-group">
 
-        <hr/>
-        {% include 'main/resources_snippets/grain.html' %}
+                <div class="card">
+                    <img src="" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">The Life-Changing Loaf of Bread</h5>
+                        <p class="card-text">This dense bread is high in protein and fiber; it's also gluten-free and vegan.</p>
+                        <a href="{% url 'resources_source' src='bread' %}" class="card-link">Read more</a>
+                    </div>
+                </div>
 
-        <hr/>
-        {% include 'main/resources_snippets/juicing.html' %}
+                <div class="card">
+                    <img src="" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">The Healing Breakfast</h5>
+                        <p class="card-text">They don’t say breakfast is the most important meal of the day for nothing. It is indeed the
+                                meal that fuels us up and gears us for the rest of the day. So what would we ideally want
+                                in a good breakfast? One that provides our bodies with the correct nutrients it needs as
+                                well as allowing growth (especially when still growing) and promotes healing.  We should be
+                                eating breakfast like a king, lunch like a prince and supper like a pauper. Instead we grab
+                                a flimsy breakfast or skip out on it completely. No surprise we cannot perform optimally
+                                and become so ravenously hungry later in the day that we will pretty much eat anything.</p>
+                        <a href="{% url 'resources_source' src='breakfast' %}" class="card-link">Read more</a>
+                    </div>
+                </div>
 
+                <div class="card">
+                    <img src="" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">The Three Grain Super Cereal</h5>
+                        <p class="card-text">The three grain cereal is a quick, easy, very nutritious and digestible
+                                breakfast.  This super porridge is stacked with fiber, with a low
+                                glycemic index for sustained energy release and the fortified grains
+                                are also high in iron.  Added nuts provide more protein and omega 3
+                                (good) oils.  Also see the healing breakfast for more information about
+                                what a healthy breakfast involves.</p>
+                        <a href="{% url 'resources_source' src='grain' %}" class="card-link">Read more</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <img src="" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Why Juice?</h5>
+                        <p class="card-text">Personally I love juicing and Smoothies. The benefits of juicing are the
+                                keys to giving you a radiant, energetic life, and truly optimal health. Juicing is
+                                an awesome way to get nutrients into your body as they are absorbed straight into
+                                your bloodstream. It gives your body a direct shot of vitamins, minerals and
+                                enzymes.</p>
+                        <a href="{% url 'resources_source' src='juicing' %}" class="card-link">Read more</a>
+                    </div>
+                </div>
+
+            </div>  {# end card group #}
+
+
+            <div class="card-group">
+                <div class="card">
+                    <img src="" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Forks over Knives</h5>
+                        <p class="card-text">Through an examination of the careers of American physician Caldwell Esselstyn and professor of nutritional biochemistry T. Colin Campbell, Forks Over Knives claims that many diseases, including obesity, cardiovascular diseases, and cancer, can be prevented and treated by eating a whole-food, plant-based diet, avoiding processed food and food from animals. The film includes an overview of the 20-year China–Cornell–Oxford Project that led to Professor Campbell's findings, outlined in his book The China Study (2005), in which he suggests that coronary artery disease, diabetes, obesity, and cancer can be linked to the Western diet of processed and animal-based foods (including dairy products).</p>
+                        <a href="{% url 'resources_source' src='forksoverknives' %}" class="card-link">View documentary</a>
+                    </div>
+                </div>
+            </div>  {# end card group #}
+
+
+        </div>
+
+        <br/>
+        {% include 'main/footer.html' %}
     </div>
-
-    <br/>
-    {% include 'main/footer.html' %}
-</div>
 {% endblock %}

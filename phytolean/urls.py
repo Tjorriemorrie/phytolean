@@ -34,8 +34,8 @@ urlpatterns = [
     path('how-it-works', views.howitworks_view, name='howitworks'),
     path('why-this-is-for-you', views.for_you_view, name='foryou'),
     path('happy-clients', views.clients_view, name='clients'),
-    path('empowering-resources', views.resources_view, name='resources'),
     path('faq', views.faq_view, name='faq'),
     path('contact-us', views.contact_view, name='getintouch'),
-    path('resources', views.resources_view, name='resources'),
+    path('resources', views.resources_index_view, name='resources_index'),
+    path('resources/<str:src>', views.resources_source_view, name='resources_source'),
 ]

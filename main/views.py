@@ -64,11 +64,29 @@ def contact_view(request):
     return render(request, 'main/contact.html', ctx)
 
 
-def resources_view(request):
+def resources_index_view(request):
     ctx = _get_ctx({
         'nav': 'resources',
     })
     return render(request, 'main/resources.html', ctx)
+
+
+def resources_source_view(request, src):
+    titles = {
+        'bread': 'The Life-Changing Loaf of Bread',
+        'breakfast': 'The Healing Breakfast',
+        'grain': 'The Three Grain Super Cereal',
+        'juicing': 'Why Juice?',
+        'forksoverknives': 'Forks over Knives',
+    }
+    if src not in titles:
+        return redirect('resources_index')
+    ctx = _get_ctx({
+        'nav': 'resources',
+        'snippet': f'main/resources_snippets/{src}.html',
+        'title': titles[src],
+    })
+    return render(request, 'main/resource.html', ctx)
 
 
 ######################################################################################
