@@ -218,5 +218,21 @@ CAPTCHA_TEST_MODE = bool(len(sys.argv) > 1 and sys.argv[1] == 'test')
 # EMAIL
 MAILJET_API_KEY = os.getenv('MAILJET_API_KEY')
 MAILJET_API_SECRET = os.getenv('MAILJET_API_SECRET')
+# if not MAILJET_API_KEY or not MAILJET_API_SECRET:
+#     raise ValueError('missing mailjet env variables')
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'mail.besetfree.co.za'
+DEFAULT_FROM_EMAIL = 'phytolean@besetfree.co.za'
+EMAIL_HOST_USER = 'phytolean@besetfree.co.za'
+EMAIL_HOST_PASSWORD = 'KXyfDe$QrR4e'
+# EMAIL_USE_TLS = False
+# EMAIL_PORT = 587
+EMAIL_USE_SSL = True
+EMAIL_PORT = 465
+EMAIL_TIMEOUT = 30
+ADMINS = [('Jaco', 'jacoj82@gmail.com')]
+MANAGERS = [('Nerine', 'nennakind@gmail.com')]
 
 SCHEDULE_ENABLED = True

@@ -177,3 +177,40 @@ def send_appointment_email_notification(discovery: Discovery, booking: Booking):
         if DEBUG:
             raise EmailError(res_data)
     logger.info('Appointment email notified done')
+
+
+def send_hello_world(receiver: str):
+    logger.info('Sending test email...')
+    subject = f'Phytolean test'
+    message = dedent(
+        f"""
+        Test email sent!
+    """)
+    data = {
+        'Messages': [
+            {
+                'From': {
+                    'Email': 'phytolean@gmail.com',
+                    'Name': 'Phytolean'
+                },
+                'To': [
+                    {
+                        'Email': receiver,
+                        'Name': 'Receiver',
+                    }
+                ],
+                'Reply-To': 'phytolean@gmail.com',
+                'Subject': subject,
+                'TextPart': message,
+                'CustomID': 'SendNotificationEmail',
+            }
+        ]
+    }
+    mailjet = Client(auth=(MAILJET_API_KEY, MAILJET_API_SECRET), version='v3.1')
+    res = mailjet.send.create(data=data)
+    if res.status_code != 200:
+        res_data = res.json()
+        logger.error(f'Could not send email: {res_data}')
+        if DEBUG:
+            raise EmailError(res_data)
+    logger.info('Test email success')
