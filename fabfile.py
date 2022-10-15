@@ -83,8 +83,10 @@ def deploy(ctx):
     conn.local('find . -depth -name __pycache__ -type d -exec rm -r "{}" \;', echo=True)
     conn.local(f'tar -czf deploy.tar.gz {" ".join(files)}', echo=True)
 
-    print('Copying to remote server...')
-    conn.put('deploy.tar.gz', f'{dir}/')
+
+@task
+def extract(ctx):
+    conn = get_conn()
 
     systemctl(ctx, 'stop nginx')
     systemctl(ctx, 'stop gunicorn')
@@ -100,7 +102,7 @@ def deploy(ctx):
         f'./manage.py collectstatic --no-input',
     ]
     conn.run(' && '.join(cmds), echo=True)
-    conn.run(f'sed -i "s/DEBUG = True/DEBUG = False/g" {dir}/phytolean/settings.py', echo=True)
+    # conn.run(f'sed -i "s/DEBUG = True/DEBUG = False/g" {dir}/phytolean/settings.py', echo=True)
     conn.run(f'rm {dir}/deploy.tar.gz', echo=True)
 
     systemctl(ctx, 'start nginx')

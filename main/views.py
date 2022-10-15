@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 
 from main.constants import DISCOVERY_SUCCESS_MSG
 from main.forms import DiscoveryForm, BookingForm
@@ -80,7 +81,7 @@ def resources_source_view(request, src):
         'forksoverknives': 'Forks over Knives',
     }
     if src not in titles:
-        return redirect('resources_index')
+        return redirect(reverse('resources_index'))
     ctx = _get_ctx({
         'nav': 'resources',
         'snippet': f'main/resources_snippets/{src}.html',
@@ -96,7 +97,7 @@ def discovery_view(request):
         form = DiscoveryForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('discovery_submitted')
+            return redirect(reverse('discovery_submitted'))
     else:
         form = DiscoveryForm()
     ctx = _get_ctx({
@@ -117,14 +118,10 @@ def discovery_submitted_view(request):
 def make_booking_view(request, slug):
     booking = get_object_or_404(Booking, slug=slug)
     if request.method == 'POST':
-        form = BookingForm(request.POST)
-        if form.is_valid():
+        form = BookingForm(request.POST, instance=booking)
+        if form.data.get('booking_slot'):
             form.save()
-            booking.status = STATUS_BOOKED
-            booking.save()
-            booking.discovery.status = STATUS_BOOKED
-            booking.discovery.save()
-            return redirect('booking_submitted')
+            return redirect(reverse('booking_submitted'))
     else:
         form = BookingForm()
     ctx = {

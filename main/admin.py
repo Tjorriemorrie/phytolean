@@ -11,5 +11,5 @@ class DiscoveryAdmin(admin.ModelAdmin):
 
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
-    list_display = ['id', 'status', 'start_at', 'slug', 'created_at']
+    list_display = ['id', 'status', 'start_at', 'slug', 'created_at', 'discovery']
     ordering = ['-start_at']

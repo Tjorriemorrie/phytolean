@@ -142,7 +142,7 @@ class Booking(models.Model):
     discovery = models.ForeignKey(
         Discovery, on_delete=models.CASCADE, related_name='bookings', null=True)
 
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, null=False)
     start_at = models.DateTimeField(null=True, blank=True)
     end_at = models.DateTimeField(null=True, blank=True)
     duration = models.IntegerField(null=True, blank=True)
@@ -151,6 +151,9 @@ class Booking(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    @staticmethod
-    def gen_slug():
-        return randint(100_000_000, 999_999_999)
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        """Ensure booking always have a slug"""
+        if not self.slug:
+            self.slug = randint(100_000_000, 999_999_999)
+        super().save(force_insert, force_update, using, update_fields)

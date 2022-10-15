@@ -10,7 +10,7 @@ from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.utils.timezone import now
 
-from main.models import Discovery, Booking, STATUS_COMPLETED, STATUS_INVALID
+from main.models import Discovery, Booking, STATUS_COMPLETED, STATUS_INVALID, STATUS_BOOKED
 
 BOOK_DAYS_AHEAD = 4
 
@@ -195,7 +195,6 @@ def _make_it_busy(days, slots):
     for _ in range(2):
         slot = slots[randint(0, 3)][randint(0, 3)]
         Booking.objects.create(
-            slug=Booking.gen_slug(),
             start_at=slot['slot'],
             end_at=slot['slot'] + timedelta(minutes=5),
             duration=5,
@@ -205,7 +204,7 @@ def _make_it_busy(days, slots):
 
 def get_booking_values():
     days, slots = get_booking_data()
-    values = [int(i['slot'].timestamp()) for r in slots for i in r]
+    values = [str(int(i['slot'].timestamp())) for r in slots for i in r]
     return values
 
 
@@ -217,7 +216,7 @@ class BookingForm(forms.ModelForm):
     
     class Meta:
         model = Booking
-        fields = ['booking_slot',]
+        fields = ['booking_slot']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -228,4 +227,13 @@ class BookingForm(forms.ModelForm):
             BookingField('booking_slot')
         )
         self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        """Set start at from form."""
+        self.instance.start_at = datetime.fromtimestamp(int(self.data['booking_slot']))
+        self.instance.status = STATUS_BOOKED
+        self.instance.save()
+
+        self.instance.discovery.status = STATUS_BOOKED
+        self.instance.discovery.save()
 

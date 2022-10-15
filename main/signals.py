@@ -18,9 +18,7 @@ def discovery_email_hook(sender: Type[Discovery], instance: Discovery, **kwargs)
         send_new_discovery_email(instance)
         instance.has_sent_new_email = True
     elif instance.status == STATUS_APPROVED and not instance.has_sent_booking_email:
-        booking = Booking.objects.create(
-            discovery=instance,
-            slug=randint(100_000_000, 999_999_999))
+        booking = Booking.objects.create(discovery=instance)
         send_booking_email(instance, booking)
         instance.has_sent_booking_email = True
     elif instance.status == STATUS_BOOKED and not instance.has_sent_appointment_email:
