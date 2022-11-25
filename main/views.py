@@ -79,6 +79,7 @@ def resources_source_view(request, src):
         'grain': 'The Three Grain Super Cereal',
         'juicing': 'Why Juice?',
         'forksoverknives': 'Forks over Knives',
+        'sexhormones': 'Nutrition and Sex Hormones',
     }
     if src not in titles:
         return redirect(reverse('resources_index'))

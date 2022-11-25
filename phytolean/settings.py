@@ -216,20 +216,15 @@ CRISPY_FAIL_SILENTLY = not DEBUG
 CAPTCHA_TEST_MODE = bool(len(sys.argv) > 1 and sys.argv[1] == 'test')
 
 # EMAIL
-MAILJET_API_KEY = os.getenv('MAILJET_API_KEY')
-MAILJET_API_SECRET = os.getenv('MAILJET_API_SECRET')
-# if not MAILJET_API_KEY or not MAILJET_API_SECRET:
-#     raise ValueError('missing mailjet env variables')
-
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'mail.besetfree.co.za'
-DEFAULT_FROM_EMAIL = 'PhytoLean <phytolean@besetfree.co.za>'
-DEFAULT_REPLY_EMAIL = 'PhytoLean <phytolean@gmail.com>'
+EMAIL_HOST = 'mail.smtp2go.com'
+DEFAULT_FROM_EMAIL = 'PhytoLean <info@phytolean.co.za>'
+DEFAULT_REPLY_EMAIL = 'PhytoLean <info@phytolean.co.za>'
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_USE_TLS = False
 EMAIL_USE_SSL = True
 EMAIL_PORT = 465
-EMAIL_TIMEOUT = 30
+EMAIL_TIMEOUT = 10
 
 SCHEDULE_ENABLED = True
