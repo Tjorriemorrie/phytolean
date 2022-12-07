@@ -227,4 +227,8 @@ EMAIL_USE_SSL = True
 EMAIL_PORT = 465
 EMAIL_TIMEOUT = 10
 
+EMAIL_API_URL='https://api.smtp2go.com/v3'
+EMAIL_API_KEY = os.getenv('EMAIL_API_KEY')
+
+
 SCHEDULE_ENABLED = True

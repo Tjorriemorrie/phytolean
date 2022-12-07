@@ -2,6 +2,7 @@ import logging
 from smtplib import SMTPException
 from textwrap import dedent
 
+import requests
 from django.core.mail import send_mail, EmailMessage
 from retry import retry
 
@@ -9,6 +10,43 @@ from main.models import Discovery, Booking
 from phytolean import settings
 
 logger = logging.getLogger(__name__)
+
+
+def _send_smtp2go_api_email(subject: str, message: str, to: list) -> dict:
+    """Send email via smtp2go api."""
+    payload = {
+        'api_key': settings.EMAIL_API_KEY,
+        'to': to,
+        'sender': settings.DEFAULT_FROM_EMAIL,
+        'subject': subject,
+        'text_body': message,
+        # 'html_body': '<h1>You're my favorite test person ever</h1>',
+        'custom_headers': [
+            {
+                'header': 'Reply-To',
+                'value': settings.DEFAULT_REPLY_EMAIL,
+            }
+        ],
+        # 'attachments': [
+        #     {
+        # 'filename': 'test.pdf',
+        # 'fileblob': '--base64-data--',
+        # 'mimetype': 'application/pdf'
+        # },
+        # ]
+    }
+    logger.info(f'Email payload: {payload}')
+    res = requests.post(
+        f'{settings.EMAIL_API_URL}/email/send',
+        json=payload
+    )
+    try:
+        res.raise_for_status()
+    except requests.HTTPError as exc:
+        raise ValueError(f'{res.content}') from exc
+    data = res.json()
+    logger.info(f'Response: {data}')
+    return data
 
 
 def _send_gridhost_email(subject: str, message: str, to: list) -> int:
@@ -36,7 +74,8 @@ def send_new_discovery_email(discovery: Discovery):
 
         If approved they will receive an email to make their booking.
     """)
-    _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
+    # _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
+    _send_smtp2go_api_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
     logger.info('New discovery email done.')
 
 
@@ -54,7 +93,8 @@ def send_booking_email(discovery: Discovery, booking: Booking):
         Regards,
         Phytolean
     """)
-    _send_gridhost_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
+    # _send_gridhost_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
+    _send_smtp2go_api_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
     logger.info('Booking email sent.')
 
 
@@ -71,7 +111,8 @@ def send_appointment_email(discovery: Discovery, booking: Booking):
         Regards,
         Phytolean
     """)
-    _send_gridhost_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
+    # _send_gridhost_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
+    _send_smtp2go_api_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
     logger.info('Appointment email done')
 
 
@@ -85,5 +126,6 @@ def send_appointment_email_notification(discovery: Discovery, booking: Booking):
         For {discovery.full_name()}
         at {booking.start_at:'%a %-d %b at %H:%I'}.
     """)
-    _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
+    # _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
+    _send_smtp2go_api_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
     logger.info('Appointment email notified done')

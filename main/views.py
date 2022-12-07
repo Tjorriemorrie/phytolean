@@ -80,6 +80,7 @@ def resources_source_view(request, src):
         'juicing': 'Why Juice?',
         'forksoverknives': 'Forks over Knives',
         'sexhormones': 'Nutrition and Sex Hormones',
+        'diabetesthyroidmood': 'Nutrition for Diabetes, Thyroid Conditions and Mood Disorders',
     }
     if src not in titles:
         return redirect(reverse('resources_index'))
