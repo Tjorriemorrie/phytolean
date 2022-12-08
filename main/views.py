@@ -72,6 +72,13 @@ def resources_index_view(request):
     return render(request, 'main/resources.html', ctx)
 
 
+def nutrition_essentials_view(request):
+    ctx = _get_ctx({
+        'nav': '',
+    })
+    return render(request, 'main/nutrition_essentials.html', ctx)
+
+
 def resources_source_view(request, src):
     titles = {
         'bread': 'The Life-Changing Loaf of Bread',

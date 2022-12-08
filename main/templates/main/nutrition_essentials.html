@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Nutrition Essentials - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container-fluid big-body">
+
+        <h1>Nutrition Essentials</h1>
+        <h4>Classes</h4>
+        <p>More details coming soon.</p>
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
+
+{% endblock %}
