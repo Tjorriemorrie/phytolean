@@ -218,3 +218,20 @@ q::after {
 .flexbox-txt {
     flex-basis: 60%;
 }
+
+
+video {
+  width: 100%;
+  height: auto;
+}
+.ne-vid {
+    max-width: 960px;
+    max-height: 540px;
+}
+
+.nutess-bg {
+    background: url(/static/main/img/nutrition_essentials/background.jpeg);
+    background-position: top left;
+    background-repeat: no-repeat;
+    background-size: cover;
+}

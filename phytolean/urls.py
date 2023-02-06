@@ -39,5 +39,5 @@ urlpatterns = [
     path('resources', views.resources_index_view, name='resources_index'),
     path('resources/<str:src>', views.resources_source_view, name='resources_source'),
 
-    path('nutritionessentials', views.nutrition_essentials_view, name='nutrition_essentials'),
+    path('events', views.events_view, name='events'),
 ]
