@@ -88,6 +88,7 @@ def resources_source_view(request, src):
         'forksoverknives': 'Forks over Knives',
         'sexhormones': 'Nutrition and Sex Hormones',
         'diabetesthyroidmood': 'Nutrition for Diabetes, Thyroid Conditions and Mood Disorders',
+        'brocollisoup': 'Cream of Broccoli Soup',
     }
     if src not in titles:
         return redirect(reverse('resources_index'))
