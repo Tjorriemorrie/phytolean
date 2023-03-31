@@ -1,0 +1,42 @@
+<html>
+<head>
+  <title>SA Psychics</title>
+  <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.3.min.js"></script>
+</head>
+<body>
+<h3>SA Psychics</h3>
+<p>
+  <button id="online_btn">Go Online!</button>
+</p>
+<small>Cookie: {{ cookie }}</small>
+<h3>Front page status:</h3>
+<div id="front_status"></div>
+
+<script type="text/javascript">
+    console.info('doc loaded');
+    function getStatus() {
+        console.info('requesting data from psychics...');
+        $.ajax({
+            url: window.location.pathname,
+            type: "POST",
+            timeout: 9000,
+            success: function (data, status, xhr) {
+                $('#front_status').prepend(data);
+            },
+            error: function (xhr, status, error) {
+                $('#front_status').prepend(`<p>{status}: {error}</p>`);
+            }
+        });
+    }
+
+    $('#online_btn').one("click", function () {
+        console.info('online button one fired!');
+        setInterval(function () {
+            getStatus();
+        }, 60000);
+        getStatus();
+    });
+</script>
+
+</body>
+</html>

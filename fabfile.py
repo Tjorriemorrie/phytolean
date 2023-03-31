@@ -81,7 +81,7 @@ def deploy(ctx):
     # clean dir
     conn.local('find . -iname ".ds_store" -delete', echo=True)
     conn.local('find . -depth -name __pycache__ -type d -exec rm -r "{}" \;', echo=True)
-    conn.local(f'tar -czf deploy.tar.gz {" ".join(files)}', echo=True)
+    conn.local(f'tar -czf --no-xattrs deploy.tar.gz {" ".join(files)}', echo=True)
 
     print('Copying to remote server...')
     conn.put('deploy.tar.gz', f'{dir}/')
