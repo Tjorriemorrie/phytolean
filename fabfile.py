@@ -79,9 +79,10 @@ def deploy(ctx):
         'manage.py',
     }
     # clean dir
-    conn.local('find . -iname ".ds_store" -delete', echo=True)
-    conn.local('find . -depth -name __pycache__ -type d -exec rm -r "{}" \;', echo=True)
-    conn.local(f'tar -czf --no-xattrs deploy.tar.gz {" ".join(files)}', echo=True)
+    #conn.local('find . -iname ".ds_store" -delete', echo=True)
+    #conn.local('find . -depth -name __pycache__ -type d -exec rm -r "{}" \;', echo=True)
+    # conn.local(f'tar -czvf --no-xattrs deploy.tar.gz {" ".join(files)}', echo=True)
+    conn.local(f'tar -czf deploy.tar.gz {" ".join(files)}', echo=True)
 
     print('Copying to remote server...')
     conn.put('deploy.tar.gz', f'{dir}/')
@@ -96,8 +97,8 @@ def deploy(ctx):
         f'cd {dir}',
         'source env/bin/activate',
         'pip install -qr requirements.txt',
-        f'./manage.py migrate --no-input',
-        f'./manage.py collectstatic --no-input',
+        f'python manage.py migrate --no-input',
+        f'python manage.py collectstatic --no-input',
     ]
     conn.run(' && '.join(cmds), echo=True)
     conn.run(f'sed -i "s/DEBUG = True/DEBUG = False/g" {dir}/phytolean/settings.py', echo=True)

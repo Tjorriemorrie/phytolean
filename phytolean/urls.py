@@ -40,4 +40,5 @@ urlpatterns = [
     path('resources/<str:src>', views.resources_source_view, name='resources_source'),
 
     path('events', views.events_view, name='events'),
+    path('event/2023/06/nutrional-essentails', views.event_202306_view, name='event_202306'),
 ]

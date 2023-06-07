@@ -3,6 +3,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300&display=swap');
 
 :root {
+    --p-green: #3d8c72;
+    --c-green: #DEB63F;
+    --p-darkgreen: #1d5f4a;
+    --c-darkgreen: #A95619;
+    --p-lightgreen: #b9dcd5;
+    --c-lightgreen: #6C4E4E;
+    --p-white: #f9f7f1;
+    --c-white: #3A3A6C;
+    --p-yellow: #fec129;
+    --c-yellow: #513DB1;
+
     --clr-grain: #d7cec7;
     --clr-blackboard: #565656;
     --clr-oxblood: #76323F;
@@ -234,4 +245,13 @@ video {
     background-position: top left;
     background-repeat: no-repeat;
     background-size: cover;
+}
+
+.box-darkgreen {
+    padding: 1em;
+    background-color: var(--p-green);
+    color: var(--p-white);
+}
+.box-darkgreen a {
+    color: var(--p-white);
 }

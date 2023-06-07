@@ -1,0 +1,143 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Nutrition Essentials Event - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container-fluid big-body">
+
+        <div class="row">
+            <div class="col">
+                <p><img class="img img-fluid" src="{% static 'main/img/events/202306_nutrition_essentials/background.jpeg' %}"/></p>
+                <h2>Nutrition Essential Classes</h2>
+                <p>
+                    Food for Life: Nutrition Essentials is based on the Physicians Committee for Responsible Medicine’s
+                    successful ward winning 21-Day Vegan Kickstart program. Depending on one’s perspective,
+                    Nutrition Essentials is about losing weight, maintaining a healthy weight, or simply embracing
+                    an overall healthful way of eating. Much of the basis of the Nutrition Essentials is about
+                    making a qualitative shift in the way we eat as opposed to a quantitative shift.
+                </p>
+                <p>
+                    For some people, it’s the first time the idea of not restricting amounts of foods but
+                    rather choosing the right foods has been the guiding principle for losing weight and staying
+                    healthy. The revelation is bolstered and supported by evidence based research with
+                    clinical benefits such as lower cholesterol, better diabetes control, and lower blood
+                    pressure, as well as improvements in energy and mood.
+                </p>
+                <p>
+                    This curriculum will allow class attendees to discover the world of health through
+                    general topics ranging from digestion to blood pressure.
+                </p>
+                <p>
+                    Results are likely to be immediate and impressive! Join us for this informative four
+                    series classes that includes sampling of healthy substitutions aimed at enhancing
+                    your health through the understanding of nutrition essentials.
+                </p>
+                <p>Presented by Food for Life instructor Nerine Jansen NHP, HC, RNP, CWLS, NHLC.
+                    <br/>Nerine is a dynamic and passionate advocate of good nutrition and a whole food plant based diet after experiencing radical changes in her own health after adopting this lifestyle.  Attending her talks, nutrition and cooking classes will inspire you to easily put into practice good taste with good nutrition. “Nutritious and delicious” takes on a new meaning, when Nerine shows you how.
+                    <br/><a href="{% url 'about' %}">More information</a></p>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col">
+                <h2>Curriculum</h2>
+                <p>Four classes:<br/>
+                    First session: Kickstart Your Health: Weight Control and Diabetes Prevention<br/>
+                    Second session: Let’s Go (Begin Kickstart, Label Reading)<br/>
+                    Third session: Getting in Gear<br/>
+                    Fourth session: Weight Control
+                </p>
+
+                <h4>Class Format</h4>
+                <p>Each class in the 4 part series features a video, discussion, and activities focused on adopting a healthful, plant-based diet. Four classes have been developed of two hours each presented over the course of a month. Each class includes a Power of Food quiz and discussion. Resources are included for each class with the session concluding with food sampling. We will then have a question and answer session where participants can share their experience, strategies, results and successes, learning from each other in a supportive and motivating environment.
+                <p>Coffee and tea (refreshments) are included as well as a certificate upon completion of the program.
+                <p>Our next class series include cooking demonstrations and recipes. Please subscribe to receive information about these upcoming classes that builds upon the nutrition essential information gained during this class series.
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col">
+                <h2>Learn the nutrition essentials to lose weight and dramatically improve your health</h2>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <img class="img img-fluid" src="{% static 'main/img/events/202306_nutrition_essentials/flyer.jpeg' %}"/>
+            </div>
+            <div class="col-sm-8">
+                <ul class="mt-4">
+                    <li>Healthy Meal Ideas</li>
+                    <li>Hidden Calories in Food</li>
+                    <li>Foods to Avoid and Enjoy</li>
+                    <li>Healthy food substitutions
+                    <li>Make Every Meal a Power Plate Meal</li>
+                    <li>Power Plate Grocery Shopping List</li>
+                    <li>Read Nutrition labels</li>
+                    <li>Weekly Menu Planner</li>
+                    <li>Improve “after meal calorie burn”</li>
+                    <li>Strategies for Success</li>
+                    <li>Sample foods</li>
+                </ul>
+                <p class="mt-4">
+                    Class dates: 5, 12, 19, 26 March 2023<br/>
+                    Venue: Schoemansville, Hartbeespoort <span class="text-muted">(details provided with booking)</span><br/>
+                    Time: 15:00- 17:00<br/>
+                    Cost: R250,00 per session (Four classes in total in this class series)<br/>
+                    Presenter: FFL instructor Nerine Jansen, NHP,HC,RNP,CWLS,NHLC
+                </p>
+                <p>
+                    For more information or bookings Contact:<br/>
+                    <i class="bi bi-link-45deg"></i> Website: <a href="https://phytolean.co.za/nutritionessentials">https://phytolean.co.za/nutritionessentials</a><br/>
+                    <i class="bi bi-envelope-open"></i> E-mail: <a href="mailto:phytolean@gmail.com">phytolean@gmail.com</a><br/>
+                    <i class="bi bi-whatsapp"></i> WhatsApp: <a href="tel:+27768180808">076 818 0808</a><br/>
+                    <small class="text-muted">Refreshments included with Certificate upon completion</small>
+                </p>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col">
+                <p><img class="img img-fluid" src="{% static 'main/img/events/202306_nutrition_essentials/infographic.png' %}"/></p>
+            </div>
+        </div>
+
+        <div class="row my-5">
+            <div class="col">
+                <h2>To learn more about the Food For Life program with the Physicians Committee for Responsible Medicine (PCRM), please watch the video below.</h2>
+                <p>
+                    Food for Life is an award-winning nutrition education and cooking class program that provides an
+                    innovative approach to diet-related chronic diseases. Since 2001, Food for Life
+                    has been a pioneer in delivering hands-on information about the direct role of
+                    plant-based nutrition in health and disease prevention to communities around the
+                    world.Designed by physicians, nurses, and registered dietitians, Food for
+                    Life promotes healthful eating based on the latest scientific research.
+                </p>
+                <p>
+                    Each Food for Life class includes:
+                    <ul>
+                        <li>Specific information about how certain foods and nutrients work to promote or discourage disease</li>
+                        <li>Cooking demonstrations of delicious and healthful recipes</li>
+                        <li>Practical cooking skills and tips for incorporating healthful eating habits into daily life</li>
+                        <li>A supportive and motivational atmosphere to empower participants to take charge of their health with the foods that are put on their plates</li>
+                    </ul>
+                </p>
+                <p><video class="ne-vid" controls>
+                    <source src="{% static 'main/foodforlifepromo.mp4' %}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video></p>
+            </div>
+        </div>
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
+
+{% endblock %}
