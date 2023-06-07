@@ -79,11 +79,18 @@ def events_view(request):
     return render(request, 'main/events.html', ctx)
 
 
+def event_202303_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/202303-nutrition-essentials.html', ctx)
+
+
 def event_202306_view(request):
     ctx = _get_ctx({
         'nav': 'events',
     })
-    return render(request, 'main/events/202306-nutrition-essentials.html', ctx)
+    return render(request, 'main/events/202306-kickstart.html', ctx)
 
 
 def resources_source_view(request, src):

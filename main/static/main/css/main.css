@@ -247,11 +247,20 @@ video {
     background-size: cover;
 }
 
-.box-darkgreen {
+.box-green {
     padding: 1em;
     background-color: var(--p-green);
     color: var(--p-white);
 }
-.box-darkgreen a {
+.box-green a {
     color: var(--p-white);
+}
+
+.box-lightgreen {
+    padding: 1em;
+    background-color: var(--p-lightgreen);
+    color: var(--c-lightgreen);
+}
+.box-lightgreen a {
+    color: var(--c-lightgreen);
 }
