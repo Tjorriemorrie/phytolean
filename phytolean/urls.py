@@ -42,4 +42,11 @@ urlpatterns = [
     path('events', views.events_view, name='events'),
     path('event/2023/03/nutrional-essentails', views.event_202303_view, name='event_202303'),
     path('events/nutrionclasses', views.event_202306_view, name='event_202306'),
+    path('event/2023/06/poppe-spel', views.event_202306_poppe_view, name='event_202306_poppe'),
+    path('event/2023/06/puppet-show', views.event_202306_puppet_view, name='event_202306_puppet'),
+    path('event/2023/06/09/kos-teater', views.event_20230609_poppe_view, name='event_20230609_poppe'),
+    path('event/2023/06/12/kos-teater', views.event_20230612_poppe_view, name='event_20230612_poppe'),
+    path('event/2023/06/16/kos-teater', views.event_20230616_poppe_view, name='event_20230616_poppe'),
+    path('event/2023/06/', views.event_202306_puppet_view, name='event_202306_puppet'),
+    path('event/2023/07/15/kos-teater', views.event_20230715_poppe_view, name='event_20230715_sda'),
 ]

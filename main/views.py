@@ -93,6 +93,48 @@ def event_202306_view(request):
     return render(request, 'main/events/202306-kickstart.html', ctx)
 
 
+def event_202306_poppe_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/202306-poppe.html', ctx)
+
+
+def event_202306_puppet_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/202306-puppet.html', ctx)
+
+
+def event_20230609_poppe_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/20230609-agape.html', ctx)
+
+
+def event_20230612_poppe_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/20230612-ghs.html', ctx)
+
+
+def event_20230616_poppe_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/20230616-market.html', ctx)
+
+
+def event_20230715_poppe_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/20230715-sda.html', ctx)
+
+
 def resources_source_view(request, src):
     titles = {
         'bread': 'The Life-Changing Loaf of Bread',

@@ -1,0 +1,78 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Kids Puppet Show Event - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+
+        {% include 'main/navbar.html' with nav=nav %}
+
+        <div class="container-fluid big-body">
+
+            <div class="row">
+                <div class="col">
+                    <h2>Super kos vir super kinders</h2>
+                    <p><img class="img-fluid" src="{% static 'main/img/events/202306_puppet/main_eng.jpg' %}"/></p>
+                    <h3>Food Theatre</h3>
+                    <p>A fun and informative puppet show about making healthy food choices.</p>
+                    <p>Date: 20 June &amp; 4, 11, 18 July 2023</p>
+                    <p>Where: Tuesdays</p>
+                    <p>Time: 11:00-12:00</p>
+                    <p>Where: Schoemansville Library</p>
+                    <p>Entry: Free Event</p>
+                    <p>For: Kids ages 3-12 Years</p>
+                    <p>Presentation in English</p>
+
+                    <h3>Join us for an Exciting Adventure!</h3>
+                    <p>Are you ready for a one-of-a-kind experience that combines fun, education, and deliciousness?
+                        Food Theatre is here to make learning about healthy food choices a blast for your kids!</p>
+
+                    <h3>What's in Store for You?</h3>
+                    <ul>
+
+                        <li>Puppet Show: Our lively puppet characters will take your children on a journey filled with
+                            laughter, learning, and valuable lessons about making healthy food choices.
+                        </li>
+                        <li>Song and Dance: Get ready to sing and dance along! Bring energy and excitement to the stage,
+                            ensuring an engaging experience for every child.
+                        </li>
+                        <li>Power Foods: Discover the secrets of power foods that build powerful bodies! Through
+                            interactive activities and visuals, your kids will learn about the amazing benefits of
+                            nutritious foods.
+                        </li>
+                        <li>The Powerplate: Step into the world of the Powerplate, where each superfood's color and
+                            superpower will be revealed. Your child will be amazed by the magic and wonders of nature's
+                            vibrant palette.
+                        </li>
+                        <li>Eat the Rainbow: Find out why we should eat the rainbow! Our experts will explain the
+                            importance of incorporating a variety of colorful fruits and vegetables into our diets for
+                            optimal health.
+                        </li>
+                        <li>Colour-In Activity: Unleash your child's creativity with a color-in activity. They will have
+                            the chance to showcase their artistic skills while reinforcing the concepts they've learned
+                            during the show.
+                        </li>
+                    </ul>
+
+                    <h3>Unlock the Superhero Within!</h3>
+                    <p>Food Theatre aims to inspire and empower your kids to become superheroes of their own health. By
+                        attending this hour-long activity, they will gain valuable knowledge, have loads of fun, and
+                        embark on a journey towards a healthier lifestyle.</p>
+                    <p>Don't miss out on this fantastic opportunity for your children to learn, laugh, and discover the
+                        magic of nutritious food choices.</p>
+                    <p>Bookings are essential. For more information and bookings contact Janet WhatsApp: 076 818
+                        0808</p>
+
+
+                </div>
+            </div>
+
+        </div>
+        <br/>
+
+        {% include 'main/footer.html' %}
+    </div>
+
+{% endblock %}

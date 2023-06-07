@@ -264,3 +264,12 @@ video {
 .box-lightgreen a {
     color: var(--c-lightgreen);
 }
+
+.box-yellow {
+    padding: 1em;
+    background-color: var(--p-yellow);
+    color: var(--c-yellow);
+}
+.box-yellow a {
+    color: var(--c-yellow);
+}

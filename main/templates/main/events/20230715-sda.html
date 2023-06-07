@@ -1,0 +1,76 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Kos Teater Event - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+
+        {% include 'main/navbar.html' with nav=nav %}
+
+        <div class="container-fluid big-body">
+
+            <div class="row">
+                <div class="col">
+                    <h2>Super kos vir super kinders</h2>
+                    <p><img class="img-fluid" src="{% static 'main/img/events/202306_poppe/main_afr.png' %}"/></p>
+                    <h3>Kos Teater</h3>
+                    <p>'n Pret- en Inligtingsvolle poppe spel oor die maak van gesonde voedselkeuses.</p>
+                    <p>Datum: 15 Julie 2023</p>
+                    <p>Tyd: 13:30-15:00</p>
+                    <p>Waar: SDA Kerksaal, Hartbeespoort</p>
+                    <p>Toegang: GRATIS Geleentheid</p>
+                    <p>Vir: Kinders ouderdomme 3-12 jaar</p>
+                    <p>Aanbieding in Afrikaans</p>
+
+                    <h3>Sluit by ons aan vir 'n Opwindende Avontuur!</h3>
+                    <p>Is jy gereed vir 'n unieke ervaring wat pret, opvoeding en smaaklikheid saambring? Kos Teater is
+                        hier om die leer van gesonde voedselkeuses vir jou kinders 'n fees te maak!</p>
+
+                    <h3>Wat Wag Vir Jou?</h3>
+                    <ul>
+
+                        <li>Poppekas: Ons lewendige popkarakters sal jou kinders op 'n reis neem vol lag, leer en
+                            waardevolle lesse oor die maak van gesonde voedselkeuses.
+                        </li>
+                        <li>Sing en Dans: Maak gereed om saam te sing en te dans! Bring energie en opwinding na die
+                            geleentheid om 'n boeiende ervaring vir elke kind te verseker.
+                        </li>
+                        <li>Kragvoedsel: Ontdek die geheime van kragvoedsel wat kragtige liggame bou! Deur interaktiewe
+                            aktiwiteite en visuele materiaal sal jou kinders leer oor die wonderlike voordele van
+                            voedsame kos.
+                        </li>
+                        <li>Die “Powerplate”: Betree die wêreld van die “Powerplate”, waar die kleur en krag van elke
+                            superkos onthul sal word op jou bord. Jou kind sal verstom staan oor die mag en wonderwerke
+                            van die natuur se lewendige palet.
+                        </li>
+                        <li>Eet die Reënboog: Vind uit waarom ons die reënboog moet eet! Deskundiges sal die belang
+                            daarvan verduidelik om 'n verskeidenheid kleurryke vrugte en groente in ons dieet op te neem
+                            vir optimale gesondheid.
+                        </li>
+                        <li>Kleur-in Aktiwiteit: Ontketen jou kind se kreatiwiteit met 'n kleur-in aktiwiteit. Hulle sal
+                            die kans kry om hul artistieke vaardighede te wys terwyl hulle die konsepte wat hulle tydens
+                            die vertoning geleer het, versterk.
+                        </li>
+                    </ul>
+
+                    <h3>Ontsluit die Superheld Binne Jou!</h3>
+                    <p>Kos Teater streef daarna om jou kinders te inspireer en in staat te stel om superhelde van hul
+                        eie gesondheid te word. Deur hierdie uur lange aktiwiteit by te woon, sal hulle waardevolle
+                        kennis opdoen, baie pret hê, en op 'n reis na 'n gesonder leefstyl vertrek.</p>
+                    <p>Moenie hierdie fantastiese geleentheid vir jou kinders misloop om te leer, te lag en die krag van
+                        goeie voedselkeuses vol voeding te ontdek nie.</p>
+                    <p>Besprekings is noodsaaklik. Vir meer inligting en besprekings kontak Janet WhatsApp: 076 818
+                        0808</p>
+
+                </div>
+            </div>
+
+        </div>
+        <br/>
+
+        {% include 'main/footer.html' %}
+    </div>
+
+{% endblock %}
