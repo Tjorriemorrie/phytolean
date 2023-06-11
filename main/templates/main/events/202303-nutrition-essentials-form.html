@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Nutrition Essentials Applications - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container-fluid big-body">
+
+        <div class="row">
+            <div class="col">
+                <p><img class="img img-fluid" src="{% static 'main/img/events/202303_nutrition_essentials/background.jpeg' %}"/></p>
+                <h2>Nutrition Essential Classes</h2>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-8">
+                {{ form.non_field_errors }}
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+            <div class="col-4">
+                <h4>Our Requirements:</h4>
+                <p>A commitment and dedication to attend the 4 class series.</p>
+                <p>Willingness to put into practice the concepts conveyed in this class series  determine if it could work for you, hold considerable health benefits and produce results.</p>
+                <p>A teachable spirit open to new knowledge and information never considered before.</p>
+                <p>A commitment and motivation to improve their way of life in a sustainable natural way.</p>
+                <p>A willingness to learn self-control or good healthy habits.</p>
+                <p>Open to considering being part of a support group to work on possible emotional or mental blocks when it comes to eating.</p>
+                <p>Willing to put into practice what is learned for the specified time period in order to get the desired results.</p>
+            </div>
+        </div>
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
+
+{% endblock %}

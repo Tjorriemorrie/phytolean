@@ -273,3 +273,9 @@ video {
 .box-yellow a {
     color: var(--c-yellow);
 }
+
+.small-textarea {
+    margin-top: 2rem;
+    font-size: 12px;
+    min-height: 10rem;
+}

@@ -4,9 +4,10 @@ from textwrap import dedent
 
 import requests
 from django.core.mail import send_mail, EmailMessage
+from django.core.serializers import serialize
 from retry import retry
 
-from main.models import Discovery, Booking
+from main.models import Discovery, Booking, Participant
 from phytolean import settings
 
 logger = logging.getLogger(__name__)
@@ -129,3 +130,33 @@ def send_appointment_email_notification(discovery: Discovery, booking: Booking):
     # _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
     _send_smtp2go_api_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
     logger.info('Appointment email notified done')
+
+
+@retry(SMTPException)
+def send_participant_email(participant: Participant):
+    logger.info('Sending participant notification...')
+    subject = f'Phytolean participant application'
+    data = serialize("json", [participant])
+    message = dedent(f"""
+        New participant
+        
+        Event: {participant.event}
+        Name: {participant.prefix} {participant.first_name} {participant.last_name}
+        Cellphone: {participant.cellphone}
+        Email: {participant.email}
+        City: {participant.city}
+        Date of birth: {participant.dob}
+        Sex: {participant.sex}
+        Ethnicity: {participant.ethnicity}
+        Cancer: {participant.cancer}
+        Diseases: {participant.diseases}
+        Origin: {participant.origin}
+        Occupation: {participant.occupation}
+        Practitioner: {participant.practitioner}
+        Diet: {participant.diet}
+        Intention: {participant.diet}
+        Expectation: {participant.expectation}
+    """)
+    # _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
+    _send_smtp2go_api_email(subject, message, [settings.DEFAULT_REPLY_EMAIL, 'nennakind@gmail.com', 'jacoj82@gmail.com'])
+    logger.info('Participant email notified done')

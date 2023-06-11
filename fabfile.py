@@ -73,6 +73,7 @@ def deploy(ctx):
     print('Deploying site...')
     conn = get_conn()
     files = {
+        '.env_template',
         'requirements.txt',
         'main',
         'phytolean',
@@ -101,7 +102,7 @@ def deploy(ctx):
         f'python manage.py collectstatic --no-input',
     ]
     conn.run(' && '.join(cmds), echo=True)
-    conn.run(f'sed -i "s/DEBUG = True/DEBUG = False/g" {dir}/phytolean/settings.py', echo=True)
+    # conn.run(f'sed -i "s/DEBUG = True/DEBUG = False/g" {dir}/phytolean/settings.py', echo=True)
     conn.run(f'rm {dir}/deploy.tar.gz', echo=True)
 
     systemctl(ctx, 'start nginx')

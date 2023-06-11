@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
 from main.constants import DISCOVERY_SUCCESS_MSG
-from main.forms import DiscoveryForm, BookingForm
+from main.forms import DiscoveryForm, BookingForm, ParticipantBookingForm
 from main.models import Booking, STATUS_BOOKED
 from phytolean import settings
 
@@ -84,6 +84,28 @@ def event_202303_view(request):
         'nav': 'events',
     })
     return render(request, 'main/events/202303-nutrition-essentials.html', ctx)
+
+
+def event_202303_form(request):
+    if request.method == 'POST':
+        form = ParticipantBookingForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('event_202303_success'))
+    else:
+        form = ParticipantBookingForm()
+    ctx = _get_ctx({
+        'nav': 'events',
+        'form': form,
+    })
+    return render(request, 'main/events/202303-nutrition-essentials-form.html', ctx)
+
+
+def event_202303_success(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/202303-nutrition-essentials-success.html', ctx)
 
 
 def event_202306_view(request):

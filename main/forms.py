@@ -10,9 +10,14 @@ from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.utils.timezone import now
 
-from main.models import Discovery, Booking, STATUS_COMPLETED, STATUS_INVALID, STATUS_BOOKED
+from main.constants import FFL_DISCLAIMER
+from main.models import Discovery, Booking, STATUS_COMPLETED, STATUS_INVALID, STATUS_BOOKED, Participant
 
 BOOK_DAYS_AHEAD = 4
+
+
+class DateInput(forms.DateInput):
+    input_type = 'date'
 
 
 class DiscoveryForm(forms.ModelForm):
@@ -237,3 +242,46 @@ class BookingForm(forms.ModelForm):
         self.instance.discovery.status = STATUS_BOOKED
         self.instance.discovery.save()
 
+
+class ParticipantBookingForm(forms.ModelForm):
+    dob = forms.DateField(label='Date of Birth', widget=DateInput)
+    info = forms.CharField(
+        label='', initial=FFL_DISCLAIMER, widget=forms.Textarea(
+            attrs={'readonly': 'readonly', 'class': 'small-textarea'}))
+    waiver = forms.BooleanField(required=True, label='I have read the disclaimer')
+
+    class Meta:
+        model = Participant
+        exclude = ['event', 'submitted_at']
+        labels = {
+            'prefix': 'Prefix (Mr, Mrs, Dr, etc):',
+            'first_name': 'First name:',
+            'last_name': 'Last name:',
+            'cellphone': 'Cellphone number:',
+            'email': 'Email address:',
+            'city': 'In which city do you live?',
+            'cancer': 'Are you a cancer survivor?',
+            'diseases': 'Any diseases or conditions we should be aware of?',
+
+            'origin': 'Where did you learn about this class series? (If you were referred by someone please mention their name)',
+            'occupation': 'What is your occupation or profession?',
+            'practitioner': 'Are you a healthcare practitioner?',
+            'diet': 'Are you a proponent or supporter of a specific diet currently? Or are you adhering currently to a specific diet? e.g. paleo, banting, keto, carnivore, vegetarian, vegan or gluten free?',
+            'intention': 'What is your intention for attending the class?',
+            'expectation': 'What is your expectation regarding the class series?',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'participantForm'
+        # self.helper.layout = Layout(
+        #     BookingField('booking_slot')
+        # )
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    def save(self, commit=True):
+        """Set start at from form."""
+        self.instance.event = 'Nutrition Essentials'
+        self.instance.submitted_at = now()
+        self.instance.save()

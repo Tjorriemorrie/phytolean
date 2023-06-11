@@ -2,6 +2,9 @@ from random import randint
 
 from django.db import models
 
+from main.constants import SEX_MALE, SEX_FEMALE, ETHNICITY_AFRICAN, ETHNICITY_ASIAN, ETHNICITY_LATIN, ETHNICITY_PACIFIC, \
+    ETHNICITY_CAUCASIAN, ETHNICITY_OTHER, PRAC_NO, PRAC_YES, PRAC_COLLAB
+
 STATUS_NEW = 'new'
 STATUS_APPROVED = 'approved'
 STATUS_DENIED = 'denied'
@@ -157,3 +160,47 @@ class Booking(models.Model):
         if not self.slug:
             self.slug = randint(100_000_000, 999_999_999)
         super().save(force_insert, force_update, using, update_fields)
+
+
+class Participant(models.Model):
+    SEX_CHOICES = (
+        (SEX_MALE, SEX_MALE.title()),
+        (SEX_FEMALE, SEX_FEMALE.title()),
+    )
+    ETHNICITY_CHOICES = (
+        (ETHNICITY_AFRICAN, ETHNICITY_AFRICAN.title()),
+        (ETHNICITY_ASIAN, ETHNICITY_ASIAN.title()),
+        (ETHNICITY_LATIN, ETHNICITY_LATIN.title()),
+        (ETHNICITY_PACIFIC, ETHNICITY_PACIFIC.title()),
+        (ETHNICITY_CAUCASIAN, ETHNICITY_CAUCASIAN.title()),
+        (ETHNICITY_OTHER, ETHNICITY_OTHER.title()),
+    )
+    PRACTITIONER_CHOICES = (
+        (PRAC_NO, PRAC_NO),
+        (PRAC_YES, PRAC_YES),
+        (PRAC_COLLAB, PRAC_COLLAB),
+    )
+
+    event = models.CharField(max_length=50)
+    submitted_at = models.DateTimeField()
+    prefix = models.CharField(max_length=10)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    cellphone = models.CharField(max_length=16)
+    email = models.CharField(max_length=150)
+    city = models.CharField(max_length=50)
+    dob = models.DateField()
+    sex = models.CharField(max_length=50, choices=SEX_CHOICES, default=SEX_FEMALE)
+    ethnicity = models.CharField(max_length=50, choices=ETHNICITY_CHOICES, default=ETHNICITY_CAUCASIAN)
+    cancer = models.BooleanField()
+    diseases = models.CharField(max_length=250, null=True, blank=True)
+
+    origin = models.CharField(max_length=250)
+    occupation = models.CharField(max_length=50)
+    practitioner = models.CharField(max_length=50, choices=PRACTITIONER_CHOICES)
+    diet = models.CharField(max_length=250)
+    intention = models.CharField(max_length=250)
+    expectation = models.CharField(max_length=250)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)

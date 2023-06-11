@@ -17,17 +17,24 @@ import socket
 import sys
 from pathlib import Path
 
+import environ
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0np$&tqaleylf_gdu-d=zv=wesbiquht9ogt2g%lc+&a*nb4z%'
+SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = [
     '127.0.0.1',
@@ -227,8 +234,7 @@ EMAIL_USE_SSL = True
 EMAIL_PORT = 465
 EMAIL_TIMEOUT = 10
 
-EMAIL_API_URL='https://api.smtp2go.com/v3'
-EMAIL_API_KEY = os.getenv('EMAIL_API_KEY')
-
+EMAIL_API_URL = env('EMAIL_API_URL')
+EMAIL_API_KEY = env('EMAIL_API_KEY')
 
 SCHEDULE_ENABLED = True

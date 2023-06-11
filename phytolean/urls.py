@@ -41,6 +41,8 @@ urlpatterns = [
 
     path('events', views.events_view, name='events'),
     path('event/2023/03/nutrional-essentails', views.event_202303_view, name='event_202303'),
+    path('event/2023/03/nutrional-essentails/apply', views.event_202303_form, name='event_202303_form'),
+    path('event/2023/03/nutrional-essentails/success', views.event_202303_success, name='event_202303_success'),
     path('events/nutrionclasses', views.event_202306_view, name='event_202306'),
     path('event/2023/06/poppe-spel', views.event_202306_poppe_view, name='event_202306_poppe'),
     path('event/2023/06/puppet-show', views.event_202306_puppet_view, name='event_202306_puppet'),
