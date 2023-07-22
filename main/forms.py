@@ -1,7 +1,7 @@
 from copy import copy
 from datetime import timedelta, datetime
 from random import randint
-from typing import List, Tuple, Dict, Any, Union
+from typing import List, Tuple, Dict, Union
 
 from captcha.fields import CaptchaField
 from crispy_forms.helper import FormHelper
@@ -10,8 +10,9 @@ from crispy_forms.utils import TEMPLATE_PACK
 from django import forms
 from django.utils.timezone import now
 
+import main.constants as c
 from main.constants import FFL_DISCLAIMER
-from main.models import Discovery, Booking, STATUS_COMPLETED, STATUS_INVALID, STATUS_BOOKED, Participant
+from main.models import Discovery, Booking, Participant, Survey
 
 BOOK_DAYS_AHEAD = 4
 
@@ -203,7 +204,7 @@ def _make_it_busy(days, slots):
             start_at=slot['slot'],
             end_at=slot['slot'] + timedelta(minutes=5),
             duration=5,
-            status=STATUS_INVALID)
+            status=c.STATUS_INVALID)
     return get_booking_data()
 
 
@@ -236,10 +237,10 @@ class BookingForm(forms.ModelForm):
     def save(self, commit=True):
         """Set start at from form."""
         self.instance.start_at = datetime.fromtimestamp(int(self.data['booking_slot']))
-        self.instance.status = STATUS_BOOKED
+        self.instance.status = c.STATUS_BOOKED
         self.instance.save()
 
-        self.instance.discovery.status = STATUS_BOOKED
+        self.instance.discovery.status = c.STATUS_BOOKED
         self.instance.discovery.save()
 
 
@@ -285,3 +286,41 @@ class ParticipantBookingForm(forms.ModelForm):
         self.instance.event = 'Nutrition Essentials'
         self.instance.submitted_at = now()
         self.instance.save()
+
+
+class SurveyForm(forms.ModelForm):
+
+    class Meta:
+        model = Survey
+        exclude = ['country', 'instructor']
+        labels = {
+            'name': 'Your name',
+            'email': 'Your email address',
+            'age': 'Your age',
+            'sex': 'Your sex',
+            'ethnicity': 'Your ethnicity',
+            'num_classes': 'How many classes have you attended?',
+            'experience': 'How was the class experience?',
+            'quality': 'How was the quality of the information shared?',
+            'meat': 'Do you eat meat?',
+            'diary': 'Do you eat eggs or dairy?',
+            'changes': 'What changes will you make because of this class?',
+            'hard': 'What is hard for you about eating a plant-based diet?',
+            'tell_a_friend': 'What would you tell a friend or family member about this class?',
+            'improve': 'What can we improve about the class?'
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_id = 'surveyForm'
+        # self.helper.layout = Layout(
+        #     BookingField('booking_slot')
+        # )
+        self.helper.add_input(Submit('submit', 'Submit'))
+
+    # def save(self, commit=True):
+    #     """Set start at from form."""
+    #     self.instance.event = 'Nutrition Essentials'
+    #     self.instance.submitted_at = now()
+    #     self.instance.save()

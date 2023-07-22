@@ -1,25 +1,18 @@
 from random import randint
 
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
-from main.constants import SEX_MALE, SEX_FEMALE, ETHNICITY_AFRICAN, ETHNICITY_ASIAN, ETHNICITY_LATIN, ETHNICITY_PACIFIC, \
-    ETHNICITY_CAUCASIAN, ETHNICITY_OTHER, PRAC_NO, PRAC_YES, PRAC_COLLAB
-
-STATUS_NEW = 'new'
-STATUS_APPROVED = 'approved'
-STATUS_DENIED = 'denied'
-STATUS_COMPLETED = 'completed'
-STATUS_INVALID = 'invalid'
-STATUS_BOOKED = 'booked'
+import main.constants as c
 
 
 class Discovery(models.Model):
     STATUS_CHOICES = (
-        (STATUS_NEW, STATUS_NEW),
-        (STATUS_APPROVED, STATUS_APPROVED),
-        (STATUS_DENIED, STATUS_DENIED),
-        (STATUS_BOOKED, STATUS_BOOKED),
-        (STATUS_COMPLETED, STATUS_COMPLETED),
+        (c.STATUS_NEW, c.STATUS_NEW),
+        (c.STATUS_APPROVED, c.STATUS_APPROVED),
+        (c.STATUS_DENIED, c.STATUS_DENIED),
+        (c.STATUS_BOOKED, c.STATUS_BOOKED),
+        (c.STATUS_COMPLETED, c.STATUS_COMPLETED),
     )
 
     source = models.CharField(
@@ -117,7 +110,7 @@ class Discovery(models.Model):
         verbose_name='As a coach, we deeply value and respect your time. If we invite you to book a call, can you commit to showing up at the scheduled time for our call, fully present without distractions?')
 
     # email notifications
-    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default=STATUS_NEW)
+    status = models.CharField(max_length=30, choices=STATUS_CHOICES, default=c.STATUS_NEW)
     has_sent_new_email = models.BooleanField(default=False)  # submitted discovery
     has_sent_booking_email = models.BooleanField(default=False)  # form approved - link to booking
     has_sent_appointment_email = models.BooleanField(default=False)  # booking made, emailed time
@@ -129,7 +122,7 @@ class Discovery(models.Model):
         return f'<Discovery id={self.id} {self.last_name} {self.created_at}>'
 
     def is_new(self) -> bool:
-        return self.status in (STATUS_NEW,)
+        return self.status in (c.STATUS_NEW,)
 
     def full_name(self) -> str:
         return ' '.join([self.first_name, self.last_name])
@@ -137,9 +130,9 @@ class Discovery(models.Model):
 
 class Booking(models.Model):
     BOOKING_CHOICES = (
-        (STATUS_NEW, STATUS_NEW),
-        (STATUS_BOOKED, STATUS_BOOKED),
-        (STATUS_COMPLETED, STATUS_COMPLETED),
+        (c.STATUS_NEW, c.STATUS_NEW),
+        (c.STATUS_BOOKED, c.STATUS_BOOKED),
+        (c.STATUS_COMPLETED, c.STATUS_COMPLETED),
     )
 
     discovery = models.ForeignKey(
@@ -149,7 +142,7 @@ class Booking(models.Model):
     start_at = models.DateTimeField(null=True, blank=True)
     end_at = models.DateTimeField(null=True, blank=True)
     duration = models.IntegerField(null=True, blank=True)
-    status = models.CharField(max_length=30, choices=BOOKING_CHOICES, default=STATUS_NEW)
+    status = models.CharField(max_length=30, choices=BOOKING_CHOICES, default=c.STATUS_NEW)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -164,21 +157,21 @@ class Booking(models.Model):
 
 class Participant(models.Model):
     SEX_CHOICES = (
-        (SEX_MALE, SEX_MALE.title()),
-        (SEX_FEMALE, SEX_FEMALE.title()),
+        (c.SEX_MALE, c.SEX_MALE.title()),
+        (c.SEX_FEMALE, c.SEX_FEMALE.title()),
     )
     ETHNICITY_CHOICES = (
-        (ETHNICITY_AFRICAN, ETHNICITY_AFRICAN.title()),
-        (ETHNICITY_ASIAN, ETHNICITY_ASIAN.title()),
-        (ETHNICITY_LATIN, ETHNICITY_LATIN.title()),
-        (ETHNICITY_PACIFIC, ETHNICITY_PACIFIC.title()),
-        (ETHNICITY_CAUCASIAN, ETHNICITY_CAUCASIAN.title()),
-        (ETHNICITY_OTHER, ETHNICITY_OTHER.title()),
+        (c.ETHNICITY_AFRICAN, c.ETHNICITY_AFRICAN.title()),
+        (c.ETHNICITY_ASIAN, c.ETHNICITY_ASIAN.title()),
+        (c.ETHNICITY_LATIN, c.ETHNICITY_LATIN.title()),
+        (c.ETHNICITY_PACIFIC, c.ETHNICITY_PACIFIC.title()),
+        (c.ETHNICITY_CAUCASIAN, c.ETHNICITY_CAUCASIAN.title()),
+        (c.ETHNICITY_OTHER, c.ETHNICITY_OTHER.title()),
     )
     PRACTITIONER_CHOICES = (
-        (PRAC_NO, PRAC_NO),
-        (PRAC_YES, PRAC_YES),
-        (PRAC_COLLAB, PRAC_COLLAB),
+        (c.PRAC_NO, c.PRAC_NO),
+        (c.PRAC_YES, c.PRAC_YES),
+        (c.PRAC_COLLAB, c.PRAC_COLLAB),
     )
 
     event = models.CharField(max_length=50)
@@ -190,8 +183,8 @@ class Participant(models.Model):
     email = models.CharField(max_length=150)
     city = models.CharField(max_length=50)
     dob = models.DateField()
-    sex = models.CharField(max_length=50, choices=SEX_CHOICES, default=SEX_FEMALE)
-    ethnicity = models.CharField(max_length=50, choices=ETHNICITY_CHOICES, default=ETHNICITY_CAUCASIAN)
+    sex = models.CharField(max_length=50, choices=SEX_CHOICES, default=c.SEX_FEMALE)
+    ethnicity = models.CharField(max_length=50, choices=ETHNICITY_CHOICES, default=c.ETHNICITY_CAUCASIAN)
     cancer = models.BooleanField()
     diseases = models.CharField(max_length=250, null=True, blank=True)
 
@@ -201,6 +194,82 @@ class Participant(models.Model):
     diet = models.CharField(max_length=250)
     intention = models.CharField(max_length=250)
     expectation = models.CharField(max_length=250)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
+class Survey(models.Model):
+    RATING_CHOICES = [
+        [c.RATING_VERY_GOOD, c.RATING_VERY_GOOD],
+        [c.RATING_GOOD, c.RATING_GOOD],
+        [c.RATING_OK, c.RATING_OK],
+        [c.RATING_BAD, c.RATING_BAD],
+        [c.RATING_VERY_BAD, c.RATING_VERY_BAD],
+    ]
+    MEAT_CHOICES = [
+        [c.MEAT_YES_REGULARLY, c.MEAT_YES_REGULARLY],
+        [c.MEAT_YES_SOMETIMES, c.MEAT_YES_SOMETIMES],
+        [c.MEAT_YES_FISH, c.MEAT_YES_FISH],
+        [c.MEAT_NO, c.MEAT_NO],
+    ]
+    MILK_CHOICES = [
+        [c.ANSWER_YES, c.ANSWER_YES],
+        [c.ANSWER_NO, c.ANSWER_NO],
+    ]
+    AGE_CHOICES = [
+        [c.AGE_9_19, c.AGE_9_19],
+        [c.AGE_20_29, c.AGE_20_29],
+        [c.AGE_30_39, c.AGE_30_39],
+        [c.AGE_40_49, c.AGE_40_49],
+        [c.AGE_50_59, c.AGE_50_59],
+        [c.AGE_60, c.AGE_60],
+    ]
+    SEX_CHOICES = (
+        (c.SEX_MALE, c.SEX_MALE.title()),
+        (c.SEX_FEMALE, c.SEX_FEMALE.title()),
+    )
+    ETHNICITY_CHOICES = (
+        (c.ETHNICITY_AFRICAN, c.ETHNICITY_AFRICAN.title()),
+        (c.ETHNICITY_ASIAN, c.ETHNICITY_ASIAN.title()),
+        (c.ETHNICITY_LATIN, c.ETHNICITY_LATIN.title()),
+        (c.ETHNICITY_PACIFIC, c.ETHNICITY_PACIFIC.title()),
+        (c.ETHNICITY_CAUCASIAN, c.ETHNICITY_CAUCASIAN.title()),
+        (c.ETHNICITY_OTHER, c.ETHNICITY_OTHER.title()),
+    )
+    CHANGES_CHOICES = [
+        [c.CHANGES_MEAT, c.CHANGES_MEAT],
+        [c.CHANGES_DIARY, c.CHANGES_DIARY],
+        [c.CHANGES_EGGS, c.CHANGES_EGGS],
+        [c.CHANGES_PLANT, c.CHANGES_PLANT],
+    ]
+    HARD_CHOICES = [
+        [c.HARD_EAT_OUT, c.HARD_EAT_OUT],
+        [c.HARD_GROCERY, c.HARD_GROCERY],
+        [c.HARD_CRAVINGS, c.HARD_CRAVINGS],
+        [c.HARD_SUPPORT, c.HARD_SUPPORT],
+        [c.HARD_MEALS, c.HARD_MEALS],
+        [c.HARD_COST, c.HARD_COST],
+        [c.HARD_OTHER, c.HARD_OTHER],
+    ]
+
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    age = models.CharField(max_length=50, choices=AGE_CHOICES, default=c.AGE_30_39)
+    sex = models.CharField(max_length=50, choices=SEX_CHOICES, default=c.SEX_FEMALE)
+    ethnicity = models.CharField(
+        max_length=50, choices=ETHNICITY_CHOICES, default=c.ETHNICITY_CAUCASIAN)
+    country = models.CharField(max_length=100, default='South Africa')
+    instructor = models.CharField(max_length=250, default='Nerine Jansen')
+    num_classes = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(4)])
+    experience = models.CharField(max_length=50, choices=RATING_CHOICES, default=c.RATING_VERY_GOOD)
+    quality = models.CharField(max_length=50, choices=RATING_CHOICES, default=c.RATING_VERY_GOOD)
+    meat = models.CharField(max_length=50, choices=MEAT_CHOICES, default=c.MEAT_YES_REGULARLY)
+    diary = models.CharField(max_length=50, choices=MILK_CHOICES, default=c.ANSWER_YES)
+    changes = models.CharField(max_length=50, choices=CHANGES_CHOICES, default=c.CHANGES_PLANT)
+    hard = models.CharField(max_length=50, choices=HARD_CHOICES)
+    tell_a_friend = models.TextField()
+    improve = models.TextField()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

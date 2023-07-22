@@ -75,8 +75,7 @@ def send_new_discovery_email(discovery: Discovery):
 
         If approved they will receive an email to make their booking.
     """)
-    # _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
-    _send_smtp2go_api_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
+    _send_smtp2go_api_email(subject, message, settings.DEFAULT_TO_EMAILS)
     logger.info('New discovery email done.')
 
 
@@ -94,7 +93,6 @@ def send_booking_email(discovery: Discovery, booking: Booking):
         Regards,
         Phytolean
     """)
-    # _send_gridhost_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
     _send_smtp2go_api_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
     logger.info('Booking email sent.')
 
@@ -112,7 +110,6 @@ def send_appointment_email(discovery: Discovery, booking: Booking):
         Regards,
         Phytolean
     """)
-    # _send_gridhost_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
     _send_smtp2go_api_email(subject, message, [f'{discovery.full_name()} <{discovery.email}>'])
     logger.info('Appointment email done')
 
@@ -127,8 +124,7 @@ def send_appointment_email_notification(discovery: Discovery, booking: Booking):
         For {discovery.full_name()}
         at {booking.start_at:'%a %-d %b at %H:%I'}.
     """)
-    # _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
-    _send_smtp2go_api_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
+    _send_smtp2go_api_email(subject, message, settings.DEFAULT_TO_EMAILS)
     logger.info('Appointment email notified done')
 
 
@@ -157,6 +153,5 @@ def send_participant_email(participant: Participant):
         Intention: {participant.diet}
         Expectation: {participant.expectation}
     """)
-    # _send_gridhost_email(subject, message, [settings.DEFAULT_REPLY_EMAIL])
-    _send_smtp2go_api_email(subject, message, [settings.DEFAULT_REPLY_EMAIL, 'nennakind@gmail.com', 'jacoj82@gmail.com'])
+    _send_smtp2go_api_email(subject, message, settings.DEFAULT_TO_EMAILS)
     logger.info('Participant email notified done')

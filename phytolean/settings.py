@@ -226,7 +226,8 @@ CAPTCHA_TEST_MODE = bool(len(sys.argv) > 1 and sys.argv[1] == 'test')
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'mail.smtp2go.com'
 DEFAULT_FROM_EMAIL = 'PhytoLean <info@phytolean.co.za>'
-DEFAULT_REPLY_EMAIL = 'PhytoLean <info@phytolean.co.za>'
+DEFAULT_REPLY_EMAIL = 'PhytoLean <phytolean@gmail.com>'
+DEFAULT_TO_EMAILS = ['PhytoLean <phytolean@gmail.com>', 'Jaco <jacoj82@gmail.com>']
 EMAIL_HOST_USER = 'phytolean'
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = False

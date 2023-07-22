@@ -1,41 +1,35 @@
 {% load static %}
-<nav class="main-nav navbar navbar-expand-lg navbar-light">
-  <div class="container-fluid">
+<nav class="navbar navbar-expand-lg navbar-light">
     <span class="navbar-brand">
-      <img class="half-high" src="{% static 'main/img/phytolean_logo.png' %}"/>
+        <img class="half-high" src="{% static 'main/img/phytolean_logo.png' %}"/>
     </span>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'home' %}active{% endif %}" href="{% url 'home' %}">Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'events' %}active{% endif %}" href="{% url 'events' %}">Events</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'about' %}active{% endif %}" href="{% url 'about' %}">About Us</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'services' %}active{% endif %}" href="{% url 'services' %}">Services</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'foryou' %}active{% endif %}" href="{% url 'foryou' %}">Why this is for you</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'faq' %}active{% endif %}" href="{% url 'faq' %}">FAQ</a>
-        </li>
-        {% comment %}
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'resources' %}active{% endif %}" href="{% url 'resources' %}">Resources</a>
-        </li>
-        {% endcomment %}
-        <li class="nav-item">
-          <a class="nav-link {% if nav == 'contact' %}active{% endif %}" href="{% url 'getintouch' %}">Get In Touch</a>
-        </li>
-      </ul>
+    <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+            <li class="nav-item {% if nav == 'home' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'home' %}">Home</a>
+            </li>
+            <li class="nav-item {% if nav == 'events' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'events' %}">Events</a>
+            </li>
+            <li class="nav-item {% if nav == 'about' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'about' %}">About Us</a>
+            </li>
+            <li class="nav-item {% if nav == 'services' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'services' %}">Services</a>
+            </li>
+            <li class="nav-item {% if nav == 'foryou' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'foryou' %}">Why this is for you</a>
+            </li>
+            <li class="nav-item {% if nav == 'faq' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'faq' %}">FAQ</a>
+            </li>
+            <li class="nav-item {% if nav == 'contact' %}active{% endif %}">
+                <a class="nav-link" href="{% url 'getintouch' %}">Get In Touch</a>
+            </li>
+        </ul>
     </div>
-  </div>
 </nav>

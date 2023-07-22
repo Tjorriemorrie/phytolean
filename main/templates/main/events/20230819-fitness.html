@@ -1,0 +1,46 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Food For Fitness Event - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+    <div class="container-fluid">
+
+        {% include 'main/navbar.html' with nav=nav %}
+
+        <div class="container-fluid big-body">
+
+            <div class="row">
+                <div class="col">
+                    <h2>Unlock Your Peak Performance with Plant-Based Power!</h2>
+                    <p><img class="img-fluid" src="{% static 'main/img/events/230819_fitness/fitness.png' %}"/></p>
+
+                    <p>Are you ready to unleash your athletic potential and take your fitness to new heights? Look no further! Introducing our dynamic online course, Food for Life: Food for Fitness, where we explore the remarkable benefits of plant-based nutrition for athletes and fitness enthusiasts alike.</p>
+                    <p>For centuries, athletes have harnessed the power of plant-based diets to gain a competitive edge, and now, these principles are captivating sports enthusiasts across the globe. From endurance sports to weightlifting and even Formula One racing, vegan athletes are leading the way!</p>
+                    <p>But you don't have to be a pro to reap the rewards of a plant-powered diet. Our course shows you how a low-fat vegan diet, packed with nourishing whole grains, legumes, fruits, and veggies, provides the ultimate fuel for all physical activities. Discover how it promotes enhanced recovery compared to high-fat and animal-based diets.</p>
+                    <p>The Food for Life: Food for Fitness class is a comprehensive two-hour experience that offers video lessons, stimulating discussions, captivating cooking demonstrations, and the chance to learn how to create delectable plant-based dishes. Join us online and gain valuable knowledge and culinary skills that empower you to create simple, nutrient-rich meals for peak fitness and optimal recovery.</p>
+                    <p>Embark on this transformative journey with us, and unlock your body's true potential. Get ready to excel, perform, and thrive with the power of plant-based nutrition. Join our class today and elevate your fitness game to extraordinary levels!</p>
+
+                    <h4>Course Format:</h4>
+                    <p><ul>
+                        <li>Warm Welcome</li>
+                        <li>Inspiring Video Lesson</li>
+                        <li>Engaging Quiz and Interactive Discussion</li>
+                        <li>Enthralling Cooking Demonstration and Tastings (in-person option)</li>
+                        <li>Abundant Resources and Mouthwatering Recipes</li>
+                        <li>Q&A Session to fuel your curiosity</li>
+                    </ul></p>
+
+                    <p>Are you ready to rise above the competition and embrace your inner plant-powered athlete? Enroll now and let's embark on this exhilarating journey together!</p>
+                    <h5>To register, please contact Janet at phytolean@gmail.com or call +27768180808</h5>
+                </div>
+            </div>
+
+        </div>
+        <br/>
+
+        {% include 'main/footer.html' %}
+    </div>
+
+{% endblock %}

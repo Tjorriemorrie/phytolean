@@ -43,6 +43,9 @@ urlpatterns = [
     path('event/2023/03/nutrional-essentails', views.event_202303_view, name='event_202303'),
     path('event/2023/03/nutrional-essentails/apply', views.event_202303_form, name='event_202303_form'),
     path('event/2023/03/nutrional-essentails/success', views.event_202303_success, name='event_202303_success'),
+    path('event/2023/03/nutrional-essentails/survey', views.event_202303_survey, name='event_202303_survey'),
+    path('event/2023/03/nutrional-essentails/thankyou', views.event_202303_thanks, name='event_202303_thankyou'),
+
     path('events/nutrionclasses', views.event_202306_view, name='event_202306'),
     path('event/2023/06/poppe-spel', views.event_202306_poppe_view, name='event_202306_poppe'),
     path('event/2023/06/puppet-show', views.event_202306_puppet_view, name='event_202306_puppet'),
@@ -50,5 +53,7 @@ urlpatterns = [
     path('event/2023/06/12/kos-teater', views.event_20230612_poppe_view, name='event_20230612_poppe'),
     path('event/2023/06/16/kos-teater', views.event_20230616_poppe_view, name='event_20230616_poppe'),
     path('event/2023/06/', views.event_202306_puppet_view, name='event_202306_puppet'),
-    path('event/2023/07/15/kos-teater', views.event_20230715_poppe_view, name='event_20230715_sda'),
+
+    # path('event/2023/07/15/kos-teater', views.event_20230715_poppe_view, name='event_20230715_sda'),
+    path('event/2023/08/19/fitness', views.event_20230819_fitness_view, name='event_20230819_fitness'),
 ]

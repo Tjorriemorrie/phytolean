@@ -1,0 +1,28 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Nutrition Essentials Event - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container-fluid big-body">
+
+        <div class="row">
+            <div class="col">
+                <p><img class="img img-fluid" src="{% static 'main/img/events/202303_nutrition_essentials/background.jpeg' %}"/></p>
+                <h2>Nutrition Essential Classes</h2>
+                <h4>Done! Thank you for your feedback!</h4>
+            </div>
+        </div>
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
+
+{% endblock %}

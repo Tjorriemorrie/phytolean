@@ -1,3 +1,31 @@
+AGE_9_19 = '9 - 19'
+AGE_20_29 = '20 - 29'
+AGE_30_39 = '30 - 39'
+AGE_40_49 = '40 - 49'
+AGE_50_59 = '50 - 59'
+AGE_60 = '60+'
+
+ANSWER_YES = 'Yes'
+ANSWER_NO = 'No'
+
+MEAT_YES_REGULARLY = 'Yes, regularly'
+MEAT_YES_SOMETIMES = 'Yes, sometimes'
+MEAT_YES_FISH = 'Yes, but only fish or seafood'
+MEAT_NO = 'No'
+
+RATING_VERY_GOOD = 'Very Good'
+RATING_GOOD = 'Good'
+RATING_OK = 'OK'
+RATING_BAD = 'Bad'
+RATING_VERY_BAD = 'Very BAD'
+
+STATUS_NEW = 'new'
+STATUS_APPROVED = 'approved'
+STATUS_DENIED = 'denied'
+STATUS_COMPLETED = 'completed'
+STATUS_INVALID = 'invalid'
+STATUS_BOOKED = 'booked'
+
 DISCOVERY_SUCCESS_MSG = 'Discovery request received!'
 
 SEX_MALE = 'male'
@@ -13,6 +41,19 @@ ETHNICITY_OTHER = 'Other'
 PRAC_NO = 'No'
 PRAC_YES = 'Yes'
 PRAC_COLLAB = 'Yes, and is open for collaboration'
+
+CHANGES_MEAT = 'Eat less meat or seafood'
+CHANGES_DIARY = 'Eat less dairy'
+CHANGES_EGGS = 'Eat less eggs'
+CHANGES_PLANT = 'Eat more plant foods'
+
+HARD_EAT_OUT = 'Eating out'
+HARD_GROCERY = 'Grocery shopping'
+HARD_CRAVINGS = 'Food cravings'
+HARD_SUPPORT = 'Support from my family or friends'
+HARD_MEALS = 'Making my own meals'
+HARD_COST = 'Cost'
+HARD_OTHER = 'Other'
 
 FFL_DISCLAIMER = """The Food for Life program was
 designed by Physicians Committee for Responsible Medicine (PCRM), a 501(c)(3) nonprofit that works

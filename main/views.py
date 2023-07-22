@@ -1,9 +1,9 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 
-from main.constants import DISCOVERY_SUCCESS_MSG
-from main.forms import DiscoveryForm, BookingForm, ParticipantBookingForm
-from main.models import Booking, STATUS_BOOKED
+import main.constants as c
+from main.forms import DiscoveryForm, BookingForm, ParticipantBookingForm, SurveyForm
+from main.models import Booking
 from phytolean import settings
 
 
@@ -108,6 +108,28 @@ def event_202303_success(request):
     return render(request, 'main/events/202303-nutrition-essentials-success.html', ctx)
 
 
+def event_202303_survey(request):
+    if request.method == 'POST':
+        form = SurveyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('event_202303_thankyou'))
+    else:
+        form = SurveyForm()
+    ctx = _get_ctx({
+        'nav': 'events',
+        'form': form,
+    })
+    return render(request, 'main/events/202303-nutrition-essentials-feedback.html', ctx)
+
+
+def event_202303_thanks(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/202303-nutrition-essentials-thanks.html', ctx)
+
+
 def event_202306_view(request):
     ctx = _get_ctx({
         'nav': 'events',
@@ -157,6 +179,13 @@ def event_20230715_poppe_view(request):
     return render(request, 'main/events/20230715-sda.html', ctx)
 
 
+def event_20230819_fitness_view(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/20230819-fitness.html', ctx)
+
+
 def resources_source_view(request, src):
     titles = {
         'bread': 'The Life-Changing Loaf of Bread',
@@ -197,7 +226,7 @@ def discovery_view(request):
 
 def discovery_submitted_view(request):
     ctx = _get_ctx({
-        'msg': DISCOVERY_SUCCESS_MSG,
+        'msg': c.DISCOVERY_SUCCESS_MSG,
         'nav': 'discovery',
     })
     return render(request, 'main/discovery_submitted.html', ctx)
