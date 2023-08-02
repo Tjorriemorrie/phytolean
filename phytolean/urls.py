@@ -51,7 +51,7 @@ urlpatterns = [
     path('event/2023/06/puppet-show', views.event_202306_puppet_view, name='event_202306_puppet'),
     path('event/2023/06/09/kos-teater', views.event_20230609_poppe_view, name='event_20230609_poppe'),
     path('event/2023/06/12/kos-teater', views.event_20230612_poppe_view, name='event_20230612_poppe'),
-    path('event/2023/06/16/kos-teater', views.event_20230616_poppe_view, name='event_20230616_poppe'),
+    path('event/2023/07/25/kos-teater/shalom', views.event_20230725_shalom_view, name='event_20230725_shalom'),
     path('event/2023/06/', views.event_202306_puppet_view, name='event_202306_puppet'),
 
     # path('event/2023/07/15/kos-teater', views.event_20230715_poppe_view, name='event_20230715_sda'),

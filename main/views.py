@@ -165,11 +165,11 @@ def event_20230612_poppe_view(request):
     return render(request, 'main/events/20230612-ghs.html', ctx)
 
 
-def event_20230616_poppe_view(request):
+def event_20230725_shalom_view(request):
     ctx = _get_ctx({
         'nav': 'events',
     })
-    return render(request, 'main/events/20230616-market.html', ctx)
+    return render(request, 'main/events/20230725-shalom.html', ctx)
 
 
 def event_20230715_poppe_view(request):
