@@ -10,30 +10,14 @@
 
     <div class="container-fluid big-body">
 
-      <div class="row px-5 pb-1">
-        <div class="col">
-          <hr/>
-          <h3 class="muted">Welcome to the home of weight loss, and the start of your weight loss success journey. We are glad to have you here!</h3>
-        </div>
+      <div class="row mb-5">
+          <div class="col-lg-6">
+                <h4>A recent global study published in the Lancet, a London-based medical journal, suggests that 70% of adult South African women and nearly 40% of men are overweight or obese. Even among children, a quarter of girls and a fifth of boys are at greater risk of ill-health, from diabetes to heart disease. Don’t become a statistic! Take your power back and regain your desired weight and health today. Do not delay! Contact us today for a Health assessment and start your journey to a new you with absolute Weight freedom.</h4>
+          </div>
+            <div class="col-lg-6">
+                <video src="{% static 'main/vid/phytolean.mp4' %}" type="video/mp4" controls></video>
+            </div>
       </div>
-
-      <div class="row justify-content-center">
-        <div class="col position-relative">
-          <h1 class="position-absolute home-cvr-txt">
-            PhytoLean
-            <br/><br/>
-            The weight loss programme that will help you draw all the looks in the room!</h1>
-          <img class="img-fluid" src="{% static 'main/img/home/pexels-andrea-piacquadio-3764492.jpg' %}">
-        </div>
-      </div>
-
-
-      <div class="row p-5">
-        <div class="col">
-          <h3>A recent global study published in the Lancet, a London-based medical journal, suggests that 70% of adult South African women and nearly 40% of men are overweight or obese. Even among children, a quarter of girls and a fifth of boys are at greater risk of ill-health, from diabetes to heart disease. Don’t become a statistic! Take your power back and regain your desired weight and health today. Do not delay! Contact us today for a Health assessment and start your journey to a new you with absolute Weight freedom.</h3>
-        </div>
-      </div>
-
 
       {% include 'main/home_snippets/discover_the_power.html' %}
 
