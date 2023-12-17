@@ -186,6 +186,28 @@ def event_20230819_fitness_view(request):
     return render(request, 'main/events/20230819-fitness.html', ctx)
 
 
+def event_202312_fitness_survey(request):
+    if request.method == 'POST':
+        form = SurveyForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse('event_202312_fitness_thankyou'))
+    else:
+        form = SurveyForm()
+    ctx = _get_ctx({
+        'nav': 'events',
+        'form': form,
+    })
+    return render(request, 'main/events/202312-fitness-feedback.html', ctx)
+
+
+def event_202312_fitness_thanks(request):
+    ctx = _get_ctx({
+        'nav': 'events',
+    })
+    return render(request, 'main/events/202312-fitness-thanks.html', ctx)
+
+
 def resources_source_view(request, src):
     titles = {
         'bread': 'The Life-Changing Loaf of Bread',

@@ -56,4 +56,9 @@ urlpatterns = [
 
     # path('event/2023/07/15/kos-teater', views.event_20230715_poppe_view, name='event_20230715_sda'),
     path('event/2023/08/19/fitness', views.event_20230819_fitness_view, name='event_20230819_fitness'),
+    path('event/2023/12/17/fitness/survey', views.event_202312_fitness_survey,
+         name='event_202312_fitness_survey'),
+    path('event/2023/12/17/fitness/thankyou', views.event_202312_fitness_thanks,
+         name='event_202312_fitness_thankyou'),
+
 ]

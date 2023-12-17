@@ -1,0 +1,30 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block title %}Food For Fitness Event - Survey - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container-fluid big-body">
+
+        <div class="row">
+            <div class="col-10">
+                <h2>Food for Fitness Classes</h2>
+                <h4>Done! Thank you for your feedback!</h4>
+            </div>
+            <div class="col-2 p-3">
+                <p><img class="img-fluid" src="{% static 'main/img/events/230819_fitness/fitness.png' %}"/></p>
+            </div>
+        </div>
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
+
+{% endblock %}

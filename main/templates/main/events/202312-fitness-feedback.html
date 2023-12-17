@@ -1,0 +1,34 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Food For Fitness Event - Survey - {{ block.super }}{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container-fluid big-body">
+
+        <div class="row">
+            <div class="col-10">
+                <h2>Food for Fitness Classes</h2>
+                <p>Thank you for attending our class!</p>
+                {{ form.non_field_errors }}
+                {{ form.errors }}
+                {% crispy form %}
+            </div>
+            <div class="col-2 p-3">
+                <p><img class="img-fluid" src="{% static 'main/img/events/230819_fitness/fitness.png' %}"/></p>
+            </div>
+        </div>
+
+    </div>
+    <br/>
+
+    {% include 'main/footer.html' %}
+</div>
+
+{% endblock %}
