@@ -11,7 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import TemplateView
 from requests import Response
 
-from main.models import Discovery, Booking
+from main.models import Discovery, Booking, Survey
 
 
 @admin.register(Discovery)
@@ -24,6 +24,12 @@ class DiscoveryAdmin(admin.ModelAdmin):
 class BookingAdmin(admin.ModelAdmin):
     list_display = ['id', 'status', 'start_at', 'slug', 'created_at', 'discovery']
     ordering = ['-start_at']
+
+
+@admin.register(Survey)
+class SurveyAdmin(admin.ModelAdmin):
+    list_display = ['id', 'created_at', 'name']
+    ordering = ['-created_at']
 
 
 #########################################################################################
