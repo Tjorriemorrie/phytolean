@@ -8,8 +8,8 @@ from django.utils.decorators import method_decorator
 from django.utils.timezone import now
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import TemplateView
-from requests import Response
+from import_export.admin import ImportExportModelAdmin, ExportActionMixin
+from import_export.resources import ModelResource
 
 from main.models import Discovery, Booking, Survey
 
@@ -26,8 +26,14 @@ class BookingAdmin(admin.ModelAdmin):
     ordering = ['-start_at']
 
 
+class SurveyResource(ModelResource):
+    class Meta:
+        model = Survey
+
+
 @admin.register(Survey)
-class SurveyAdmin(admin.ModelAdmin):
+class SurveyAdmin(ImportExportModelAdmin, ExportActionMixin):
+    resource_class = SurveyResource
     list_display = ['id', 'created_at', 'name']
     ordering = ['-created_at']
 
