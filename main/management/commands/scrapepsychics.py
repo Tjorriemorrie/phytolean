@@ -35,10 +35,12 @@ def parse_advisors(fragment: str) -> List[Psychic]:
         role_tag = container.select_one("div.specialization ul.spec-list li a")
         if role_tag:
             raw_role = role_tag.get_text(strip=True)
-            role_names = [
-                part.strip().removeprefix("Psychic ").strip()
-                for part in raw_role.split("|")
-            ]
+            role_names = []
+            for part in raw_role.split("|"):
+                part = part.strip()
+                if part.startswith("Psychic "):
+                    part = part[len("Psychic "):]
+                role_names.append(part)
         else:
             role_names = []
 
