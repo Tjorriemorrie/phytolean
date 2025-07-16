@@ -2,8 +2,17 @@ from random import randint
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from unidecode import unidecode
 
 import main.constants as c
+
+
+class Timestamped(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
 
 
 class Discovery(models.Model):
@@ -273,3 +282,33 @@ class Survey(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class Role(Timestamped):
+    name = models.CharField(primary_key=True, max_length=100)
+
+
+class Psychic(Timestamped):
+    roles = models.ManyToManyField(Role)
+    url = models.URLField(unique=True)
+    name = models.CharField(max_length=250)
+    tagline = models.CharField(max_length=100)
+    img = models.URLField()
+
+    def __str__(self):
+        roles = [r.name for r in self.roles.all()]
+        return unidecode(
+            f"{self.name:<20} | {', '.join(roles):<30} | {self.tagline} | {self.url} | {self.img}")
+
+
+class Status(Timestamped):
+    psychic = models.ForeignKey(Psychic, on_delete=models.CASCADE, related_name='statuses')
+    status = models.CharField(max_length=50, choices=c.PSYCHIC_STATUS_CHOICES)
+    status_at = models.DateTimeField()
+
+
+class Day(Timestamped):
+    day = models.DateField(primary_key=True)
+
+    def __str__(self) -> str:
+        return unidecode(f'{self.day:%y-%m-%d}')

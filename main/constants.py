@@ -117,3 +117,27 @@ the employees, officers, directors, agents, legal representatives, licensees, an
 will receive no compensation, monetary or otherwise, in exchange for this agreement or for the use of these
 photographs, film, video or audio recordings.
 """
+
+
+########################################################################################
+ROLE_MENTOR = 'Mentor'
+ROLE_MEDIUM = 'Medium'
+ROLE_HEALER = 'Healer'
+ROLE_THERAPIST = 'Therapist'
+ROLE_NUMEROLOGIST = 'Numerologist'
+ROLE_CHOICES = [
+    (ROLE_MENTOR, ROLE_MENTOR),
+    (ROLE_MEDIUM, ROLE_MEDIUM),
+    (ROLE_HEALER, ROLE_HEALER),
+    (ROLE_THERAPIST, ROLE_THERAPIST),
+    (ROLE_NUMEROLOGIST, ROLE_NUMEROLOGIST),
+]
+
+PSYCHIC_STATUS_ONLINE = 'Online'
+PSYCHIC_STATUS_OFFLINE = 'Offline'
+PSYCHIC_STATUS_ONCALL = 'Oncall'
+PSYCHIC_STATUS_CHOICES = [
+    (PSYCHIC_STATUS_ONLINE, PSYCHIC_STATUS_ONLINE),
+    (PSYCHIC_STATUS_OFFLINE, PSYCHIC_STATUS_OFFLINE),
+    (PSYCHIC_STATUS_ONCALL, PSYCHIC_STATUS_ONCALL),
+]
