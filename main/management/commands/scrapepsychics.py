@@ -1,6 +1,6 @@
 import time
 import logging
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import requests
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
@@ -96,7 +96,7 @@ def parse_advisors(fragment: str) -> List[Psychic]:
     return psychics
 
 
-def find_loadmore_endpoint(soup: BeautifulSoup) -> Tuple[str, int, int] | None:
+def find_loadmore_endpoint(soup: BeautifulSoup) -> Optional[Tuple[str, int, int]]:
     """
     Find the AJAX endpoint and pagination info from the 'See More Advisors' button.
     """
