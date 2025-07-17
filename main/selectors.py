@@ -65,6 +65,6 @@ def list_psychics_with_status_monthly() -> QuerySet[Psychic]:
             ),
             output_field=FloatField()
         )
-    ).order_by('-oncall_online_ratio')
+    ).order_by('-oncall_minutes')
 
     return psychics
