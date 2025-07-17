@@ -60,11 +60,8 @@ class RoleAdmin(admin.ModelAdmin):
 
 def sa_psychics(request):
     psychics_monthly = list_psychics_with_status_monthly()
-    psychics_online = list_psychics_online()
-    online_names = ", ".join(p.name.title() for p in psychics_online)
     context = {
         **admin.site.each_context(request),
-        'online_names': online_names,
         'psychics_monthly': psychics_monthly,
     }
     return TemplateResponse(request, "admin/sa_psychics.html", context)

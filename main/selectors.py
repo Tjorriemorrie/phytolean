@@ -9,18 +9,6 @@ from django.db.models import QuerySet, OuterRef, Subquery, Count, ExpressionWrap
 from main.models import Psychic, Status
 
 
-def list_psychics_online() -> QuerySet[Psychic]:
-    latest_status = Status.objects.filter(
-        psychic=OuterRef('pk')
-    ).order_by('-status_at')
-
-    psychics = Psychic.objects.annotate(
-        last_status=Subquery(latest_status.values('status')[:1])
-    ).filter(last_status__in=[c.PSYCHIC_STATUS_ONLINE, c.PSYCHIC_STATUS_ONCALL])
-
-    return psychics
-
-
 def list_psychics_with_status_monthly() -> QuerySet[Psychic]:
     one_month_ago = timezone.now() - timedelta(days=30)
 
