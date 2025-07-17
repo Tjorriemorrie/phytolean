@@ -1,22 +1,11 @@
-import requests
-from bs4 import BeautifulSoup
 from django.contrib import admin
-from django.contrib.admin import AdminSite
-from django.contrib.auth.models import User
-from django.db import models
-from django.http import HttpResponse
-from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.urls import path
-from django.utils.decorators import method_decorator
-from django.utils.timezone import now
-from django.views import View
-from django.views.decorators.csrf import csrf_exempt
 from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from import_export.resources import ModelResource
 
 from main.models import Discovery, Booking, Survey, Psychic, Status, Role
-from main.selectors import list_psychics_online, list_psychics_with_status_monthly
+from main.selectors import list_psychics_with_status_monthly
 
 
 @admin.register(Discovery)
