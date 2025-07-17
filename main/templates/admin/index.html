@@ -1,0 +1,10 @@
+{% extends "admin/index.html" %}
+
+{% block content_title %}
+    {{ block.super }}
+    <div style="float: right; margin-top: -2.3em;">
+        <a href="{% url 'admin:sa-psychics' %}" class="button" style="margin-left: 10px;">
+            ✨ SA-psychics
+        </a>
+    </div>
+{% endblock %}

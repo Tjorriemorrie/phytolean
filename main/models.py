@@ -1,7 +1,10 @@
+import main.constants as c
+from datetime import timedelta
 from random import randint
 
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+from django.utils import timezone
 from unidecode import unidecode
 
 import main.constants as c
@@ -305,10 +308,3 @@ class Status(Timestamped):
     psychic = models.ForeignKey(Psychic, on_delete=models.CASCADE, related_name='statuses')
     status = models.CharField(max_length=50, choices=c.PSYCHIC_STATUS_CHOICES)
     status_at = models.DateTimeField()
-
-
-class Day(Timestamped):
-    day = models.DateField(primary_key=True)
-
-    def __str__(self) -> str:
-        return unidecode(f'{self.day:%y-%m-%d}')

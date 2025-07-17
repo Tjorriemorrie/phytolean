@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
+import io
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -77,7 +77,7 @@ ROOT_URLCONF = 'phytolean.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'main' / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -145,42 +145,27 @@ STATIC_ROOT = BASE_DIR / 'static'
 
 
 # logging
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'formatters': {
         'standard': {
-            'format': '%(asctime)s %(levelname)-8s %(name)s - %(message)s',
+            'format': '%(asctime)s %(levelname)-8s %(message)s {%(filename)s:%(lineno)d}',
         },
         'compact': {
-            'format': '%(asctime)s %(levelname)s - %(message)s',
-        }
+            'format': '%(asctime)s %(levelname)-8s %(message)s',
+        },
     },
     'handlers': {
-        'django': {
-            'level': 'DEBUG',
-            # 'class': 'logging.StreamHandler',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'django.log',
-            'when': 'midnight',
-            'backupCount': 30,
-            'delay': True,
-            'formatter': 'standard',
-        },
-        'default': {
-            'level': 'DEBUG',
-            # 'class': 'logging.StreamHandler',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'default.log',
-            'when': 'midnight',
-            'backupCount': 30,
-            'delay': True,
-            'formatter': 'standard',
-        },
-        'cmds': {
+        'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'cmds.log',
+            'filename': str(LOG_DIR / 'app.log'),
             'when': 'midnight',
             'backupCount': 30,
             'delay': True,
@@ -193,28 +178,18 @@ LOGGING = {
             'formatter': 'compact',
         },
     },
+    'root': {
+        'handlers': ['file', 'console'],
+        'level': 'DEBUG',
+        'propagate': False,
+    },
     'loggers': {
-        '': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'phytolean': {
-            'handlers': ['default', 'console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'main': {
-            'handlers': ['default', 'console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
         'django': {
-            'handlers': ['django'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False,
-        }
-    }
+        },
+    },
 }
 
 # crispy forms

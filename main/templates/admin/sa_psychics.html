@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+{% block content %}
+    <h3>Currently online:</h3>
+    <p>{{ online_names }}</p>
+
+    <h3>Top Psychics (rolling 30 days):</h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Online?</th>
+            <th>Online min</th>
+            <th>Oncall min</th>
+            <th>Total min</th>
+            <th>call:avail</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for psychic in psychics_monthly %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if psychic.latest_status == 'Oncall' %}
+                        📞
+                    {% elif psychic.latest_status == 'Online' %}
+                        ✅
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td><a href="{{ psychic.url }}" target="_blank">{{ psychic.name.title }}</a></td>
+                <td>{{ psychic.online_minutes }}</td>
+                <td>{{ psychic.oncall_minutes }}</td>
+                <td>{{ psychic.total_minutes }}</td>
+                <td>{{ psychic.oncall_online_ratio|floatformat:2 }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

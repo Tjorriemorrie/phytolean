@@ -1,8 +1,12 @@
 import requests
 from bs4 import BeautifulSoup
 from django.contrib import admin
+from django.contrib.admin import AdminSite
+from django.contrib.auth.models import User
+from django.db import models
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils.decorators import method_decorator
 from django.utils.timezone import now
@@ -11,7 +15,8 @@ from django.views.decorators.csrf import csrf_exempt
 from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from import_export.resources import ModelResource
 
-from main.models import Discovery, Booking, Survey
+from main.models import Discovery, Booking, Survey, Psychic, Status, Role
+from main.selectors import list_psychics_online, list_psychics_with_status_monthly
 
 
 @admin.register(Discovery)
@@ -38,36 +43,42 @@ class SurveyAdmin(ImportExportModelAdmin, ExportActionMixin):
     ordering = ['-created_at']
 
 
-#########################################################################################
-# SA Psychics
-#########################################################################################
-
-class PsychicsView(View):
-    # template_name = 'admin/main/psychics/psychics.html'
-
-    # def get_context_data(self, **kwargs):
-    #     kwargs = super().get_context_data(**kwargs)
-    #     kwargs['cookie'] = self.request.META.get('HTTP_COOKIE')
-    #     return kwargs
-
-    @method_decorator(csrf_exempt)
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
-
-    def get(self, request, *args, **kwargs):
-        return render(request, 'admin/main/psychics/psychics.html')
-
-    def post(self, request, *args, **kwargs):
-        res = requests.get('https://www.sa-psychics.com/GetBusiness/SEAH')
-        try:
-            res.raise_for_status()
-        except Exception as exc:
-            status = res.text
-        else:
-            html = BeautifulSoup(res.text, 'html.parser')
-            status = html.find('span', id='status').text.strip()
-        return HttpResponse(f'<p>{now():%H:%M} {status.title()}</p>')
+@admin.register(Psychic)
+class PsychicAdmin(admin.ModelAdmin):
+    pass
 
 
-admin_site_urls = admin.site.urls
-admin_site_urls[0].insert(7, path('psychics/', PsychicsView.as_view(), name='psychics_view'))
+@admin.register(Status)
+class StatusAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Role)
+class RoleAdmin(admin.ModelAdmin):
+    pass
+
+
+def sa_psychics(request):
+    psychics_monthly = list_psychics_with_status_monthly()
+    psychics_online = list_psychics_online()
+    online_names = ", ".join(p.name.title() for p in psychics_online)
+    context = {
+        **admin.site.each_context(request),
+        'online_names': online_names,
+        'psychics_monthly': psychics_monthly,
+    }
+    return TemplateResponse(request, "admin/sa_psychics.html", context)
+
+
+original_get_urls = admin.site.get_urls
+
+
+def get_urls():
+    urls = original_get_urls()
+    custom_urls = [
+        path('sa-psychics/', admin.site.admin_view(sa_psychics), name='sa-psychics'),
+    ]
+    return custom_urls + urls
+
+
+admin.site.get_urls = get_urls

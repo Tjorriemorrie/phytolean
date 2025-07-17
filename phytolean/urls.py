@@ -16,10 +16,10 @@ Including another URLconf
 from django.urls import path, include
 
 from main import views
-from main.admin import admin_site_urls
+from django.contrib import admin
 
 urlpatterns = [
-    path('admin/', admin_site_urls),
+    path('admin/', admin.site.urls),
     path('', views.home_view, name='home'),
 
     path('captcha/', include('captcha.urls')),
