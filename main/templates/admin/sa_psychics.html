@@ -7,16 +7,24 @@
             <th>Rank</th>
             <th>Name</th>
             <th>Online?</th>
-            <th>Online min</th>
-            <th>Oncall min</th>
-            <th>Total min</th>
-            <th>call:avail</th>
+            <th>Online hrs</th>
+            <th>Oncall hrs</th>
+            <th>Total hrs</th>
+            <th>Score</th>
+            <th>Last online</th>
         </tr>
         </thead>
         <tbody>
         {% for psychic in psychics_monthly %}
             <tr>
-                <td>{{ forloop.counter }}</td>
+                <td>
+                    {% if psychic.name == 'SEAH' %}
+                        ⭐
+                    {% else %}
+                        {{ forloop.counter }}
+                    {% endif %}
+                </td>
+
                 <td>
                     {% if psychic.latest_status == 'Oncall' %}
                         📞
@@ -27,10 +35,11 @@
                     {% endif %}
                 </td>
                 <td><a href="{{ psychic.url }}" target="_blank">{{ psychic.name.title }}</a></td>
-                <td>{{ psychic.online_minutes }}</td>
-                <td>{{ psychic.oncall_minutes }}</td>
-                <td>{{ psychic.total_minutes }}</td>
-                <td>{{ psychic.oncall_online_ratio|floatformat:2 }}</td>
+                <td>{{ psychic.online_hours|floatformat:1 }}</td>
+                <td>{{ psychic.oncall_hours|floatformat:1 }}</td>
+                <td>{{ psychic.total_hours|floatformat:1 }}</td>
+                <td>{{ psychic.score|floatformat:1 }}</td>
+                <td>{{ psychic.last_online_at }}</td>
             </tr>
         {% endfor %}
         </tbody>

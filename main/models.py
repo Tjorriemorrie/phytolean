@@ -298,6 +298,9 @@ class Psychic(Timestamped):
     tagline = models.CharField(max_length=100)
     img = models.URLField()
 
+    last_online_at = models.DateTimeField(null=True, blank=True)
+    last_oncall_at = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         roles = [r.name for r in self.roles.all()]
         return unidecode(

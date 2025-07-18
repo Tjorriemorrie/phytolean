@@ -1,3 +1,4 @@
+import main.constants as c
 import time
 import logging
 from typing import List, Tuple, Optional
@@ -84,11 +85,16 @@ def parse_advisors(fragment: str) -> List[Psychic]:
 
         # Save status (one per scrape)
         if status:
-            Status.objects.create(
+            status_ins = Status.objects.create(
                 psychic=psychic,
                 status=status,
                 status_at=now()
             )
+            if status_ins.status == c.PSYCHIC_STATUS_ONLINE:
+                psychic.last_online_at = now()
+            elif status_ins.status == c.PSYCHIC_STATUS_ONCALL:
+                psychic.last_oncall_at = now()
+            psychic.save()
 
         logger.info(
             unidecode(

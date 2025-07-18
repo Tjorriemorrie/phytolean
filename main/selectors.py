@@ -39,20 +39,16 @@ def list_psychics_with_status_monthly() -> QuerySet[Psychic]:
             default=Value(False),
             output_field=BooleanField()
         ),
-        oncall_minutes=ExpressionWrapper(F('oncall_count') * 15, output_field=IntegerField()),
-        online_minutes=ExpressionWrapper(F('online_count') * 15, output_field=IntegerField()),
-        total_minutes=ExpressionWrapper(
-            (F('oncall_count') + F('online_count')) * 15,
-            output_field=IntegerField()
+        oncall_hours=ExpressionWrapper(F('oncall_count') / Value(4.0), output_field=FloatField()),
+        online_hours=ExpressionWrapper(F('online_count') / Value(4.0), output_field=FloatField()),
+        total_hours=ExpressionWrapper(
+            (F('oncall_count') + F('online_count')) / Value(4.0),
+            output_field=FloatField()
         ),
-        oncall_online_ratio=ExpressionWrapper(
-            Case(
-                When(online_count=0, then=Value(0.0)),
-                default=F('oncall_count') * 1.0 / F('online_count'),
-                output_field=FloatField()
-            ),
+        score=ExpressionWrapper(
+            (F('oncall_count') / Value(4.0)) + (F('online_count') / Value(4.0) * Value(0.1)),
             output_field=FloatField()
         )
-    ).order_by('-oncall_minutes')
+    ).order_by('-score')
 
     return psychics
