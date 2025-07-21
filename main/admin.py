@@ -3,9 +3,11 @@ from django.template.response import TemplateResponse
 from django.urls import path
 from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from import_export.resources import ModelResource
+from plotly.offline import plot
 
 from main.models import Discovery, Booking, Survey, Psychic, Status, Role
-from main.selectors import list_psychics_with_status_monthly
+from main.selectors import list_psychics_with_status_monthly, generate_status_hourly_plot, \
+    get_last_scrape_date
 
 
 @admin.register(Discovery)
@@ -48,10 +50,15 @@ class RoleAdmin(admin.ModelAdmin):
 
 
 def sa_psychics(request):
+    last_status_at = get_last_scrape_date()
     psychics_monthly = list_psychics_with_status_monthly()
+    # status_plot = generate_status_hourly_plot()
     context = {
         **admin.site.each_context(request),
+        'title': 'SA Psycics',
+        'last_status_at': last_status_at,
         'psychics_monthly': psychics_monthly,
+        # 'status_plot_html': plot(status_plot, output_type='div', include_plotlyjs=False),
     }
     return TemplateResponse(request, "admin/sa_psychics.html", context)
 

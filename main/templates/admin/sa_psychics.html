@@ -1,5 +1,18 @@
 {% extends "admin/base_site.html" %}
+
+{% block extrahead %}
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+{% endblock %}
+
 {% block content %}
+    <div>
+        <p>Last status: {{ last_status_at }}</p>
+    </div>
+
+    <div>
+        {{ status_plot_html|safe }}
+    </div>
+
     <h3>Top Psychics (rolling 30 days):</h3>
     <table>
         <thead>
