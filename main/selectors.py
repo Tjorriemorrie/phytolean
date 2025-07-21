@@ -19,47 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 def list_psychics_with_status_monthly() -> QuerySet[Psychic]:
-    one_month_ago = timezone.now() - timedelta(days=30)
-
-    latest_status_subquery = Status.objects.filter(
-        psychic=OuterRef('pk')
-    ).order_by('-status_at').values('status')[:1]
-
-    psychics = Psychic.objects.annotate(
-        oncall_count=Count(
-            'statuses',
-            filter=Q(
-                statuses__status=c.PSYCHIC_STATUS_ONCALL,
-                statuses__status_at__gte=one_month_ago
-            )
-        ),
-        online_count=Count(
-            'statuses',
-            filter=Q(
-                statuses__status=c.PSYCHIC_STATUS_ONLINE,
-                statuses__status_at__gte=one_month_ago
-            )
-        ),
-        latest_status=Subquery(latest_status_subquery),
-    ).annotate(
-        is_currently_online=Case(
-            When(latest_status__in=[c.PSYCHIC_STATUS_ONLINE, c.PSYCHIC_STATUS_ONCALL],
-                 then=Value(True)),
-            default=Value(False),
-            output_field=BooleanField()
-        ),
-        oncall_hours=ExpressionWrapper(F('oncall_count') / Value(4.0), output_field=FloatField()),
-        online_hours=ExpressionWrapper(F('online_count') / Value(4.0), output_field=FloatField()),
-        total_hours=ExpressionWrapper(
-            (F('oncall_count') + F('online_count')) / Value(4.0),
-            output_field=FloatField()
-        ),
-        score=ExpressionWrapper(
-            (F('oncall_count') / Value(4.0)) + (F('online_count') / Value(4.0) * Value(0.1)),
-            output_field=FloatField()
-        )
-    ).order_by('-score')
-
+    psychics = Psychic.objects.order_by('-score')
     return psychics
 
 
@@ -125,3 +85,49 @@ def generate_status_hourly_plot():
 
 def get_last_scrape_date() -> datetime:
     return Status.objects.aggregate(last_status_at=Max('status_at'))['last_status_at']
+
+
+def update_psychics_stats():
+    one_month_ago = timezone.now() - timedelta(days=30)
+
+    latest_status_subquery = Status.objects.filter(
+        psychic=OuterRef('pk')
+    ).order_by('-status_at').values('status')[:1]
+    latest_status_time_subquery = Status.objects.filter(
+        psychic=OuterRef('pk')
+    ).order_by('-status_at').values('status_at')[:1]
+
+    psychics = Psychic.objects.annotate(
+        oncall_count_temp=Count(
+            'statuses',
+            filter=Q(statuses__status=c.PSYCHIC_STATUS_ONCALL, statuses__status_at__gte=one_month_ago)
+        ),
+        online_count_temp=Count(
+            'statuses',
+            filter=Q(statuses__status=c.PSYCHIC_STATUS_ONLINE, statuses__status_at__gte=one_month_ago)
+        ),
+        latest_status_temp=Subquery(latest_status_subquery),
+        latest_status_time_temp=Subquery(latest_status_time_subquery)
+    )
+
+    for psychic in psychics:
+        oncall = psychic.oncall_count_temp
+        online = psychic.online_count_temp
+        latest_status = psychic.latest_status_temp
+
+        psychic.oncall_count = oncall
+        psychic.online_count = online
+        psychic.latest_status = latest_status
+        psychic.is_currently_online = latest_status in [c.PSYCHIC_STATUS_ONLINE, c.PSYCHIC_STATUS_ONCALL]
+        psychic.status_last_updated = psychic.latest_status_time_temp
+        psychic.oncall_hours = oncall / 4.0
+        psychic.online_hours = online / 4.0
+        psychic.total_hours = (oncall + online) / 4.0
+        psychic.score = (oncall / 4.0) + (online / 4.0) * 0.1
+
+        psychic.save(update_fields=[
+            'oncall_count', 'online_count',
+            'latest_status', 'status_last_updated',
+            'is_currently_online', 'oncall_hours', 'online_hours',
+            'total_hours', 'score'
+        ])

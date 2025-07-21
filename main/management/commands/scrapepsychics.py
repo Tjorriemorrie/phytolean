@@ -11,6 +11,7 @@ from django.utils.timezone import now
 from unidecode import unidecode
 
 from main.models import Psychic, Role, Status
+from main.selectors import update_psychics_stats
 
 logger = logging.getLogger(__name__)
 
@@ -122,7 +123,7 @@ def find_loadmore_endpoint(soup: BeautifulSoup) -> Optional[Tuple[str, int, int]
     return ajax_url, offset, limit
 
 
-def scrape_all() -> List[dict]:
+def scrape_all() -> List[Psychic]:
     """
     Scrape all advisor pages, logging info along the way.
     """
@@ -165,3 +166,7 @@ class Command(BaseCommand):
         logger.info("Starting SA-Psychics advisor scrape...")
         advisors = scrape_all()
         logger.info(f"Scraping complete. Total advisors scraped: {len(advisors)}")
+
+        logger.info("Starting SA-Psychics stats update...")
+        update_psychics_stats()
+        logger.info('Stats update complete for psychics')

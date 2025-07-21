@@ -297,9 +297,20 @@ class Psychic(Timestamped):
     name = models.CharField(max_length=250)
     tagline = models.CharField(max_length=100)
     img = models.URLField()
-
     last_online_at = models.DateTimeField(null=True, blank=True)
     last_oncall_at = models.DateTimeField(null=True, blank=True)
+
+    # stats
+    status_last_updated = models.DateTimeField(null=True, blank=True)
+    latest_status = models.CharField(max_length=20, null=True, blank=True)
+    oncall_count = models.PositiveIntegerField(default=0)
+    online_count = models.PositiveIntegerField(default=0)
+    oncall_hours = models.FloatField(default=0)
+    online_hours = models.FloatField(default=0)
+    total_hours = models.FloatField(default=0)
+    score = models.FloatField(default=0)
+
+    is_currently_online = models.BooleanField(default=False)
 
     def __str__(self):
         roles = [r.name for r in self.roles.all()]
