@@ -322,3 +322,4 @@ class Status(Timestamped):
     psychic = models.ForeignKey(Psychic, on_delete=models.CASCADE, related_name='statuses')
     status = models.CharField(max_length=50, choices=c.PSYCHIC_STATUS_CHOICES)
     status_at = models.DateTimeField()
+    prev_allowed = models.BooleanField(default=False, db_index=True)

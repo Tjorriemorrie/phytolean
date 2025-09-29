@@ -86,30 +86,15 @@ def get_last_scrape_date() -> datetime:
 def update_psychics_stats():
     one_month_ago = timezone.now() - timedelta(days=30)
 
-    # Subquery returning the pk of the immediate previous status (if it exists)
-    prev_status_qs = (
-        Status.objects
-        .filter(
-            psychic=OuterRef('psychic'),              # refer to the Status row's psychic
-            status_at__lt=OuterRef('status_at'),     # strictly earlier than this status row
-            status__in=[c.PSYCHIC_STATUS_ONCALL, c.PSYCHIC_STATUS_ONLINE]
-        )
-        .order_by('-status_at')
-        .values('pk')[:1]  # immediate previous only
-    )
-
-    # valid_statuses is a subquery over Status rows for a given Psychic (OuterRef('pk'))
-    # where the status is ONCALL, it is within the last month, and the immediate previous
-    # status (if any) is in ONCALL or ONLINE.
+    # Count only ONCALL statuses where prev_allowed=True
     valid_oncall_statuses = (
         Status.objects
         .filter(
-            psychic=OuterRef('pk'),                       # OuterRef to Psychic.pk
+            psychic=OuterRef('pk'),
             status=c.PSYCHIC_STATUS_ONCALL,
-            status_at__gte=one_month_ago
+            status_at__gte=one_month_ago,
+            prev_allowed=True
         )
-        .annotate(prev_is_allowed=Exists(prev_status_qs))
-        .filter(prev_is_allowed=True)                    # only those where immediate prev is allowed
         .values('psychic')
         .annotate(cnt=Count('pk'))
         .values('cnt')
@@ -123,7 +108,10 @@ def update_psychics_stats():
         ),
         online_count_temp=Count(
             'statuses',
-            filter=Q(statuses__status=c.PSYCHIC_STATUS_ONLINE, statuses__status_at__gte=one_month_ago)
+            filter=Q(
+                statuses__status=c.PSYCHIC_STATUS_ONLINE,
+                statuses__status_at__gte=one_month_ago
+            )
         ),
         latest_status_temp=Subquery(
             Status.objects.filter(psychic=OuterRef('pk'))
