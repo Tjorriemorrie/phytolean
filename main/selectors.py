@@ -1,19 +1,15 @@
 import logging
-
-import plotly.graph_objects as go
-import plotly.express as px
-import pandas as pd
 from datetime import timedelta, datetime
 
-from django.db.models.functions import TruncHour
+import pandas as pd
+import plotly.graph_objects as go
+from django.db.models import QuerySet, OuterRef, Subquery, Count, IntegerField, \
+    Q, Value, Max, Exists
+from django.db.models.functions import TruncHour, Coalesce
 from django.utils import timezone
 
 import main.constants as c
-from django.db.models import QuerySet, OuterRef, Subquery, Count, ExpressionWrapper, IntegerField, \
-    F, Q, Value, FloatField, When, Case, BooleanField, Max
-
 from main.models import Psychic, Status
-
 
 logger = logging.getLogger(__name__)
 
@@ -90,24 +86,55 @@ def get_last_scrape_date() -> datetime:
 def update_psychics_stats():
     one_month_ago = timezone.now() - timedelta(days=30)
 
-    latest_status_subquery = Status.objects.filter(
-        psychic=OuterRef('pk')
-    ).order_by('-status_at').values('status')[:1]
-    latest_status_time_subquery = Status.objects.filter(
-        psychic=OuterRef('pk')
-    ).order_by('-status_at').values('status_at')[:1]
+    # Subquery returning the pk of the immediate previous status (if it exists)
+    prev_status_qs = (
+        Status.objects
+        .filter(
+            psychic=OuterRef('psychic'),              # refer to the Status row's psychic
+            status_at__lt=OuterRef('status_at'),     # strictly earlier than this status row
+            status__in=[c.PSYCHIC_STATUS_ONCALL, c.PSYCHIC_STATUS_ONLINE]
+        )
+        .order_by('-status_at')
+        .values('pk')[:1]  # immediate previous only
+    )
 
+    # valid_statuses is a subquery over Status rows for a given Psychic (OuterRef('pk'))
+    # where the status is ONCALL, it is within the last month, and the immediate previous
+    # status (if any) is in ONCALL or ONLINE.
+    valid_oncall_statuses = (
+        Status.objects
+        .filter(
+            psychic=OuterRef('pk'),                       # OuterRef to Psychic.pk
+            status=c.PSYCHIC_STATUS_ONCALL,
+            status_at__gte=one_month_ago
+        )
+        .annotate(prev_is_allowed=Exists(prev_status_qs))
+        .filter(prev_is_allowed=True)                    # only those where immediate prev is allowed
+        .values('psychic')
+        .annotate(cnt=Count('pk'))
+        .values('cnt')
+    )
+
+    # Annotate psychics. Use Coalesce to return 0 when there are no matches
     psychics = Psychic.objects.annotate(
-        oncall_count_temp=Count(
-            'statuses',
-            filter=Q(statuses__status=c.PSYCHIC_STATUS_ONCALL, statuses__status_at__gte=one_month_ago)
+        oncall_count_temp=Coalesce(
+            Subquery(valid_oncall_statuses, output_field=IntegerField()),
+            Value(0)
         ),
         online_count_temp=Count(
             'statuses',
             filter=Q(statuses__status=c.PSYCHIC_STATUS_ONLINE, statuses__status_at__gte=one_month_ago)
         ),
-        latest_status_temp=Subquery(latest_status_subquery),
-        latest_status_time_temp=Subquery(latest_status_time_subquery)
+        latest_status_temp=Subquery(
+            Status.objects.filter(psychic=OuterRef('pk'))
+            .order_by('-status_at')
+            .values('status')[:1]
+        ),
+        latest_status_time_temp=Subquery(
+            Status.objects.filter(psychic=OuterRef('pk'))
+            .order_by('-status_at')
+            .values('status_at')[:1]
+        )
     )
 
     for psychic in psychics:
