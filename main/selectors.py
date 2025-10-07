@@ -15,7 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 def list_psychics_with_status_monthly() -> QuerySet[Psychic]:
-    psychics = Psychic.objects.order_by('-score')
+    psychics = Psychic.objects.order_by('-oncall_hours')
     return psychics
 
 
