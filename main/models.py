@@ -326,13 +326,13 @@ class Status(Timestamped):
 
 
 class PayFastTransaction(Timestamped):
-    m_payment_id = models.CharField(max_length=100)
+    m_payment_id = models.CharField(max_length=100, blank=True, null=True)
     pf_payment_id = models.CharField(max_length=100, blank=True, null=True)
-    item_name = models.CharField(max_length=255)
+    item_name = models.CharField(max_length=255, blank=True, null=True)
     amount_gross = models.DecimalField(max_digits=10, decimal_places=2)
     amount_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     amount_net = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    payment_status = models.CharField(max_length=50)
+    payment_status = models.CharField(max_length=50, blank=True, null=True)
     name_first = models.CharField(max_length=100, blank=True, null=True)
     name_last = models.CharField(max_length=100, blank=True, null=True)
     email_address = models.EmailField(blank=True, null=True)
