@@ -323,3 +323,24 @@ class Status(Timestamped):
     status = models.CharField(max_length=50, choices=c.PSYCHIC_STATUS_CHOICES)
     status_at = models.DateTimeField()
     prev_allowed = models.BooleanField(default=False, db_index=True)
+
+
+class PayFastTransaction(Timestamped):
+    m_payment_id = models.CharField(max_length=100)
+    pf_payment_id = models.CharField(max_length=100, blank=True, null=True)
+    item_name = models.CharField(max_length=255)
+    amount_gross = models.DecimalField(max_digits=10, decimal_places=2)
+    amount_fee = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    amount_net = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    payment_status = models.CharField(max_length=50)
+    name_first = models.CharField(max_length=100, blank=True, null=True)
+    name_last = models.CharField(max_length=100, blank=True, null=True)
+    email_address = models.EmailField(blank=True, null=True)
+    item_description = models.TextField(blank=True, null=True)
+    merchant_id = models.CharField(max_length=50, blank=True, null=True)
+    signature = models.CharField(max_length=255, blank=True, null=True)
+
+    user_email = models.EmailField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.m_payment_id} - {self.payment_status}"

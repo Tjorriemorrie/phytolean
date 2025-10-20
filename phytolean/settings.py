@@ -136,6 +136,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+APPEND_SLASH = True
+
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -163,11 +166,11 @@ LOGGING = {
     },
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'INFO',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': str(LOG_DIR / 'app.log'),
             'when': 'midnight',
-            'backupCount': 30,
+            'backupCount': 7,
             'delay': True,
             'formatter': 'standard',
         },
@@ -180,13 +183,13 @@ LOGGING = {
     },
     'root': {
         'handlers': ['file', 'console'],
-        'level': 'DEBUG',
+        'level': 'INFO',
         'propagate': False,
     },
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'INFO',
             'propagate': False,
         },
     },
@@ -215,3 +218,10 @@ EMAIL_API_URL = env('EMAIL_API_URL')
 EMAIL_API_KEY = env('EMAIL_API_KEY')
 
 SCHEDULE_ENABLED = True
+
+# payfast
+PAYFAST_MERCHANT_ID = env.int('PAYFAST_MERCHANT_ID')
+PAYFAST_MERCHANT_KEY = env.str('PAYFAST_MERCHANT_KEY')
+PAYFAST_PROCESS_URL = env.str('PAYFAST_PROCESS_URL')
+PAYFAST_PASSPHRASE = env.str('PAYFAST_PASSPHRASE')
+PAYFAST_VALIDATE_URL = env.str('PAYFAST_VALIDATE_URL')

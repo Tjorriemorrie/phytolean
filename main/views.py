@@ -1,11 +1,23 @@
+import logging
+from decimal import Decimal
+
+import requests
+from django.contrib import messages
+from django.http import HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.views.decorators.csrf import csrf_exempt
 
 import main.constants as c
 from main.forms import DiscoveryForm, BookingForm, ParticipantBookingForm, SurveyForm
-from main.models import Booking
+from main.models import Booking, PayFastTransaction
 from phytolean import settings
 
+logger = logging.getLogger(__name__)
+
+
+def home(request):
+    bookings = Booking.objects.all()
 
 def _get_ctx(params: dict = None) -> dict:
     ctx = {
@@ -282,3 +294,75 @@ def faq_view(request):
         'nav': 'faq',
     })
     return render(request, 'main/faq.html', ctx)
+
+
+def one_time_event_view(request):
+    logger.info('One time event viewed.')
+    ctx = {
+        'process_url': settings.PAYFAST_PROCESS_URL,
+        'merchant_id': settings.PAYFAST_MERCHANT_ID,
+        'merchant_key': settings.PAYFAST_MERCHANT_KEY,
+        'return_url': request.build_absolute_uri('/payment/success/'),
+        'cancel_url': request.build_absolute_uri('/payment/cancel/'),
+        'notify_url': request.build_absolute_uri('/payment/notify/'),
+    }
+    return render(request, 'main/one_time_event.html', ctx)
+
+
+def payment_success(request):
+    logger.info('Payment success.')
+    # Set a flash message
+    messages.warning(request, "Your payment was successful.")
+    # Redirect back to the one-time event page
+    return redirect('one_time_event')
+
+
+def payment_cancel(request):
+    logger.info('Payment cancelled.')
+    # Set a flash message
+    messages.warning(request, "Your transaction was cancelled.")
+    # Redirect back to the one-time event page
+    return redirect('one_time_event')
+
+
+@csrf_exempt
+def payment_notify(request):
+    if request.method == "POST":
+        # Step 1: Read POST data
+        data = request.POST.dict()
+
+        # Step 2: OPTIONAL: verify the data with PayFast
+        logger.info('Verifying payment...')
+        verify_url = settings.PAYFAST_VALIDATE_URL
+        try:
+            response = requests.post(verify_url, data=data, timeout=10)
+            if response.text != "VALID":
+                logger.info('Payment invalid.')
+                return HttpResponse("INVALID", status=400)
+        except requests.RequestException:
+            logger.exception('Payment failed.')
+            return HttpResponse("ERROR", status=500)
+
+        # Step 3: Save to database
+        PayFastTransaction.objects.create(
+            m_payment_id=data.get("m_payment_id") or None,
+            pf_payment_id=data.get("pf_payment_id") or None,
+            item_name=data.get("item_name") or "",
+            item_description=data.get("item_description") or "",
+            amount_gross=Decimal(data.get("amount_gross", "0")),
+            amount_fee=Decimal(data.get("amount_fee", "0")),
+            amount_net=Decimal(data.get("amount_net", "0")),
+            payment_status=data.get("payment_status") or "",
+            name_first=data.get("name_first") or None,
+            name_last=data.get("name_last") or None,
+            email_address=data.get("email_address") or None,
+            merchant_id=data.get("merchant_id") or None,
+            signature=data.get("signature") or None,
+            user_email=data.get("custom_str1") or None,
+        )
+
+        # Step 4: Respond with 200 OK
+        logger.info('Payment success.')
+        return HttpResponse("OK")
+
+    return HttpResponse("Method not allowed", status=405)

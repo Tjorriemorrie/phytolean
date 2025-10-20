@@ -61,4 +61,8 @@ urlpatterns = [
     path('event/2023/12/17/fitness/thankyou', views.event_202312_fitness_thanks,
          name='event_202312_fitness_thankyou'),
 
+    path('one-time-event/', views.one_time_event_view, name='one_time_event'),
+    path('payment/success/', views.payment_success, name='payment_success'),
+    path('payment/cancel/', views.payment_cancel, name='payment_cancel'),
+    path('payment/notify/', views.payment_notify, name='payment_notify'),
 ]

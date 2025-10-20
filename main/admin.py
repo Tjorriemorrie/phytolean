@@ -5,7 +5,7 @@ from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from import_export.resources import ModelResource
 from plotly.offline import plot
 
-from main.models import Discovery, Booking, Survey, Psychic, Status, Role
+from main.models import Discovery, Booking, Survey, Psychic, Status, Role, PayFastTransaction
 from main.selectors import list_psychics_with_status_monthly, generate_status_hourly_plot, \
     get_last_scrape_date
 
@@ -47,6 +47,31 @@ class StatusAdmin(admin.ModelAdmin):
 @admin.register(Role)
 class RoleAdmin(admin.ModelAdmin):
     pass
+
+
+@admin.register(PayFastTransaction)
+class PayFastTransactionAdmin(admin.ModelAdmin):
+    # List view columns
+    list_display = (
+        'id', 'user_email', 'm_payment_id', 'pf_payment_id',
+        'item_name', 'amount_gross', 'amount_fee', 'amount_net',
+        'payment_status', 'created_at'
+    )
+
+    # Searchable fields
+    search_fields = ('user_email', 'm_payment_id', 'pf_payment_id', 'email_address')
+
+    # Filters
+    list_filter = ('payment_status', 'created_at')
+
+    # Ordering
+    ordering = ('-created_at',)
+
+    # Read-only fields
+    readonly_fields = (
+        'm_payment_id', 'pf_payment_id', 'amount_gross', 'amount_fee',
+        'amount_net', 'payment_status', 'signature', 'created_at'
+    )
 
 
 def sa_psychics(request):
