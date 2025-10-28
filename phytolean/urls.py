@@ -29,7 +29,7 @@ urlpatterns = [
     path('make-booking/<slug:slug>', views.make_booking_view, name='booking'),
     path('booking-submitted', views.booking_submitted_view, name='booking_submitted'),
 
-    path('about', views.about_view, name='about'),
+    # path('about', views.about_view, name='about'),
     path('services', views.services_view, name='services'),
     path('how-it-works', views.howitworks_view, name='howitworks'),
     path('why-this-is-for-you', views.for_you_view, name='foryou'),
