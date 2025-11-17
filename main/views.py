@@ -11,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 import main.constants as c
 from main.forms import DiscoveryForm, BookingForm, ParticipantBookingForm, SurveyForm, SignupForm
 from main.models import Booking, PayFastTransaction
+from main.send_emails import send_booking_alert
 from phytolean import settings
 
 logger = logging.getLogger(__name__)
@@ -241,7 +242,8 @@ def signup_submit(request):
     if request.method == "POST":
         form = SignupForm(request.POST)
         if form.is_valid():
-            form.save()
+            signup = form.save()
+            send_booking_alert(signup)
             # ✔️ render a NEW HTML page with a message
             return render(request, "main/events/signup.html", {
                 "name": form.cleaned_data["name"],

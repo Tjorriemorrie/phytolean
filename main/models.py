@@ -349,3 +349,4 @@ class PayFastTransaction(Timestamped):
 class Signup(Timestamped):
     name = models.CharField(max_length=250)
     email = models.EmailField()
+    phone = models.CharField(max_length=250)

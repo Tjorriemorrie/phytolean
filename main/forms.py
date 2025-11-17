@@ -331,7 +331,7 @@ class SurveyForm(forms.ModelForm):
 class SignupForm(forms.ModelForm):
     class Meta:
         model = Signup
-        fields = ["name", "email"]
+        fields = ["name", "email", 'phone']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -340,4 +340,5 @@ class SignupForm(forms.ModelForm):
         self.helper.layout = Layout(
             Field("name"),
             Field("email"),
+            Field("phone"),
         )

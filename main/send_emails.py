@@ -5,9 +5,10 @@ from textwrap import dedent
 import requests
 from django.core.mail import send_mail, EmailMessage
 from django.core.serializers import serialize
+from django.utils.timezone import now
 from retry import retry
 
-from main.models import Discovery, Booking, Participant
+from main.models import Discovery, Booking, Participant, Signup
 from phytolean import settings
 
 logger = logging.getLogger(__name__)
@@ -155,3 +156,18 @@ def send_participant_email(participant: Participant):
     """)
     _send_smtp2go_api_email(subject, message, settings.DEFAULT_TO_EMAILS)
     logger.info('Participant email notified done')
+
+
+@retry(SMTPException)
+def send_booking_alert(signup: Signup):
+    logger.info('Sending booking alert...')
+    subject = 'Phytolean event booking received'
+    message = dedent(f"""
+        New booking received,
+        Date: {now()}
+        Name: {signup.name}
+        Email: {signup.email}
+        Phone: {signup.phone}
+    """)
+    _send_smtp2go_api_email(subject, message, ['Phytolean phytolean@gmail.com'])
+    logger.info('Booking alert done')
