@@ -1,5 +1,5 @@
-crispy_bootstrap4
-django==3.2.8
+crispy_bootstrap4==2025.6
+django>=3.2.8
 django-crispy-forms==1.13.0
 django-environ==0.10.0
 django-import-export==3.3.4
