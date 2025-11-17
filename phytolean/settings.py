@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     # external
     'crispy_forms',
+    'crispy_bootstrap4',
     'captcha',
     'django_extensions',
     'import_export',

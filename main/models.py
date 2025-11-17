@@ -344,3 +344,8 @@ class PayFastTransaction(Timestamped):
 
     def __str__(self):
         return f"{self.m_payment_id} - {self.payment_status}"
+
+
+class Signup(Timestamped):
+    name = models.CharField(max_length=250)
+    email = models.EmailField()

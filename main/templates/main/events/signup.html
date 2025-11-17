@@ -1,0 +1,58 @@
+{% extends 'main/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Food For Fitness Event - {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+
+    {% include 'main/navbar.html' with nav=nav %}
+
+    <div class="container big-body py-5">
+
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-md-8">
+
+                <div class="card shadow-lg border-0 rounded-3">
+                    <div class="card-body p-4">
+
+                        <h3 class="text-success mb-3">
+                            <i class="fas fa-check-circle"></i> Signup Successful!
+                        </h3>
+
+                        <p class="lead">Thank you, <strong>{{ name }}</strong>. Your signup has been saved.</p>
+
+                        <p>Please make payment to:</p>
+
+                        <hr class="my-4">
+
+                        <h5 class="mb-3">Payment Details</h5>
+
+                        <div class="bg-light p-3 rounded">
+                            <p class="mb-1"><strong>Amount:</strong> R250</p>
+                            <p class="mb-1"><strong>Bank:</strong> ABSA</p>
+                            <p class="mb-1"><strong>Account:</strong> 4075087300</p>
+                            <p class="mb-1"><strong>Branch:</strong> General (632005)</p>
+                            <p class="mb-0"><strong>Reference:</strong> {{ name }}</p>
+                        </div>
+
+                        <p>You will be emailed the link once payment is received.</p>
+
+                        <div class="text-center mt-4">
+                            <a href="{% url 'event_20251209_fitness' %}" class="btn btn-primary">
+                                Back to event page.
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    {% include 'main/footer.html' %}
+</div>
+{% endblock %}

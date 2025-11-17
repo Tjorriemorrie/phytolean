@@ -60,6 +60,9 @@ urlpatterns = [
          name='event_202312_fitness_survey'),
     path('event/2023/12/17/fitness/thankyou', views.event_202312_fitness_thanks,
          name='event_202312_fitness_thankyou'),
+    path('event/2025/12/09/fitness', views.event_20251209_fitness_view,
+         name='event_20251209_fitness'),
+    path("signup/submit/", views.signup_submit, name="signup_submit"),
 
     path('one-time-event/', views.one_time_event_view, name='one_time_event'),
     path('payment/success/', views.payment_success, name='payment_success'),

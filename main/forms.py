@@ -4,6 +4,7 @@ from random import randint
 from typing import List, Tuple, Dict, Union
 
 from captcha.fields import CaptchaField
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit, Layout, Field, Fieldset, Div, HTML
 from crispy_forms.utils import TEMPLATE_PACK
@@ -12,7 +13,7 @@ from django.utils.timezone import now
 
 import main.constants as c
 from main.constants import FFL_DISCLAIMER
-from main.models import Discovery, Booking, Participant, Survey
+from main.models import Discovery, Booking, Participant, Survey, Signup
 
 BOOK_DAYS_AHEAD = 4
 
@@ -129,7 +130,8 @@ class DiscoveryForm(forms.ModelForm):
                 Field('punctual'),
             ),
             Field('captcha'),
-            HTML('<br/><p style="color: var(--clr-phytolean)"><strong>All information will be kept confidential.</strong></p>'),
+            HTML(
+                '<br/><p style="color: var(--clr-phytolean)"><strong>All information will be kept confidential.</strong></p>'),
         )
 
         self.helper.add_input(Submit('submit', 'Submit'))
@@ -138,7 +140,8 @@ class DiscoveryForm(forms.ModelForm):
 class BookingField(Field):
     template = 'main/crispy/booking.html'
 
-    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None, **kwargs):
+    def render(self, form, form_style, context, template_pack=TEMPLATE_PACK, extra_context=None,
+               **kwargs):
         if extra_context is None:
             extra_context = {}
         if hasattr(self, "wrapper_class"):
@@ -219,7 +222,7 @@ class BookingForm(forms.ModelForm):
         choices=[],
         widget=forms.RadioSelect,
         required=True)
-    
+
     class Meta:
         model = Booking
         fields = ['booking_slot']
@@ -289,7 +292,6 @@ class ParticipantBookingForm(forms.ModelForm):
 
 
 class SurveyForm(forms.ModelForm):
-
     class Meta:
         model = Survey
         exclude = ['country', 'instructor']
@@ -324,3 +326,18 @@ class SurveyForm(forms.ModelForm):
     #     self.instance.event = 'Nutrition Essentials'
     #     self.instance.submitted_at = now()
     #     self.instance.save()
+
+
+class SignupForm(forms.ModelForm):
+    class Meta:
+        model = Signup
+        fields = ["name", "email"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = "post"
+        self.helper.layout = Layout(
+            Field("name"),
+            Field("email"),
+        )

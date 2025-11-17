@@ -9,7 +9,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 
 import main.constants as c
-from main.forms import DiscoveryForm, BookingForm, ParticipantBookingForm, SurveyForm
+from main.forms import DiscoveryForm, BookingForm, ParticipantBookingForm, SurveyForm, SignupForm
 from main.models import Booking, PayFastTransaction
 from phytolean import settings
 
@@ -220,6 +220,36 @@ def event_202312_fitness_thanks(request):
     return render(request, 'main/events/202312-fitness-thanks.html', ctx)
 
 
+def event_20251209_fitness_view(request):
+    form = SignupForm()
+    ctx = _get_ctx({
+        'nav': 'events',
+        'process_url': settings.PAYFAST_PROCESS_URL,
+        'merchant_id': settings.PAYFAST_MERCHANT_ID,
+        'merchant_key': settings.PAYFAST_MERCHANT_KEY,
+        'return_url': request.build_absolute_uri('/payment/success/'),
+        'cancel_url': request.build_absolute_uri('/payment/cancel/'),
+        'notify_url': request.build_absolute_uri('/payment/notify/'),
+        'form': form,
+    })
+    return render(request, 'main/events/20251209-fitness.html', ctx)
+
+
+def signup_submit(request):
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            # ✔️ render a NEW HTML page with a message
+            return render(request, "main/events/signup.html", {
+                "name": form.cleaned_data["name"],
+                "email": form.cleaned_data["email"],
+            })
+        else:
+            # ❗ invalid form → re-render form with errors
+            return redirect(reverse('event_20251209_fitness'))
+
+
 def resources_source_view(request, src):
     titles = {
         'bread': 'The Life-Changing Loaf of Bread',
@@ -314,7 +344,7 @@ def payment_success(request):
     # Set a flash message
     messages.warning(request, "Your payment was successful.")
     # Redirect back to the one-time event page
-    return redirect('one_time_event')
+    return redirect('event_20251209_fitness')
 
 
 def payment_cancel(request):
