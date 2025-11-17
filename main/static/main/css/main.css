@@ -235,6 +235,10 @@ video {
   width: 100%;
   height: auto;
 }
+.vt-vid {
+    max-width: 1080px;
+    max-height: 1440px;
+}
 .ne-vid {
     max-width: 960px;
     max-height: 540px;
