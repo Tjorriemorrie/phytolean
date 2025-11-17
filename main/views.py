@@ -222,6 +222,7 @@ def event_202312_fitness_thanks(request):
 
 def event_20251209_fitness_view(request):
     form = SignupForm()
+
     ctx = _get_ctx({
         'nav': 'events',
         'process_url': settings.PAYFAST_PROCESS_URL,
@@ -232,6 +233,7 @@ def event_20251209_fitness_view(request):
         'notify_url': request.build_absolute_uri('/payment/notify/'),
         'form': form,
     })
+
     return render(request, 'main/events/20251209-fitness.html', ctx)
 
 
