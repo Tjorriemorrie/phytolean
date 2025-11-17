@@ -169,5 +169,5 @@ def send_booking_alert(signup: Signup):
         Email: {signup.email}
         Phone: {signup.phone}
     """)
-    _send_smtp2go_api_email(subject, message, ['Phytolean phytolean@gmail.com'])
+    _send_smtp2go_api_email(subject, message, ['Phytolean <phytolean@gmail.com>'])
     logger.info('Booking alert done')
