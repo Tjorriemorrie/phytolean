@@ -95,11 +95,9 @@
                     {#                        <li>Sample foods</li>#}
                     {#                    </ul>#}
                     <p class="mt-4">
-                        Class date: 9 December 2025<br/>
-                        Venue: Online<br/>
-                        Time: 19:00 SAST<br/>
-                        Cost: R200<br/>
-                        Duration: 2 hours<br/>
+                        Class date: 18 October 2025<br/>
+{#                        Time: 19:00 SAST<br/>#}
+{#                        Duration: 2 hours<br/>#}
                         Presenter: FFL instructor Nerine Jansen, NHP,HC,RNP,CWLS,NHLC
                     </p>
                     <p>
@@ -166,23 +164,23 @@
                 </div>
             </div>
 
-            <div class="container py-5">
-                <div class="row justify-content-center">
-                    <div class="col-md-6">
-                        <div class="card shadow-lg border-0 rounded-3">
-                            <div class="card-body p-4">
-                                <h1 class="card-title text-center mb-3">Food for Fitness</h1>
-                                <p class="text-center text-muted mb-4">Register for the session
-                                    below</p>
-                                <p class="text-center text-muted mb-4">Fee: R200 for 2 hours</p>
-
-                                <form method="post" action="{% url 'signup_submit' %}">
-                                    {% csrf_token %}
-                                    {{ form|crispy }}
-                                    <button type="submit" class="btn btn-primary">Submit</button>
-
-                                </form>
-
+{#            <div class="container py-5">#}
+{#                <div class="row justify-content-center">#}
+{#                    <div class="col-md-6">#}
+{#                        <div class="card shadow-lg border-0 rounded-3">#}
+{#                            <div class="card-body p-4">#}
+{#                                <h1 class="card-title text-center mb-3">Food for Fitness</h1>#}
+{#                                <p class="text-center text-muted mb-4">Register for the session#}
+{#                                    below</p>#}
+{#                                <p class="text-center text-muted mb-4">Fee: R200 for 2 hours</p>#}
+{##}
+{#                                <form method="post" action="{% url 'signup_submit' %}">#}
+{#                                    {% csrf_token %}#}
+{#                                    {{ form|crispy }}#}
+{#                                    <button type="submit" class="btn btn-primary">Submit</button>#}
+{##}
+{#                                </form>#}
+{##}
                                 {#                                <form action="{{ process_url }}" method="post">#}
                                 {#                                    {% csrf_token %}#}
                                 {#                                    <input type="hidden" name="merchant_id"#}
@@ -213,16 +211,16 @@
                                 {#                                    </button>#}
                                 {#                                </form>#}
                                 {##}
-                            </div>
-                        </div>
+{#                            </div>#}
+{#                        </div>#}
                         {##}
                         {#                        <p class="text-center text-muted small mt-3">#}
                         {#                            Secure payment powered by#}
                         {#                            <strong>{{ merchant_name|default:"PayFast" }}</strong>#}
                         {#                        </p>#}
-                    </div>
-                </div>
-            </div>
+{#                    </div>#}
+{#                </div>#}
+{#            </div>#}
 
         </div>
         <br/>
