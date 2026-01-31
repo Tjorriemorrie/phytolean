@@ -1,17 +1,15 @@
-import main.constants as c
-import time
 import logging
+import time
 from typing import List, Tuple, Optional
+
 import requests
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
-
 from django.core.management.base import BaseCommand
 from django.utils.timezone import now
 from unidecode import unidecode
 
+import main.constants as c
 from main.models import Psychic, Role, Status
-from main.selectors import update_psychics_stats
 
 logger = logging.getLogger(__name__)
 
@@ -86,15 +84,33 @@ def parse_advisors(fragment: str) -> List[Psychic]:
 
         # Save status (one per scrape)
         if status:
+            prev_status = (
+                Status.objects
+                .filter(psychic=psychic)
+                .order_by("-status_at")
+                .values_list("status", flat=True)
+                .first()
+            )
+
+            final_status = status
+            if status == c.PSYCHIC_STATUS_ONCALL:
+                if prev_status not in (
+                        c.PSYCHIC_STATUS_ONCALL,
+                        c.PSYCHIC_STATUS_ONLINE,
+                ):
+                    final_status = c.PSYCHIC_STATUS_FAKE
+
             status_ins = Status.objects.create(
                 psychic=psychic,
-                status=status,
-                status_at=now()
+                status=final_status,
+                status_at=now(),
             )
-            if status_ins.status == c.PSYCHIC_STATUS_ONLINE:
+
+            if final_status == c.PSYCHIC_STATUS_ONLINE:
                 psychic.last_online_at = now()
-            elif status_ins.status == c.PSYCHIC_STATUS_ONCALL:
+            elif final_status == c.PSYCHIC_STATUS_ONCALL:
                 psychic.last_oncall_at = now()
+
             psychic.save()
 
         logger.info(
@@ -166,7 +182,3 @@ class Command(BaseCommand):
         logger.info("Starting SA-Psychics advisor scrape...")
         advisors = scrape_all()
         logger.info(f"Scraping complete. Total advisors scraped: {len(advisors)}")
-
-        logger.info("Starting SA-Psychics stats update...")
-        update_psychics_stats()
-        logger.info('Stats update complete for psychics')

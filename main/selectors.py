@@ -14,11 +14,6 @@ from main.models import Psychic, Status
 logger = logging.getLogger(__name__)
 
 
-def list_psychics_with_status_monthly() -> QuerySet[Psychic]:
-    psychics = Psychic.objects.order_by('-oncall_hours')
-    return psychics
-
-
 def generate_status_hourly_plot():
     # Query and round to the hour
     qs = (
@@ -79,70 +74,56 @@ def generate_status_hourly_plot():
     return fig
 
 
-def get_last_scrape_date() -> datetime:
-    return Status.objects.aggregate(last_status_at=Max('status_at'))['last_status_at']
+def get_monthly_psychic_status_aggregates(month=None):
+    """
+    Returns per-psychic status counts for the given month.
+    Defaults to the current month.
 
+    Output shape:
+    [
+        {
+            "psychic": <Psychic>,
+            "online": int,
+            "offline": int,
+            "oncall": int,
+            "fake_oncall": int,
+            "total": int,
+        },
+        ...
+    ]
+    """
+    now = timezone.now()
+    month = month or now
 
-def update_psychics_stats():
-    one_month_ago = timezone.now() - timedelta(days=30)
+    start = month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if start.month == 12:
+        end = start.replace(year=start.year + 1, month=1)
+    else:
+        end = start.replace(month=start.month + 1)
 
-    # Count only ONCALL statuses where prev_allowed=True
-    valid_oncall_statuses = (
+    statuses = (
         Status.objects
-        .filter(
-            psychic=OuterRef('pk'),
-            status=c.PSYCHIC_STATUS_ONCALL,
-            status_at__gte=one_month_ago,
-            prev_allowed=True
-        )
-        .values('psychic')
-        .annotate(cnt=Count('pk'))
-        .values('cnt')
-    )
-
-    # Annotate psychics. Use Coalesce to return 0 when there are no matches
-    psychics = Psychic.objects.annotate(
-        oncall_count_temp=Coalesce(
-            Subquery(valid_oncall_statuses, output_field=IntegerField()),
-            Value(0)
-        ),
-        online_count_temp=Count(
-            'statuses',
-            filter=Q(
-                statuses__status=c.PSYCHIC_STATUS_ONLINE,
-                statuses__status_at__gte=one_month_ago
-            )
-        ),
-        latest_status_temp=Subquery(
-            Status.objects.filter(psychic=OuterRef('pk'))
-            .order_by('-status_at')
-            .values('status')[:1]
-        ),
-        latest_status_time_temp=Subquery(
-            Status.objects.filter(psychic=OuterRef('pk'))
-            .order_by('-status_at')
-            .values('status_at')[:1]
+        .filter(status_at__gte=start, status_at__lt=end)
+        .values("psychic")
+        .annotate(
+            online=Count("id", filter=Q(status=c.PSYCHIC_STATUS_ONLINE)),
+            offline=Count("id", filter=Q(status=c.PSYCHIC_STATUS_OFFLINE)),
+            oncall=Count("id", filter=Q(status=c.PSYCHIC_STATUS_ONCALL)),
+            fake_oncall=Count("id", filter=Q(status=c.PSYCHIC_STATUS_FAKE)),
+            total=Count("id"),
         )
     )
 
-    for psychic in psychics:
-        oncall = psychic.oncall_count_temp
-        online = psychic.online_count_temp
-        latest_status = psychic.latest_status_temp
+    psychics = Psychic.objects.in_bulk([s["psychic"] for s in statuses])
 
-        psychic.oncall_count = oncall
-        psychic.online_count = online
-        psychic.latest_status = latest_status
-        psychic.is_currently_online = latest_status in [c.PSYCHIC_STATUS_ONLINE, c.PSYCHIC_STATUS_ONCALL]
-        psychic.status_last_updated = psychic.latest_status_time_temp
-        psychic.oncall_hours = oncall / 4.0
-        psychic.online_hours = online / 4.0
-        psychic.total_hours = (oncall + online) / 4.0
-        psychic.score = (oncall / 4.0) + (online / 4.0) * 0.1
-
-        psychic.save(update_fields=[
-            'oncall_count', 'online_count',
-            'latest_status', 'status_last_updated',
-            'is_currently_online', 'oncall_hours', 'online_hours',
-            'total_hours', 'score'
-        ])
+    return [
+        {
+            "psychic": psychics[row["psychic"]],
+            "online": row["online"] * c.MINUTES_PER_SAMPLE,
+            "offline": row["offline"] * c.MINUTES_PER_SAMPLE,
+            "oncall": row["oncall"] * c.MINUTES_PER_SAMPLE,
+            "fake_oncall": row["fake_oncall"] * c.MINUTES_PER_SAMPLE,
+            "total": row["total"] * c.MINUTES_PER_SAMPLE,
+        }
+        for row in statuses
+    ]

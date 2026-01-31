@@ -1,13 +1,12 @@
 from django.contrib import admin
 from django.template.response import TemplateResponse
 from django.urls import path
+from django.utils import timezone
 from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from import_export.resources import ModelResource
-from plotly.offline import plot
 
 from main.models import Discovery, Booking, Survey, Psychic, Status, Role, PayFastTransaction
-from main.selectors import list_psychics_with_status_monthly, generate_status_hourly_plot, \
-    get_last_scrape_date
+from main.selectors import get_monthly_psychic_status_aggregates
 
 
 @admin.register(Discovery)
@@ -75,17 +74,45 @@ class PayFastTransactionAdmin(admin.ModelAdmin):
 
 
 def sa_psychics(request):
-    last_status_at = get_last_scrape_date()
-    psychics_monthly = list_psychics_with_status_monthly()
-    # status_plot = generate_status_hourly_plot()
+    now = timezone.now()
+
+    current_month = now.replace(day=1)
+
+    if current_month.month == 1:
+        previous_month = current_month.replace(
+            year=current_month.year - 1,
+            month=12,
+        )
+    else:
+        previous_month = current_month.replace(
+            month=current_month.month - 1,
+        )
+
+    psychics_current_month = get_monthly_psychic_status_aggregates(
+        month=current_month
+    )
+    psychics_previous_month = get_monthly_psychic_status_aggregates(
+        month=previous_month
+    )
+
+    # 🔑 SORT HERE
+    psychics_current_month.sort(
+        key=lambda r: (r["oncall"], r["online"]),
+        reverse=True,
+    )
+
     context = {
         **admin.site.each_context(request),
-        'title': 'SA Psycics',
-        'last_status_at': last_status_at,
-        'psychics_monthly': psychics_monthly,
-        # 'status_plot_html': plot(status_plot, output_type='div', include_plotlyjs=False),
+        "title": "SA Psychics",
+        "psychics_current_month": psychics_current_month,
+        "psychics_previous_month": psychics_previous_month,
     }
-    return TemplateResponse(request, "admin/sa_psychics.html", context)
+
+    return TemplateResponse(
+        request,
+        "admin/sa_psychics.html",
+        context,
+    )
 
 
 original_get_urls = admin.site.get_urls

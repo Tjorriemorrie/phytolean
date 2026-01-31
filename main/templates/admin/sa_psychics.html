@@ -1,60 +1,57 @@
 {% extends "admin/base_site.html" %}
 
-{% block extrahead %}
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-{% endblock %}
-
 {% block content %}
-    <div>
-        <p>Last status: {{ last_status_at }}</p>
-    </div>
+<h2>SA Psychics – Monthly Status Totals</h2>
 
-    <div>
-        {{ status_plot_html|safe }}
-    </div>
-
-    <h3>Top Psychics (rolling 30 days):</h3>
-    <table>
-        <thead>
+<table class="admin-table">
+    <thead>
         <tr>
-            <th>Rank</th>
-            <th>Name</th>
-            <th>Online?</th>
-            <th>Online hrs</th>
-            <th>Oncall hrs</th>
-            <th>Total hrs</th>
-            <th>Score</th>
-            <th>Last online</th>
+            <th rowspan="2">Psychic</th>
+            <th colspan="4">Previous Month</th>
+            <th colspan="4">Current Month</th>
         </tr>
-        </thead>
-        <tbody>
-        {% for psychic in psychics_monthly %}
+        <tr>
+            <th>Online</th>
+            <th>Offline</th>
+            <th>Oncall</th>
+            <th>Fake Oncall</th>
+
+            <th>Online</th>
+            <th>Offline</th>
+            <th>Oncall</th>
+            <th>Fake Oncall</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in psychics_current_month %}
+            {% with prev=psychics_previous_month|dictsort:"psychic.id" %}
             <tr>
                 <td>
-                    {% if psychic.name == 'SEAH' %}
-                        ⭐
-                    {% else %}
-                        {{ forloop.counter }}
-                    {% endif %}
+                    <a href="{{ row.psychic.url }}" target="_blank">
+                        {{ row.psychic.name }}
+                    </a>
                 </td>
 
-                <td>
-                    {% if psychic.latest_status == 'Oncall' %}
-                        📞
-                    {% elif psychic.latest_status == 'Online' %}
-                        ✅
-                    {% else %}
-                        —
+                {# Previous month #}
+                {% for p in psychics_previous_month %}
+                    {% if p.psychic.id == row.psychic.id %}
+                        <td>{{ p.online|floatformat:1 }}</td>
+                        <td>{{ p.offline|floatformat:1 }}</td>
+                        <td>{{ p.oncall|floatformat:1 }}</td>
+                        <td>{{ p.fake_oncall|floatformat:1 }}</td>
                     {% endif %}
-                </td>
-                <td><a href="{{ psychic.url }}" target="_blank">{{ psychic.name.title }}</a></td>
-                <td>{{ psychic.online_hours|floatformat:1 }}</td>
-                <td>{{ psychic.oncall_hours|floatformat:1 }}</td>
-                <td>{{ psychic.total_hours|floatformat:1 }}</td>
-                <td>{{ psychic.score|floatformat:1 }}</td>
-                <td>{{ psychic.last_online_at }}</td>
+                {% empty %}
+                    <td>0</td><td>0</td><td>0</td><td>0</td>
+                {% endfor %}
+
+                {# Current month #}
+                <td>{{ row.online|floatformat:1 }}</td>
+                <td>{{ row.offline|floatformat:1 }}</td>
+                <td>{{ row.oncall|floatformat:1 }}</td>
+                <td>{{ row.fake_oncall|floatformat:1 }}</td>
             </tr>
+            {% endwith %}
         {% endfor %}
-        </tbody>
-    </table>
+    </tbody>
+</table>
 {% endblock %}
