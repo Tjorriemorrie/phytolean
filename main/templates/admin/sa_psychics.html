@@ -15,8 +15,8 @@
                     <th>Psychic</th>
                     <th>Oncall</th>
                     <th>Online</th>
-                    <th>Offline</th>
                     <th>Fake Oncall</th>
+                    <th>Offline</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -30,8 +30,8 @@
                         </td>
                         <td>{{ row.oncall|floatformat:1 }}</td>
                         <td>{{ row.online|floatformat:1 }}</td>
-                        <td>{{ row.offline|floatformat:1 }}</td>
                         <td>{{ row.fake_oncall|floatformat:1 }}</td>
+                        <td>{{ row.offline|floatformat:1 }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -64,8 +64,8 @@
                         </td>
                         <td>{{ row.oncall|floatformat:1 }}</td>
                         <td>{{ row.online|floatformat:1 }}</td>
-                        <td>{{ row.offline|floatformat:1 }}</td>
                         <td>{{ row.fake_oncall|floatformat:1 }}</td>
+                        <td>{{ row.offline|floatformat:1 }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

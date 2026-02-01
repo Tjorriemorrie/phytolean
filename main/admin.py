@@ -97,12 +97,21 @@ def sa_psychics(request):
 
     # 🔑 SORT HERE
     psychics_current_month.sort(
-        key=lambda r: (r["oncall"], r["online"], r["offline"]),
-        reverse=True,
+        key=lambda r: (
+            -r["oncall"],
+            -r["online"],
+            -r["fake_oncall"],
+            r["offline"],
+        )
     )
+
     psychics_previous_month.sort(
-        key=lambda r: (r["oncall"], r["online"], r["offline"]),
-        reverse=True,
+        key=lambda r: (
+            -r["oncall"],
+            -r["online"],
+            -r["fake_oncall"],
+            r["offline"],
+        )
     )
 
     context = {
