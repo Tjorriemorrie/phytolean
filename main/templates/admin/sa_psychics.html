@@ -1,57 +1,76 @@
 {% extends "admin/base_site.html" %}
 
 {% block content %}
-<h2>SA Psychics – Monthly Status Totals</h2>
+    <h2>SA Psychics – Monthly Status Totals</h2>
 
-<table class="admin-table">
-    <thead>
-        <tr>
-            <th rowspan="2">Psychic</th>
-            <th colspan="4">Previous Month</th>
-            <th colspan="4">Current Month</th>
-        </tr>
-        <tr>
-            <th>Online</th>
-            <th>Offline</th>
-            <th>Oncall</th>
-            <th>Fake Oncall</th>
+    <div style="display: flex; gap: 2rem; align-items: flex-start;">
 
-            <th>Online</th>
-            <th>Offline</th>
-            <th>Oncall</th>
-            <th>Fake Oncall</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for row in psychics_current_month %}
-            {% with prev=psychics_previous_month|dictsort:"psychic.id" %}
-            <tr>
-                <td>
-                    <a href="{{ row.psychic.url }}" target="_blank">
-                        {{ row.psychic.name }}
-                    </a>
-                </td>
-
-                {# Previous month #}
-                {% for p in psychics_previous_month %}
-                    {% if p.psychic.id == row.psychic.id %}
-                        <td>{{ p.online|floatformat:1 }}</td>
-                        <td>{{ p.offline|floatformat:1 }}</td>
-                        <td>{{ p.oncall|floatformat:1 }}</td>
-                        <td>{{ p.fake_oncall|floatformat:1 }}</td>
-                    {% endif %}
-                {% empty %}
-                    <td>0</td><td>0</td><td>0</td><td>0</td>
+        <!-- Current Month -->
+        <div style="flex: 1;">
+            <h3>Current Month</h3>
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Psychic</th>
+                    <th>Oncall</th>
+                    <th>Online</th>
+                    <th>Offline</th>
+                    <th>Fake Oncall</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in psychics_current_month %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{{ row.psychic.url }}" target="_blank">
+                                {{ row.psychic.name }}
+                            </a>
+                        </td>
+                        <td>{{ row.oncall|floatformat:1 }}</td>
+                        <td>{{ row.online|floatformat:1 }}</td>
+                        <td>{{ row.offline|floatformat:1 }}</td>
+                        <td>{{ row.fake_oncall|floatformat:1 }}</td>
+                    </tr>
                 {% endfor %}
+                </tbody>
+            </table>
 
-                {# Current month #}
-                <td>{{ row.online|floatformat:1 }}</td>
-                <td>{{ row.offline|floatformat:1 }}</td>
-                <td>{{ row.oncall|floatformat:1 }}</td>
-                <td>{{ row.fake_oncall|floatformat:1 }}</td>
-            </tr>
-            {% endwith %}
-        {% endfor %}
-    </tbody>
-</table>
+        </div>
+
+        <!-- Previous Month -->
+        <div style="flex: 1;">
+            <h3>Previous Month</h3>
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Psychic</th>
+                    <th>Oncall</th>
+                    <th>Online</th>
+                    <th>Offline</th>
+                    <th>Fake Oncall</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in psychics_previous_month %}
+                    <tr>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{{ row.psychic.url }}" target="_blank">
+                                {{ row.psychic.name }}
+                            </a>
+                        </td>
+                        <td>{{ row.oncall|floatformat:1 }}</td>
+                        <td>{{ row.online|floatformat:1 }}</td>
+                        <td>{{ row.offline|floatformat:1 }}</td>
+                        <td>{{ row.fake_oncall|floatformat:1 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 {% endblock %}
