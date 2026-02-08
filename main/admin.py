@@ -10,7 +10,7 @@ from main.selectors import (
     get_monthly_psychic_status_aggregates,
     get_psychic_hourly_activity_aggregates,
     get_psychic_monthly_stats,
-    get_all_psychics_hourly_oncall_totals,
+    get_all_psychics_hourly_unique_counts,
 )
 
 
@@ -124,7 +124,7 @@ def sa_psychics(request):
         "title": "SA Psychics",
         "psychics_current_month": psychics_current_month,
         "psychics_previous_month": psychics_previous_month,
-        "hourly_oncall": get_all_psychics_hourly_oncall_totals(),
+        "hourly_unique": get_all_psychics_hourly_unique_counts(),
     }
 
     return TemplateResponse(

@@ -4,24 +4,31 @@
     <h2>SA Psychics – Monthly Status Totals</h2>
 
     <div class="histogram-container" style="margin-bottom: 2rem;">
-        <h3>Hourly Oncall Activity - All Psychics (Last 30 Days)</h3>
-        <div class="histogram" style="display: flex; padding-bottom: 30px; height: 230px; align-items: flex-end;">
-            {% for h in hourly_oncall %}
-            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 20px; height: 100%;">
+        <h3>Unique Psychics per Half-Hour - All Psychics (Last 30 Days)</h3>
+        <div class="histogram" style="display: flex; padding-bottom: 30px; padding-top: 10px; height: 240px; align-items: flex-end;">
+            {% for h in hourly_unique %}
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 10px; height: 100%;">
                 <div style="display: flex; flex-direction: column-reverse; height: 200px; width: 100%; justify-content: flex-start;">
-                    {% if h.oncall > 0 %}
-                    <div style="background-color: #ffc107; height: {{ h.height_pct }}%;" title="Oncall: {{ h.oncall }}"></div>
+                    {% if h.online > 0 or h.oncall > 0 %}
+                    <div style="background-color: #28a745; height: {{ h.online_height_px }}px;" title="Online: {{ h.online }}"></div>
+                    <div style="background-color: #dc3545; height: {{ h.oncall_height_px }}px;" title="Oncall: {{ h.oncall }}"></div>
                     {% else %}
                     <div style="background-color: #ddd; height: 2px;"></div>
                     {% endif %}
                 </div>
-                <span style="position: absolute; bottom: -20px; font-size: 10px;">{{ h.hour }}</span>
+                {% if h.is_hour_start %}
+                <span style="position: absolute; bottom: -20px; font-size: 9px;">{{ h.hour }}</span>
+                {% endif %}
             </div>
             {% endfor %}
         </div>
         <div style="margin-top: 30px;">
+            <span style="display: inline-block; margin-right: 20px;">
+                <span style="display: inline-block; width: 20px; height: 12px; background-color: #28a745; margin-right: 5px; vertical-align: middle;"></span>
+                Online
+            </span>
             <span style="display: inline-block;">
-                <span style="display: inline-block; width: 20px; height: 12px; background-color: #ffc107; margin-right: 5px; vertical-align: middle;"></span>
+                <span style="display: inline-block; width: 20px; height: 12px; background-color: #dc3545; margin-right: 5px; vertical-align: middle;"></span>
                 Oncall
             </span>
         </div>

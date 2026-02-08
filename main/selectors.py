@@ -3,15 +3,18 @@ from datetime import timedelta, datetime
 
 import pandas as pd
 import plotly.graph_objects as go
+from django.core.cache import cache
 from django.db.models import QuerySet, OuterRef, Subquery, Count, IntegerField, \
     Q, Value, Max, Exists
-from django.db.models.functions import TruncHour, Coalesce, ExtractHour
+from django.db.models.functions import TruncHour, Coalesce, ExtractHour, ExtractMinute
 from django.utils import timezone
 
 import main.constants as c
 from main.models import Psychic, Status
 
 logger = logging.getLogger(__name__)
+
+CACHE_TIMEOUT_1_HOUR = 60 * 60
 
 
 def generate_status_hourly_plot():
@@ -208,53 +211,103 @@ def get_psychic_monthly_stats(psychic_id):
     }
 
 
-def get_all_psychics_hourly_oncall_totals():
+def get_all_psychics_hourly_unique_counts():
     """
-    Returns hourly absolute oncall counts for all psychics combined.
+    Returns half-hourly unique psychic counts for online and oncall statuses.
     Uses a rolling 30-day window from now.
-    Includes height_pct for rendering bars scaled to max value.
+    Counts each psychic only once per half-hour slot if they had at least one status of that type.
+    If a psychic was oncall during a half-hour, they are NOT counted as online (oncall takes priority).
+    Cached for 1 hour.
 
     Output shape:
     [
-        {"hour": 0, "oncall": int, "height_pct": float},
-        {"hour": 1, "oncall": int, "height_pct": float},
+        {"slot": 0, "label": "0:00", "online": int, "oncall": int, "online_height_pct": float, "oncall_height_pct": float},
+        {"slot": 1, "label": "0:30", "online": int, "oncall": int, "online_height_pct": float, "oncall_height_pct": float},
         ...
-        {"hour": 23, "oncall": int, "height_pct": float},
+        {"slot": 47, "label": "23:30", "online": int, "oncall": int, "online_height_pct": float, "oncall_height_pct": float},
     ]
     """
+    cache_key = "all_psychics_halfhourly_unique_counts_v2"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
     now = timezone.now()
     start = now - timedelta(days=30)
 
-    statuses = (
+    # Get all online statuses with hour and minute
+    online_statuses = (
+        Status.objects
+        .filter(
+            status_at__gte=start,
+            status_at__lt=now,
+            status=c.PSYCHIC_STATUS_ONLINE,
+        )
+        .annotate(
+            hour=ExtractHour('status_at'),
+            minute=ExtractMinute('status_at'),
+        )
+        .values('hour', 'minute', 'psychic')
+    )
+
+    # Get all oncall statuses with hour and minute
+    oncall_statuses = (
         Status.objects
         .filter(
             status_at__gte=start,
             status_at__lt=now,
             status=c.PSYCHIC_STATUS_ONCALL,
         )
-        .annotate(hour=ExtractHour('status_at'))
-        .values('hour')
-        .annotate(count=Count('id'))
-        .order_by('hour')
+        .annotate(
+            hour=ExtractHour('status_at'),
+            minute=ExtractMinute('status_at'),
+        )
+        .values('hour', 'minute', 'psychic')
     )
 
-    # Create a dict for quick lookup: {hour: count}
-    hour_counts = {row['hour']: row['count'] for row in statuses}
+    # Build sets of psychics per half-hour slot for oncall
+    # slot = hour * 2 + (1 if minute >= 30 else 0)
+    oncall_by_slot = {}  # {slot: set of psychic_ids}
+    for row in oncall_statuses:
+        slot = row['hour'] * 2 + (1 if row['minute'] >= 30 else 0)
+        if slot not in oncall_by_slot:
+            oncall_by_slot[slot] = set()
+        oncall_by_slot[slot].add(row['psychic'])
 
-    # Build initial result with oncall counts
-    result = [
-        {
-            "hour": h,
-            "oncall": hour_counts.get(h, 0),
-        }
-        for h in range(24)
-    ]
+    # Build sets of psychics per half-hour slot for online (excluding those who were oncall)
+    online_by_slot = {}  # {slot: set of psychic_ids}
+    for row in online_statuses:
+        slot = row['hour'] * 2 + (1 if row['minute'] >= 30 else 0)
+        psychic_id = row['psychic']
+        # Only count as online if not oncall in this slot
+        if psychic_id not in oncall_by_slot.get(slot, set()):
+            if slot not in online_by_slot:
+                online_by_slot[slot] = set()
+            online_by_slot[slot].add(psychic_id)
 
-    # Calculate max for scaling
-    max_oncall = max((r["oncall"] for r in result), default=1) or 1
+    # Build result for all 48 half-hour slots
+    result = []
+    for slot in range(48):
+        hour = slot // 2
+        is_hour_start = slot % 2 == 0
+        minute = "30" if slot % 2 else "00"
+        result.append({
+            "slot": slot,
+            "hour": hour,
+            "is_hour_start": is_hour_start,
+            "label": f"{hour}:{minute}",
+            "online": len(online_by_slot.get(slot, set())),
+            "oncall": len(oncall_by_slot.get(slot, set())),
+        })
 
-    # Add height percentage
+    # Calculate max values for scaling to fit 200px container
+    max_combined = max((r["online"] + r["oncall"] for r in result), default=1) or 1
+    scale_factor = 200 / max_combined  # pixels per unit
+
+    # Add pixel heights (scaled to fit 200px container for stacked bars)
     for r in result:
-        r["height_pct"] = (r["oncall"] / max_oncall) * 100
+        r["online_height_px"] = r["online"] * scale_factor
+        r["oncall_height_px"] = r["oncall"] * scale_factor
 
+    cache.set(cache_key, result, CACHE_TIMEOUT_1_HOUR)
     return result
