@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from django.db.models import QuerySet, OuterRef, Subquery, Count, IntegerField, \
     Q, Value, Max, Exists
-from django.db.models.functions import TruncHour, Coalesce
+from django.db.models.functions import TruncHour, Coalesce, ExtractHour
 from django.utils import timezone
 
 import main.constants as c
@@ -127,3 +127,83 @@ def get_monthly_psychic_status_aggregates(month=None):
         }
         for row in statuses
     ]
+
+
+def get_psychic_hourly_activity_aggregates(psychic_id, month=None):
+    """
+    Returns hourly activity counts (Online + Oncall) for a specific psychic.
+    Defaults to the current month.
+
+    Output shape:
+    [
+        {"hour": 0, "count": int},
+        {"hour": 1, "count": int},
+        ...
+        {"hour": 23, "count": int},
+    ]
+    """
+    now = timezone.now()
+    month = month or now
+
+    start = month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if start.month == 12:
+        end = start.replace(year=start.year + 1, month=1)
+    else:
+        end = start.replace(month=start.month + 1)
+
+    statuses = (
+        Status.objects
+        .filter(
+            psychic_id=psychic_id,
+            status_at__gte=start,
+            status_at__lt=end,
+            status__in=[c.PSYCHIC_STATUS_ONLINE, c.PSYCHIC_STATUS_ONCALL],
+        )
+        .annotate(hour=ExtractHour('status_at'))
+        .values('hour')
+        .annotate(count=Count('id'))
+        .order_by('hour')
+    )
+
+    # Create a dict for quick lookup
+    hour_counts = {row['hour']: row['count'] for row in statuses}
+
+    # Return all 24 hours, filling in zeros for missing hours
+    return [
+        {"hour": h, "count": hour_counts.get(h, 0)}
+        for h in range(24)
+    ]
+
+
+def get_psychic_monthly_stats(psychic_id, month=None):
+    """
+    Returns monthly status counts for a specific psychic.
+    """
+    now = timezone.now()
+    month = month or now
+
+    start = month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if start.month == 12:
+        end = start.replace(year=start.year + 1, month=1)
+    else:
+        end = start.replace(month=start.month + 1)
+
+    result = (
+        Status.objects
+        .filter(psychic_id=psychic_id, status_at__gte=start, status_at__lt=end)
+        .aggregate(
+            online=Count("id", filter=Q(status=c.PSYCHIC_STATUS_ONLINE)),
+            offline=Count("id", filter=Q(status=c.PSYCHIC_STATUS_OFFLINE)),
+            oncall=Count("id", filter=Q(status=c.PSYCHIC_STATUS_ONCALL)),
+            fake_oncall=Count("id", filter=Q(status=c.PSYCHIC_STATUS_FAKE)),
+            total=Count("id"),
+        )
+    )
+
+    return {
+        "online": result["online"] * c.MINUTES_PER_SAMPLE,
+        "offline": result["offline"] * c.MINUTES_PER_SAMPLE,
+        "oncall": result["oncall"] * c.MINUTES_PER_SAMPLE,
+        "fake_oncall": result["fake_oncall"] * c.MINUTES_PER_SAMPLE,
+        "total": result["total"] * c.MINUTES_PER_SAMPLE,
+    }

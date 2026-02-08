@@ -24,7 +24,7 @@
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>
-                            <a href="{{ row.psychic.url }}" target="_blank">
+                            <a href="{% url 'admin:psychic-detail' row.psychic.id %}">
                                 {{ row.psychic.name }}
                             </a>
                         </td>
@@ -58,7 +58,7 @@
                     <tr>
                         <td>{{ forloop.counter }}</td>
                         <td>
-                            <a href="{{ row.psychic.url }}" target="_blank">
+                            <a href="{% url 'admin:psychic-detail' row.psychic.id %}">
                                 {{ row.psychic.name }}
                             </a>
                         </td>

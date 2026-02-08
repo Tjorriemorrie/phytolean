@@ -6,7 +6,11 @@ from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from import_export.resources import ModelResource
 
 from main.models import Discovery, Booking, Survey, Psychic, Status, Role, PayFastTransaction
-from main.selectors import get_monthly_psychic_status_aggregates
+from main.selectors import (
+    get_monthly_psychic_status_aggregates,
+    get_psychic_hourly_activity_aggregates,
+    get_psychic_monthly_stats,
+)
 
 
 @admin.register(Discovery)
@@ -128,6 +132,30 @@ def sa_psychics(request):
     )
 
 
+def psychic_detail_view(request, psychic_id):
+    from main.models import Psychic
+    psychic = Psychic.objects.get(id=psychic_id)
+    now = timezone.now()
+    current_month = now.replace(day=1)
+
+    stats = get_psychic_monthly_stats(psychic_id, month=current_month)
+    hourly = get_psychic_hourly_activity_aggregates(psychic_id, month=current_month)
+
+    context = {
+        **admin.site.each_context(request),
+        "title": f"Psychic: {psychic.name}",
+        "psychic": psychic,
+        "stats": stats,
+        "hourly": hourly,
+    }
+
+    return TemplateResponse(
+        request,
+        "admin/psychic_detail.html",
+        context,
+    )
+
+
 original_get_urls = admin.site.get_urls
 
 
@@ -135,6 +163,7 @@ def get_urls():
     urls = original_get_urls()
     custom_urls = [
         path('sa-psychics/', admin.site.admin_view(sa_psychics), name='sa-psychics'),
+        path('psychic/<int:psychic_id>/', admin.site.admin_view(psychic_detail_view), name='psychic-detail'),
     ]
     return custom_urls + urls
 
