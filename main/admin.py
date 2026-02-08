@@ -11,6 +11,7 @@ from main.selectors import (
     get_psychic_hourly_activity_aggregates,
     get_psychic_monthly_stats,
     get_all_psychics_hourly_unique_counts,
+    get_daily_oncall_counts,
 )
 
 
@@ -125,6 +126,7 @@ def sa_psychics(request):
         "psychics_current_month": psychics_current_month,
         "psychics_previous_month": psychics_previous_month,
         "hourly_unique": get_all_psychics_hourly_unique_counts(),
+        "daily_oncall": get_daily_oncall_counts(),
     }
 
     return TemplateResponse(

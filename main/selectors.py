@@ -211,6 +211,63 @@ def get_psychic_monthly_stats(psychic_id):
     }
 
 
+def get_daily_oncall_counts():
+    """
+    Returns daily total oncall counts for all psychics.
+    Uses a rolling 60-day window from now.
+    This is an absolute sum (not unique psychics).
+
+    Output shape:
+    [
+        {"date": "2026-02-01", "oncall": int},
+        {"date": "2026-02-02", "oncall": int},
+        ...
+    ]
+    """
+    from django.db.models.functions import TruncDate
+
+    now = timezone.now()
+    start = now - timedelta(days=60)
+
+    statuses = (
+        Status.objects
+        .filter(
+            status_at__gte=start,
+            status_at__lt=now,
+            status=c.PSYCHIC_STATUS_ONCALL,
+        )
+        .annotate(date=TruncDate('status_at'))
+        .values('date')
+        .annotate(oncall=Count('id'))
+        .order_by('date')
+    )
+
+    # Build lookup dict
+    date_counts = {row['date']: row['oncall'] for row in statuses}
+
+    # Generate all dates in the 60-day range
+    result = []
+    current_date = start.date()
+    end_date = now.date()
+    while current_date <= end_date:
+        result.append({
+            "date": current_date.strftime("%Y-%m-%d"),
+            "date_short": current_date.strftime("%m/%d"),
+            "oncall": date_counts.get(current_date, 0),
+        })
+        current_date += timedelta(days=1)
+
+    # Calculate max value for scaling to fit 200px container
+    max_oncall = max((r["oncall"] for r in result), default=1) or 1
+    scale_factor = 200 / max_oncall  # pixels per unit
+
+    # Add pixel heights (scaled to fit 200px container)
+    for r in result:
+        r["oncall_height_px"] = r["oncall"] * scale_factor
+
+    return result
+
+
 def get_all_psychics_hourly_unique_counts():
     """
     Returns half-hourly unique psychic counts for online and oncall statuses.

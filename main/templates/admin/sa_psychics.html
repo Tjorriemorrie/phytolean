@@ -34,6 +34,32 @@
         </div>
     </div>
 
+    <div class="histogram-container" style="margin-bottom: 2rem;">
+        <h3>Daily Oncall Total - All Psychics (Last 60 Days)</h3>
+        <div class="histogram" style="display: flex; padding-bottom: 30px; padding-top: 10px; height: 240px; align-items: flex-end;">
+            {% for d in daily_oncall %}
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 8px; height: 100%;">
+                <div style="display: flex; flex-direction: column-reverse; height: 200px; width: 100%; justify-content: flex-start;">
+                    {% if d.oncall > 0 %}
+                    <div style="background-color: #ffc107; height: {{ d.oncall_height_px }}px;" title="{{ d.date }}: {{ d.oncall }}"></div>
+                    {% else %}
+                    <div style="background-color: #ddd; height: 2px;"></div>
+                    {% endif %}
+                </div>
+                {% if forloop.counter|divisibleby:7 %}
+                <span style="position: absolute; bottom: -20px; font-size: 8px;">{{ d.date_short }}</span>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        <div style="margin-top: 30px;">
+            <span style="display: inline-block;">
+                <span style="display: inline-block; width: 20px; height: 12px; background-color: #ffc107; margin-right: 5px; vertical-align: middle;"></span>
+                Oncall
+            </span>
+        </div>
+    </div>
+
     <div style="display: flex; gap: 2rem; align-items: flex-start;">
 
         <!-- Current Month -->
