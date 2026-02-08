@@ -67,7 +67,7 @@
 
 <div class="stats-container">
     <div>
-        <h3>Current Month Stats (minutes)</h3>
+        <h3>Last 30 Days Stats (minutes)</h3>
         <table class="stats-table">
             <tr>
                 <th>Status</th>
@@ -98,14 +98,33 @@
 </div>
 
 <div class="histogram-container">
-    <h3>Hourly Activity (Online + Oncall)</h3>
+    <h3>Hourly Activity (Last 30 Days)</h3>
     <div class="histogram" style="padding-bottom: 30px;">
         {% for h in hourly %}
-        <div class="histogram-bar" style="height: {% if h.count > 0 %}{{ h.count }}%{% else %}2px{% endif %};">
-            <span class="histogram-value">{{ h.count }}</span>
-            <span class="histogram-label">{{ h.hour }}</span>
+        {% with total=h.online|add:h.oncall %}
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 20px;">
+            <div style="display: flex; flex-direction: column-reverse; height: 200px; width: 100%; justify-content: flex-start;">
+                {% if total > 0 %}
+                <div style="background-color: #28a745; height: {{ h.online }}px;" title="Online: {{ h.online }}"></div>
+                <div style="background-color: #ffc107; height: {{ h.oncall }}px;" title="Oncall: {{ h.oncall }}"></div>
+                {% else %}
+                <div style="background-color: #ddd; height: 2px;"></div>
+                {% endif %}
+            </div>
+            <span style="position: absolute; bottom: -20px; font-size: 10px;">{{ h.hour }}</span>
         </div>
+        {% endwith %}
         {% endfor %}
+    </div>
+    <div style="margin-top: 30px;">
+        <span style="display: inline-block; margin-right: 20px;">
+            <span style="display: inline-block; width: 20px; height: 12px; background-color: #28a745; margin-right: 5px; vertical-align: middle;"></span>
+            Online
+        </span>
+        <span style="display: inline-block;">
+            <span style="display: inline-block; width: 20px; height: 12px; background-color: #ffc107; margin-right: 5px; vertical-align: middle;"></span>
+            Oncall
+        </span>
     </div>
 </div>
 

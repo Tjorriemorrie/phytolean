@@ -3,6 +3,30 @@
 {% block content %}
     <h2>SA Psychics – Monthly Status Totals</h2>
 
+    <div class="histogram-container" style="margin-bottom: 2rem;">
+        <h3>Hourly Oncall Activity - All Psychics (Last 30 Days)</h3>
+        <div class="histogram" style="display: flex; padding-bottom: 30px; height: 230px; align-items: flex-end;">
+            {% for h in hourly_oncall %}
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 20px; height: 100%;">
+                <div style="display: flex; flex-direction: column-reverse; height: 200px; width: 100%; justify-content: flex-start;">
+                    {% if h.oncall > 0 %}
+                    <div style="background-color: #ffc107; height: {{ h.height_pct }}%;" title="Oncall: {{ h.oncall }}"></div>
+                    {% else %}
+                    <div style="background-color: #ddd; height: 2px;"></div>
+                    {% endif %}
+                </div>
+                <span style="position: absolute; bottom: -20px; font-size: 10px;">{{ h.hour }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        <div style="margin-top: 30px;">
+            <span style="display: inline-block;">
+                <span style="display: inline-block; width: 20px; height: 12px; background-color: #ffc107; margin-right: 5px; vertical-align: middle;"></span>
+                Oncall
+            </span>
+        </div>
+    </div>
+
     <div style="display: flex; gap: 2rem; align-items: flex-start;">
 
         <!-- Current Month -->
@@ -21,7 +45,7 @@
                 </thead>
                 <tbody>
                 {% for row in psychics_current_month %}
-                    <tr>
+                    <tr{% if row.psychic.name == "SEAH" %} style="background-color: #5c4d1a;"{% endif %}>
                         <td>{{ forloop.counter }}</td>
                         <td>
                             <a href="{% url 'admin:psychic-detail' row.psychic.id %}">
@@ -55,7 +79,7 @@
                 </thead>
                 <tbody>
                 {% for row in psychics_previous_month %}
-                    <tr>
+                    <tr{% if row.psychic.name == "SEAH" %} style="background-color: #5c4d1a;"{% endif %}>
                         <td>{{ forloop.counter }}</td>
                         <td>
                             <a href="{% url 'admin:psychic-detail' row.psychic.id %}">

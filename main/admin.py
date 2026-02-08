@@ -10,6 +10,7 @@ from main.selectors import (
     get_monthly_psychic_status_aggregates,
     get_psychic_hourly_activity_aggregates,
     get_psychic_monthly_stats,
+    get_all_psychics_hourly_oncall_totals,
 )
 
 
@@ -123,6 +124,7 @@ def sa_psychics(request):
         "title": "SA Psychics",
         "psychics_current_month": psychics_current_month,
         "psychics_previous_month": psychics_previous_month,
+        "hourly_oncall": get_all_psychics_hourly_oncall_totals(),
     }
 
     return TemplateResponse(
@@ -135,11 +137,9 @@ def sa_psychics(request):
 def psychic_detail_view(request, psychic_id):
     from main.models import Psychic
     psychic = Psychic.objects.get(id=psychic_id)
-    now = timezone.now()
-    current_month = now.replace(day=1)
 
-    stats = get_psychic_monthly_stats(psychic_id, month=current_month)
-    hourly = get_psychic_hourly_activity_aggregates(psychic_id, month=current_month)
+    stats = get_psychic_monthly_stats(psychic_id)
+    hourly = get_psychic_hourly_activity_aggregates(psychic_id)
 
     context = {
         **admin.site.each_context(request),
