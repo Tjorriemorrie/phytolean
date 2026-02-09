@@ -331,56 +331,66 @@ def get_all_psychics_hourly_unique_counts():
 
 def get_psychic_sessions(psychic_id, days=30):
     """
-    Returns consolidated sessions for a psychic, with all datetimes in SAST (GMT+2).
-    All returned datetimes are timezone-aware and in Africa/Johannesburg timezone.
-    Each session's end time is the next session's start time, ensuring contiguous sessions.
+    Returns sessions for a psychic, with all datetimes in SAST (GMT+2).
+    Consecutive statuses of the same type are merged into a single session.
+    Each session's start_at is the first occurrence of that status, and end_at is the next different status's status_at (in SAST).
+    For the last session, end_at is the last status's status_at.
     """
     now_utc = timezone.now()
     start_utc = now_utc - timedelta(days=days)
 
-    statuses = (
+    statuses = list(
         Status.objects
         .filter(psychic_id=psychic_id, status_at__gte=start_utc, status_at__lt=now_utc)
-        .order_by('status_at')  # chronological order
+        .order_by('status_at')
         .values('status', 'status_at')
     )
 
     sessions = []
-    prev_status = None
-    prev_start_at = None
+    current_status = None
+    current_start = None
 
-    for status_record in statuses:
+    for i, status_record in enumerate(statuses):
+        status = status_record["status"]
         status_at = status_record["status_at"]
-        # Ensure status_at is timezone-aware in UTC before converting to SAST
         if timezone.is_naive(status_at):
             status_at = timezone.make_aware(status_at, datetime.timezone.utc)
         sast_dt = timezone.localtime(status_at, SAST)
 
-        if prev_status is not None:
-            # End the previous session at the current status's start time
-            duration = int((sast_dt - prev_start_at).total_seconds() // 60)
+        if current_status is None:
+            # First status
+            current_status = status
+            current_start = sast_dt
+        elif status != current_status:
+            # Status changed, close previous session
+            end_at = sast_dt
+            duration = int((end_at - current_start).total_seconds() // 60)
             duration = max(duration, 0)
             sessions.append({
-                "status": prev_status,
-                "start_at": prev_start_at,
-                "end_at": sast_dt,
+                "status": current_status,
+                "start_at": current_start,
+                "end_at": end_at,
                 "duration_minutes": duration,
             })
-        prev_status = status_record["status"]
-        prev_start_at = sast_dt
+            current_status = status
+            current_start = sast_dt
 
-    # Close the last session (if any)
-    if prev_status is not None and prev_start_at is not None:
-        # End at now (in SAST) for the last session
-        end_at = timezone.localtime(now_utc, SAST)
-        duration = int((end_at - prev_start_at).total_seconds() // 60)
+    # Close the last session
+    if current_status is not None and current_start is not None:
+        # Use the last status's status_at as end_at
+        end_at = current_start
+        if statuses:
+            last_status_at = statuses[-1]["status_at"]
+            if timezone.is_naive(last_status_at):
+                last_status_at = timezone.make_aware(last_status_at, datetime.timezone.utc)
+            end_at = timezone.localtime(last_status_at, SAST)
+        duration = int((end_at - current_start).total_seconds() // 60)
         duration = max(duration, 0)
         sessions.append({
-            "status": prev_status,
-            "start_at": prev_start_at,
+            "status": current_status,
+            "start_at": current_start,
             "end_at": end_at,
             "duration_minutes": duration,
         })
 
-    # Sessions are in chronological order (oldest to newest)
-    return sessions
+    return reversed(sessions)
