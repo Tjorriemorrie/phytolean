@@ -340,12 +340,13 @@ def get_psychic_sessions(psychic_id, days=30):
     statuses = (
         Status.objects
         .filter(psychic_id=psychic_id, status_at__gte=start_utc, status_at__lt=now_utc)
-        .order_by('-status_at')
+        .order_by('status_at')  # chronological order
         .values('status', 'status_at')
     )
 
     sessions = []
     current_session = None
+    prev_status_at = None
 
     for status_record in statuses:
         status_at = status_record["status_at"]
@@ -353,40 +354,44 @@ def get_psychic_sessions(psychic_id, days=30):
         if timezone.is_naive(status_at):
             status_at = timezone.make_aware(status_at, datetime.timezone.utc)
         sast_dt = timezone.localtime(status_at, SAST)
+
         if current_session is None:
+            # Start a new session
             current_session = {
                 "status": status_record["status"],
-                "end_at": sast_dt,
                 "start_at": sast_dt,
             }
-        elif status_record["status"] == current_session["status"]:
-            current_session["start_at"] = sast_dt
-        else:
-            # Defensive: ensure both are datetime objects and not types
-            if isinstance(current_session["end_at"], object) and isinstance(current_session["start_at"], object) and hasattr(current_session["end_at"], '__sub__'):
-                duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
-            else:
-                duration = 0
+        elif status_record["status"] != current_session["status"]:
+            # End the previous session at the previous status's timestamp
+            end_at = prev_status_at
+            if end_at is None:
+                end_at = sast_dt
+            duration = int((end_at - current_session["start_at"]).total_seconds() // 60)
+            duration = max(duration, 0)
             sessions.append({
-                **current_session,
+                "status": current_session["status"],
+                "start_at": current_session["start_at"],
+                "end_at": end_at,
                 "duration_minutes": duration,
             })
+            # Start a new session
             current_session = {
                 "status": status_record["status"],
-                "end_at": sast_dt,
                 "start_at": sast_dt,
             }
+        prev_status_at = sast_dt
 
-    if current_session:
-        # Use the same check as above for subtraction
-        if isinstance(current_session["end_at"], object) and isinstance(current_session["start_at"], object) and hasattr(current_session["end_at"], '__sub__'):
-            duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
-        else:
-            duration = 0
+    # Close the last session
+    if current_session and prev_status_at is not None:
+        end_at = prev_status_at
+        duration = int((end_at - current_session["start_at"]).total_seconds() // 60)
+        duration = max(duration, 0)
         sessions.append({
-            **current_session,
+            "status": current_session["status"],
+            "start_at": current_session["start_at"],
+            "end_at": end_at,
             "duration_minutes": duration,
         })
 
     # All datetimes in sessions are in SAST (Africa/Johannesburg, GMT+2)
-    return sessions
+    return reversed(sessions)
