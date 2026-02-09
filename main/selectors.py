@@ -1,15 +1,14 @@
+import datetime
 import logging
-from datetime import timedelta, datetime
+from datetime import timedelta
+import pytz
 
 import pandas as pd
 import plotly.graph_objects as go
 from django.core.cache import cache
-from django.db.models import QuerySet, OuterRef, Subquery, Count, IntegerField, \
-    Q, Value, Max, Exists
-from django.db.models.functions import TruncHour, Coalesce, ExtractHour, ExtractMinute
+from django.db.models import Count, Q
+from django.db.models.functions import TruncHour, ExtractHour
 from django.utils import timezone
-from django.utils.timezone import get_current_timezone
-import pytz
 
 import main.constants as c
 from main.models import Psychic, Status
@@ -332,7 +331,8 @@ def get_all_psychics_hourly_unique_counts():
 
 def get_psychic_sessions(psychic_id, days=30):
     """
-    Returns consolidated sessions for a psychic, with all datetimes in SAST.
+    Returns consolidated sessions for a psychic, with all datetimes in SAST (GMT+2).
+    All returned datetimes are timezone-aware and in Africa/Johannesburg timezone.
     """
     now_utc = timezone.now()
     start_utc = now_utc - timedelta(days=days)
@@ -348,7 +348,11 @@ def get_psychic_sessions(psychic_id, days=30):
     current_session = None
 
     for status_record in statuses:
-        sast_dt = timezone.localtime(status_record["status_at"], SAST)
+        status_at = status_record["status_at"]
+        # Ensure status_at is timezone-aware in UTC before converting to SAST
+        if timezone.is_naive(status_at):
+            status_at = timezone.make_aware(status_at, datetime.timezone.utc)
+        sast_dt = timezone.localtime(status_at, SAST)
         if current_session is None:
             current_session = {
                 "status": status_record["status"],
@@ -358,7 +362,11 @@ def get_psychic_sessions(psychic_id, days=30):
         elif status_record["status"] == current_session["status"]:
             current_session["start_at"] = sast_dt
         else:
-            duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
+            # Defensive: ensure both are datetime objects and not types
+            if isinstance(current_session["end_at"], object) and isinstance(current_session["start_at"], object) and hasattr(current_session["end_at"], '__sub__'):
+                duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
+            else:
+                duration = 0
             sessions.append({
                 **current_session,
                 "duration_minutes": duration,
@@ -370,10 +378,15 @@ def get_psychic_sessions(psychic_id, days=30):
             }
 
     if current_session:
-        duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
+        # Use the same check as above for subtraction
+        if isinstance(current_session["end_at"], object) and isinstance(current_session["start_at"], object) and hasattr(current_session["end_at"], '__sub__'):
+            duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
+        else:
+            duration = 0
         sessions.append({
             **current_session,
             "duration_minutes": duration,
         })
 
+    # All datetimes in sessions are in SAST (Africa/Johannesburg, GMT+2)
     return sessions
