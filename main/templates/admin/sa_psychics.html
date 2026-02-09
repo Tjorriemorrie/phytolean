@@ -16,8 +16,9 @@
                     <div style="background-color: #ddd; height: 2px;"></div>
                     {% endif %}
                 </div>
-                {% if h.is_hour_start %}
-                <span style="position: absolute; bottom: -20px; font-size: 9px;">{{ h.hour }}</span>
+                <!-- X-axis label for every bar, or every Nth bar for clarity -->
+                {% if forloop.counter0|divisibleby:4 or h.is_hour_start %}
+                <span style="position: absolute; bottom: -20px; font-size: 9px; white-space: nowrap;">{{ h.label|default:h.hour }}</span>
                 {% endif %}
             </div>
             {% endfor %}
@@ -46,8 +47,9 @@
                     <div style="background-color: #ddd; height: 2px;"></div>
                     {% endif %}
                 </div>
-                {% if forloop.counter|divisibleby:7 %}
-                <span style="position: absolute; bottom: -20px; font-size: 8px;">{{ d.date_short }}</span>
+                <!-- X-axis label for every 7th bar (weekly), or every bar if desired -->
+                {% if forloop.counter0|divisibleby:7 %}
+                <span style="position: absolute; bottom: -20px; font-size: 8px; white-space: nowrap;">{{ d.date_short }}</span>
                 {% endif %}
             </div>
             {% endfor %}

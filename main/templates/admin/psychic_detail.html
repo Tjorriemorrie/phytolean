@@ -43,6 +43,7 @@
         left: 50%;
         transform: translateX(-50%);
         font-size: 10px;
+        color: black;
     }
     .histogram-value {
         position: absolute;
@@ -111,7 +112,7 @@
                 <div style="background-color: #ddd; height: 2px;"></div>
                 {% endif %}
             </div>
-            <span style="position: absolute; bottom: -20px; font-size: 10px;">{{ h.hour }}</span>
+            <span class="histogram-label">{{ h.hour }}</span>
         </div>
         {% endwith %}
         {% endfor %}

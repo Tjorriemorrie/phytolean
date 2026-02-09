@@ -8,6 +8,8 @@ from django.db.models import QuerySet, OuterRef, Subquery, Count, IntegerField, 
     Q, Value, Max, Exists
 from django.db.models.functions import TruncHour, Coalesce, ExtractHour, ExtractMinute
 from django.utils import timezone
+from django.utils.timezone import get_current_timezone
+import pytz
 
 import main.constants as c
 from main.models import Psychic, Status
@@ -15,6 +17,7 @@ from main.models import Psychic, Status
 logger = logging.getLogger(__name__)
 
 CACHE_TIMEOUT_1_HOUR = 60 * 60
+SAST = pytz.timezone('Africa/Johannesburg')
 
 
 def generate_status_hourly_plot():
@@ -134,44 +137,36 @@ def get_monthly_psychic_status_aggregates(month=None):
 
 def get_psychic_hourly_activity_aggregates(psychic_id):
     """
-    Returns hourly activity counts split by status (Online and Oncall) for a specific psychic.
-    Uses a rolling 30-day window from now.
-
-    Output shape:
-    [
-        {"hour": 0, "online": int, "oncall": int},
-        {"hour": 1, "online": int, "oncall": int},
-        ...
-        {"hour": 23, "online": int, "oncall": int},
-    ]
+    Returns a list of dicts, one per hour (0-23), with counts of online and oncall statuses for the past 30 days.
+    All hours are in SAST (GMT+2).
     """
-    now = timezone.now()
-    start = now - timedelta(days=30)
+    now_utc = timezone.now()
+    start_utc = now_utc - timedelta(days=30)
 
+    # Extract hour in UTC, then shift to SAST in Python
     statuses = (
         Status.objects
         .filter(
             psychic_id=psychic_id,
-            status_at__gte=start,
-            status_at__lt=now,
+            status_at__gte=start_utc,
+            status_at__lt=now_utc,
         )
-        .annotate(hour=ExtractHour('status_at'))
-        .values('hour', 'status')
+        .annotate(hour_utc=ExtractHour('status_at'))
+        .values('hour_utc', 'status')
         .annotate(count=Count('id'))
-        .order_by('hour')
+        .order_by('hour_utc')
     )
 
-    # Create a nested dict for quick lookup: {hour: {status: count}}
     hour_status_counts = {}
     for row in statuses:
-        hour = row['hour']
+        # Shift hour from UTC to SAST (GMT+2), wrap around 24
+        hour = (row['hour_utc'] + 2) % 24
         status = row['status']
         count = row['count']
         if hour not in hour_status_counts:
             hour_status_counts[hour] = {}
         hour_status_counts[hour][status] = count
 
-    # Return all 24 hours with online and oncall counts
     return [
         {
             "hour": h,
@@ -270,91 +265,56 @@ def get_daily_oncall_counts():
 
 def get_all_psychics_hourly_unique_counts():
     """
-    Returns half-hourly unique psychic counts for online and oncall statuses.
-    Uses a rolling 30-day window from now.
-    Counts each psychic only once per half-hour slot if they had at least one status of that type.
-    If a psychic was oncall during a half-hour, they are NOT counted as online (oncall takes priority).
-    Cached for 1 hour.
-
-    Output shape:
-    [
-        {"slot": 0, "label": "0:00", "online": int, "oncall": int, "online_height_pct": float, "oncall_height_pct": float},
-        {"slot": 1, "label": "0:30", "online": int, "oncall": int, "online_height_pct": float, "oncall_height_pct": float},
-        ...
-        {"slot": 47, "label": "23:30", "online": int, "oncall": int, "online_height_pct": float, "oncall_height_pct": float},
-    ]
+    Returns a list of dicts, one per hour (0-23), with unique counts of online and oncall psychics for the past 30 days.
+    All hours are in SAST (GMT+2).
     """
     cache_key = "all_psychics_halfhourly_unique_counts_v2"
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
-    now = timezone.now()
-    start = now - timedelta(days=30)
+    now_utc = timezone.now()
+    start_utc = now_utc - timedelta(days=30)
 
-    # Get all online statuses with hour and minute
     online_statuses = (
         Status.objects
         .filter(
-            status_at__gte=start,
-            status_at__lt=now,
+            status_at__gte=start_utc,
+            status_at__lt=now_utc,
             status=c.PSYCHIC_STATUS_ONLINE,
         )
-        .annotate(
-            hour=ExtractHour('status_at'),
-            minute=ExtractMinute('status_at'),
-        )
-        .values('hour', 'minute', 'psychic')
+        .annotate(hour_utc=ExtractHour('status_at'))
+        .values('hour_utc', 'psychic')
     )
 
-    # Get all oncall statuses with hour and minute
     oncall_statuses = (
         Status.objects
         .filter(
-            status_at__gte=start,
-            status_at__lt=now,
+            status_at__gte=start_utc,
+            status_at__lt=now_utc,
             status=c.PSYCHIC_STATUS_ONCALL,
         )
-        .annotate(
-            hour=ExtractHour('status_at'),
-            minute=ExtractMinute('status_at'),
-        )
-        .values('hour', 'minute', 'psychic')
+        .annotate(hour_utc=ExtractHour('status_at'))
+        .values('hour_utc', 'psychic')
     )
 
-    # Build sets of psychics per half-hour slot for oncall
-    # slot = hour * 2 + (1 if minute >= 30 else 0)
-    oncall_by_slot = {}  # {slot: set of psychic_ids}
-    for row in oncall_statuses:
-        slot = row['hour'] * 2 + (1 if row['minute'] >= 30 else 0)
-        if slot not in oncall_by_slot:
-            oncall_by_slot[slot] = set()
-        oncall_by_slot[slot].add(row['psychic'])
-
-    # Build sets of psychics per half-hour slot for online (excluding those who were oncall)
-    online_by_slot = {}  # {slot: set of psychic_ids}
+    online_by_hour = {}
+    oncall_by_hour = {}
     for row in online_statuses:
-        slot = row['hour'] * 2 + (1 if row['minute'] >= 30 else 0)
-        psychic_id = row['psychic']
-        # Only count as online if not oncall in this slot
-        if psychic_id not in oncall_by_slot.get(slot, set()):
-            if slot not in online_by_slot:
-                online_by_slot[slot] = set()
-            online_by_slot[slot].add(psychic_id)
+        hour = (row['hour_utc'] + 2) % 24
+        psychic = row['psychic']
+        online_by_hour.setdefault(hour, set()).add(psychic)
+    for row in oncall_statuses:
+        hour = (row['hour_utc'] + 2) % 24
+        psychic = row['psychic']
+        oncall_by_hour.setdefault(hour, set()).add(psychic)
 
-    # Build result for all 48 half-hour slots
     result = []
-    for slot in range(48):
-        hour = slot // 2
-        is_hour_start = slot % 2 == 0
-        minute = "30" if slot % 2 else "00"
+    for slot in range(24):
         result.append({
-            "slot": slot,
-            "hour": hour,
-            "is_hour_start": is_hour_start,
-            "label": f"{hour}:{minute}",
-            "online": len(online_by_slot.get(slot, set())),
-            "oncall": len(oncall_by_slot.get(slot, set())),
+            "hour": slot,
+            "online": len(online_by_hour.get(slot, set())),
+            "oncall": len(oncall_by_hour.get(slot, set())),
         })
 
     # Calculate max values for scaling to fit 200px container
@@ -372,26 +332,14 @@ def get_all_psychics_hourly_unique_counts():
 
 def get_psychic_sessions(psychic_id, days=30):
     """
-    Returns consolidated sessions for a psychic.
-    Consecutive Status records with the same status are combined into a single session.
-
-    Output shape:
-    [
-        {
-            "status": str,
-            "start_at": datetime,
-            "end_at": datetime,
-            "duration_minutes": int,
-        },
-        ...
-    ]
+    Returns consolidated sessions for a psychic, with all datetimes in SAST.
     """
-    now = timezone.now()
-    start = now - timedelta(days=days)
+    now_utc = timezone.now()
+    start_utc = now_utc - timedelta(days=days)
 
     statuses = (
         Status.objects
-        .filter(psychic_id=psychic_id, status_at__gte=start, status_at__lt=now)
+        .filter(psychic_id=psychic_id, status_at__gte=start_utc, status_at__lt=now_utc)
         .order_by('-status_at')
         .values('status', 'status_at')
     )
@@ -400,33 +348,32 @@ def get_psychic_sessions(psychic_id, days=30):
     current_session = None
 
     for status_record in statuses:
+        sast_dt = timezone.localtime(status_record["status_at"], SAST)
         if current_session is None:
-            # Start the first session
             current_session = {
                 "status": status_record["status"],
-                "end_at": status_record["status_at"],
-                "start_at": status_record["status_at"],
+                "end_at": sast_dt,
+                "start_at": sast_dt,
             }
-        elif current_session["status"] == status_record["status"]:
-            # Same status, extend the session start time backwards
-            current_session["start_at"] = status_record["status_at"]
+        elif status_record["status"] == current_session["status"]:
+            current_session["start_at"] = sast_dt
         else:
-            # Status changed, save current session and start new one
-            current_session["duration_minutes"] = int(
-                (current_session["end_at"] - current_session["start_at"]).total_seconds() / 60
-            ) + c.MINUTES_PER_SAMPLE  # Add 5 minutes for the final interval
-            sessions.append(current_session)
+            duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
+            sessions.append({
+                **current_session,
+                "duration_minutes": duration,
+            })
             current_session = {
                 "status": status_record["status"],
-                "end_at": status_record["status_at"],
-                "start_at": status_record["status_at"],
+                "end_at": sast_dt,
+                "start_at": sast_dt,
             }
 
-    # Don't forget the last session
     if current_session:
-        current_session["duration_minutes"] = int(
-            (current_session["end_at"] - current_session["start_at"]).total_seconds() / 60
-        ) + c.MINUTES_PER_SAMPLE
-        sessions.append(current_session)
+        duration = int((current_session["end_at"] - current_session["start_at"]).total_seconds() // 60)
+        sessions.append({
+            **current_session,
+            "duration_minutes": duration,
+        })
 
     return sessions
