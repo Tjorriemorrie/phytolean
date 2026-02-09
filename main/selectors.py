@@ -334,7 +334,7 @@ def get_psychic_sessions(psychic_id, days=30):
     Returns sessions for a psychic, with all datetimes in SAST (GMT+2).
     Consecutive statuses of the same type are merged into a single session.
     Each session's start_at is the first occurrence of that status, and end_at is the next different status's status_at (in SAST).
-    For the last session, end_at is the last status's status_at.
+    For the last session, end_at is the last status's status_at (SAST-adjusted, but not double-adjusted).
     """
     now_utc = timezone.now()
     start_utc = now_utc - timedelta(days=days)
@@ -349,20 +349,20 @@ def get_psychic_sessions(psychic_id, days=30):
     sessions = []
     current_status = None
     current_start = None
+    last_sast_dt = None
 
     for i, status_record in enumerate(statuses):
         status = status_record["status"]
         status_at = status_record["status_at"]
         if timezone.is_naive(status_at):
             status_at = timezone.make_aware(status_at, datetime.timezone.utc)
-        sast_dt = timezone.localtime(status_at, SAST)
+        sast_dt = status_at + timedelta(hours=2)
+        last_sast_dt = sast_dt
 
         if current_status is None:
-            # First status
             current_status = status
             current_start = sast_dt
         elif status != current_status:
-            # Status changed, close previous session
             end_at = sast_dt
             duration = int((end_at - current_start).total_seconds() // 60)
             duration = max(duration, 0)
@@ -377,13 +377,7 @@ def get_psychic_sessions(psychic_id, days=30):
 
     # Close the last session
     if current_status is not None and current_start is not None:
-        # Use the last status's status_at as end_at
-        end_at = current_start
-        if statuses:
-            last_status_at = statuses[-1]["status_at"]
-            if timezone.is_naive(last_status_at):
-                last_status_at = timezone.make_aware(last_status_at, datetime.timezone.utc)
-            end_at = timezone.localtime(last_status_at, SAST)
+        end_at = last_sast_dt if last_sast_dt is not None else current_start
         duration = int((end_at - current_start).total_seconds() // 60)
         duration = max(duration, 0)
         sessions.append({
