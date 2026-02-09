@@ -368,3 +368,65 @@ def get_all_psychics_hourly_unique_counts():
 
     cache.set(cache_key, result, CACHE_TIMEOUT_1_HOUR)
     return result
+
+
+def get_psychic_sessions(psychic_id, days=30):
+    """
+    Returns consolidated sessions for a psychic.
+    Consecutive Status records with the same status are combined into a single session.
+
+    Output shape:
+    [
+        {
+            "status": str,
+            "start_at": datetime,
+            "end_at": datetime,
+            "duration_minutes": int,
+        },
+        ...
+    ]
+    """
+    now = timezone.now()
+    start = now - timedelta(days=days)
+
+    statuses = (
+        Status.objects
+        .filter(psychic_id=psychic_id, status_at__gte=start, status_at__lt=now)
+        .order_by('-status_at')
+        .values('status', 'status_at')
+    )
+
+    sessions = []
+    current_session = None
+
+    for status_record in statuses:
+        if current_session is None:
+            # Start the first session
+            current_session = {
+                "status": status_record["status"],
+                "end_at": status_record["status_at"],
+                "start_at": status_record["status_at"],
+            }
+        elif current_session["status"] == status_record["status"]:
+            # Same status, extend the session start time backwards
+            current_session["start_at"] = status_record["status_at"]
+        else:
+            # Status changed, save current session and start new one
+            current_session["duration_minutes"] = int(
+                (current_session["end_at"] - current_session["start_at"]).total_seconds() / 60
+            ) + c.MINUTES_PER_SAMPLE  # Add 5 minutes for the final interval
+            sessions.append(current_session)
+            current_session = {
+                "status": status_record["status"],
+                "end_at": status_record["status_at"],
+                "start_at": status_record["status_at"],
+            }
+
+    # Don't forget the last session
+    if current_session:
+        current_session["duration_minutes"] = int(
+            (current_session["end_at"] - current_session["start_at"]).total_seconds() / 60
+        ) + c.MINUTES_PER_SAMPLE
+        sessions.append(current_session)
+
+    return sessions

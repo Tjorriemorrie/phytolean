@@ -12,6 +12,7 @@ from main.selectors import (
     get_psychic_monthly_stats,
     get_all_psychics_hourly_unique_counts,
     get_daily_oncall_counts,
+    get_psychic_sessions,
 )
 
 
@@ -142,6 +143,7 @@ def psychic_detail_view(request, psychic_id):
 
     stats = get_psychic_monthly_stats(psychic_id)
     hourly = get_psychic_hourly_activity_aggregates(psychic_id)
+    sessions = get_psychic_sessions(psychic_id)
 
     context = {
         **admin.site.each_context(request),
@@ -149,6 +151,7 @@ def psychic_detail_view(request, psychic_id):
         "psychic": psychic,
         "stats": stats,
         "hourly": hourly,
+        "sessions": sessions,
     }
 
     return TemplateResponse(

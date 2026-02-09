@@ -128,5 +128,41 @@
     </div>
 </div>
 
+<div class="sessions-container" style="margin-top: 2rem;">
+    <h3>Sessions (Last 30 Days)</h3>
+    <table class="stats-table">
+        <thead>
+            <tr>
+                <th>Status</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Duration (minutes)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for session in sessions %}
+            <tr>
+                <td>
+                    <span style="display: inline-block; width: 12px; height: 12px; margin-right: 5px; vertical-align: middle;
+                        {% if session.status == 'Online' %}background-color: #28a745;
+                        {% elif session.status == 'Oncall' %}background-color: #ffc107;
+                        {% elif session.status == 'Fake Oncall' %}background-color: #fd7e14;
+                        {% else %}background-color: #6c757d;{% endif %}
+                    "></span>
+                    {{ session.status }}
+                </td>
+                <td>{{ session.start_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ session.end_at|date:"Y-m-d H:i" }}</td>
+                <td>{{ session.duration_minutes|floatformat:0 }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4">No sessions found in the last 30 days.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
 
 {% endblock %}
