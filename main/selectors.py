@@ -333,6 +333,7 @@ def get_psychic_sessions(psychic_id, days=30):
     """
     Returns consolidated sessions for a psychic, with all datetimes in SAST (GMT+2).
     All returned datetimes are timezone-aware and in Africa/Johannesburg timezone.
+    Each session's end time is the next session's start time, ensuring contiguous sessions.
     """
     now_utc = timezone.now()
     start_utc = now_utc - timedelta(days=days)
@@ -345,8 +346,8 @@ def get_psychic_sessions(psychic_id, days=30):
     )
 
     sessions = []
-    current_session = None
-    prev_status_at = None
+    prev_status = None
+    prev_start_at = None
 
     for status_record in statuses:
         status_at = status_record["status_at"]
@@ -355,43 +356,31 @@ def get_psychic_sessions(psychic_id, days=30):
             status_at = timezone.make_aware(status_at, datetime.timezone.utc)
         sast_dt = timezone.localtime(status_at, SAST)
 
-        if current_session is None:
-            # Start a new session
-            current_session = {
-                "status": status_record["status"],
-                "start_at": sast_dt,
-            }
-        elif status_record["status"] != current_session["status"]:
-            # End the previous session at the previous status's timestamp
-            end_at = prev_status_at
-            if end_at is None:
-                end_at = sast_dt
-            duration = int((end_at - current_session["start_at"]).total_seconds() // 60)
+        if prev_status is not None:
+            # End the previous session at the current status's start time
+            duration = int((sast_dt - prev_start_at).total_seconds() // 60)
             duration = max(duration, 0)
             sessions.append({
-                "status": current_session["status"],
-                "start_at": current_session["start_at"],
-                "end_at": end_at,
+                "status": prev_status,
+                "start_at": prev_start_at,
+                "end_at": sast_dt,
                 "duration_minutes": duration,
             })
-            # Start a new session
-            current_session = {
-                "status": status_record["status"],
-                "start_at": sast_dt,
-            }
-        prev_status_at = sast_dt
+        prev_status = status_record["status"]
+        prev_start_at = sast_dt
 
-    # Close the last session
-    if current_session and prev_status_at is not None:
-        end_at = prev_status_at
-        duration = int((end_at - current_session["start_at"]).total_seconds() // 60)
+    # Close the last session (if any)
+    if prev_status is not None and prev_start_at is not None:
+        # End at now (in SAST) for the last session
+        end_at = timezone.localtime(now_utc, SAST)
+        duration = int((end_at - prev_start_at).total_seconds() // 60)
         duration = max(duration, 0)
         sessions.append({
-            "status": current_session["status"],
-            "start_at": current_session["start_at"],
+            "status": prev_status,
+            "start_at": prev_start_at,
             "end_at": end_at,
             "duration_minutes": duration,
         })
 
-    # All datetimes in sessions are in SAST (Africa/Johannesburg, GMT+2)
-    return reversed(sessions)
+    # Sessions are in chronological order (oldest to newest)
+    return sessions
