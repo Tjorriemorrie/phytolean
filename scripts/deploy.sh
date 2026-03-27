@@ -17,6 +17,13 @@ git fetch origin
 git reset --hard origin/main >> "$logfile" 2>&1
 echo "git reset exit code: $?" | tee -a "$logfile"
 
+# Ensure uv is available
+if ! command -v uv &> /dev/null; then
+    echo "Installing uv..." | tee -a "$logfile"
+    curl -LsSf https://astral.sh/uv/install.sh | sh >> "$logfile" 2>&1
+fi
+export PATH="$HOME/.local/bin:$PATH"
+
 # Install dependencies with uv
 echo "Installing dependencies..." | tee -a "$logfile"
 uv sync >> "$logfile" 2>&1
