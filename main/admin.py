@@ -1,7 +1,10 @@
+import json
+
 from django.contrib import admin
 from django.template.response import TemplateResponse
 from django.urls import path
 from django.utils import timezone
+from django.views.decorators.cache import cache_page
 from import_export.admin import ImportExportModelAdmin, ExportActionMixin
 from import_export.resources import ModelResource
 
@@ -11,8 +14,10 @@ from main.selectors import (
     get_psychic_hourly_activity_aggregates,
     get_psychic_monthly_stats,
     get_all_psychics_hourly_unique_counts,
+    get_all_psychics_daily_unique_counts,
     get_daily_oncall_counts,
     get_psychic_sessions,
+    get_oncall_online_ratio_heatmap,
 )
 
 
@@ -80,6 +85,7 @@ class PayFastTransactionAdmin(admin.ModelAdmin):
     )
 
 
+@cache_page(60 * 60)
 def sa_psychics(request):
     now = timezone.now()
 
@@ -95,6 +101,16 @@ def sa_psychics(request):
             month=current_month.month - 1,
         )
 
+    if previous_month.month == 1:
+        two_months_ago = previous_month.replace(
+            year=previous_month.year - 1,
+            month=12,
+        )
+    else:
+        two_months_ago = previous_month.replace(
+            month=previous_month.month - 1,
+        )
+
     psychics_current_month = get_monthly_psychic_status_aggregates(
         month=current_month
     )
@@ -102,32 +118,53 @@ def sa_psychics(request):
         month=previous_month
     )
 
-    # 🔑 SORT HERE
-    psychics_current_month.sort(
-        key=lambda r: (
-            -r["oncall"],
-            -r["online"],
-            -r["fake_oncall"],
-            r["offline"],
-        )
+    sort_key = lambda r: (
+        -r["oncall"],
+        -r["online"],
+        -r["fake_oncall"],
+        r["offline"],
     )
 
-    psychics_previous_month.sort(
-        key=lambda r: (
-            -r["oncall"],
-            -r["online"],
-            -r["fake_oncall"],
-            r["offline"],
-        )
+    psychics_current_month.sort(key=sort_key)
+    psychics_previous_month.sort(key=sort_key)
+
+    psychics_two_months_ago = get_monthly_psychic_status_aggregates(
+        month=two_months_ago
     )
+    psychics_two_months_ago.sort(key=sort_key)
+
+    hourly_unique = get_all_psychics_hourly_unique_counts()
+    daily_unique = get_all_psychics_daily_unique_counts()
+    daily_oncall = get_daily_oncall_counts()
+    heatmap = get_oncall_online_ratio_heatmap()
+
+    # Serialize chart data as JSON for Chart.js
+    hourly_chart_data = json.dumps({
+        "labels": [f"{h['hour']}:00" for h in hourly_unique],
+        "online": [h["online"] for h in hourly_unique],
+        "oncall": [h["oncall"] for h in hourly_unique],
+    })
+    daily_unique_chart_data = json.dumps({
+        "labels": [str(d['day']) for d in daily_unique],
+        "online": [d["online"] for d in daily_unique],
+        "oncall": [d["oncall"] for d in daily_unique],
+    })
+    daily_chart_data = json.dumps({
+        "labels": [d["date_short"] for d in daily_oncall],
+        "oncall": [d["oncall"] for d in daily_oncall],
+    })
+    heatmap_data = json.dumps(heatmap)
 
     context = {
         **admin.site.each_context(request),
         "title": "SA Psychics",
         "psychics_current_month": psychics_current_month,
         "psychics_previous_month": psychics_previous_month,
-        "hourly_unique": get_all_psychics_hourly_unique_counts(),
-        "daily_oncall": get_daily_oncall_counts(),
+        "psychics_two_months_ago": psychics_two_months_ago,
+        "hourly_chart_data": hourly_chart_data,
+        "daily_unique_chart_data": daily_unique_chart_data,
+        "daily_chart_data": daily_chart_data,
+        "heatmap_data": heatmap_data,
     }
 
     return TemplateResponse(

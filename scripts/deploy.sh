@@ -17,20 +17,19 @@ git fetch origin
 git reset --hard origin/main >> "$logfile" 2>&1
 echo "git reset exit code: $?" | tee -a "$logfile"
 
-# Activate virtual environment and install dependencies
+# Install dependencies with uv
 echo "Installing dependencies..." | tee -a "$logfile"
-source /home/lean/phytolean/.venv/bin/activate
-pip install -r requirements.txt >> "$logfile" 2>&1
-echo "pip install exit code: $?" | tee -a "$logfile"
+uv sync >> "$logfile" 2>&1
+echo "uv sync exit code: $?" | tee -a "$logfile"
 
 # Apply migrations
 echo "Applying migrations..." | tee -a "$logfile"
-python3 manage.py migrate --noinput >> "$logfile" 2>&1
+uv run python manage.py migrate --noinput >> "$logfile" 2>&1
 echo "migrate exit code: $?" | tee -a "$logfile"
 
 # Collect static files
 echo "Collecting static files..." | tee -a "$logfile"
-python3 manage.py collectstatic --noinput >> "$logfile" 2>&1
+uv run python manage.py collectstatic --noinput >> "$logfile" 2>&1
 echo "collectstatic exit code: $?" | tee -a "$logfile"
 
 # Restart Gunicorn using the password from SERVER_PWD

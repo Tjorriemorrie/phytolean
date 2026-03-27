@@ -7,7 +7,7 @@ import pandas as pd
 import plotly.graph_objects as go
 from django.core.cache import cache
 from django.db.models import Count, Q
-from django.db.models.functions import TruncHour, ExtractHour
+from django.db.models.functions import TruncHour, ExtractHour, ExtractDay
 from django.utils import timezone
 
 import main.constants as c
@@ -325,6 +325,147 @@ def get_all_psychics_hourly_unique_counts():
         r["online_height_px"] = r["online"] * scale_factor
         r["oncall_height_px"] = r["oncall"] * scale_factor
 
+    cache.set(cache_key, result, CACHE_TIMEOUT_1_HOUR)
+    return result
+
+
+def get_all_psychics_daily_unique_counts():
+    """
+    Returns a list of dicts, one per day of month (1-31), with unique counts of online and oncall psychics
+    for the past 30 days. All times are in SAST (GMT+2).
+    """
+    cache_key = "all_psychics_daily_unique_counts_v1"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    now_utc = timezone.now()
+    start_utc = now_utc - timedelta(days=30)
+
+    online_statuses = (
+        Status.objects
+        .filter(
+            status_at__gte=start_utc,
+            status_at__lt=now_utc,
+            status=c.PSYCHIC_STATUS_ONLINE,
+        )
+        .annotate(day=ExtractDay('status_at'))
+        .values('day', 'psychic')
+    )
+
+    oncall_statuses = (
+        Status.objects
+        .filter(
+            status_at__gte=start_utc,
+            status_at__lt=now_utc,
+            status=c.PSYCHIC_STATUS_ONCALL,
+        )
+        .annotate(day=ExtractDay('status_at'))
+        .values('day', 'psychic')
+    )
+
+    online_by_day = {}
+    oncall_by_day = {}
+    for row in online_statuses:
+        day = row['day']
+        online_by_day.setdefault(day, set()).add(row['psychic'])
+    for row in oncall_statuses:
+        day = row['day']
+        oncall_by_day.setdefault(day, set()).add(row['psychic'])
+
+    result = []
+    for day in range(1, 32):
+        result.append({
+            "day": day,
+            "online": len(online_by_day.get(day, set())),
+            "oncall": len(oncall_by_day.get(day, set())),
+        })
+
+    cache.set(cache_key, result, CACHE_TIMEOUT_1_HOUR)
+    return result
+
+
+def get_oncall_online_ratio_heatmap():
+    """
+    Returns a 7x24 grid (day_of_week x hour) of oncall/online ratios
+    for the past 90 days. All hours are in SAST (GMT+2).
+
+    Output shape:
+    {
+        "days": ["Mon", "Tue", ...],
+        "hours": [0, 1, ..., 23],
+        "data": [[ratio_h0, ratio_h1, ...], ...]  # 7 rows (days) x 24 cols (hours)
+    }
+    """
+    from django.db.models.functions import ExtractWeekDay
+
+    cache_key = "oncall_online_ratio_heatmap_v1"
+    cached = cache.get(cache_key)
+    if cached is not None:
+        return cached
+
+    now_utc = timezone.now()
+    start_utc = now_utc - timedelta(days=90)
+
+    statuses = (
+        Status.objects
+        .filter(
+            status_at__gte=start_utc,
+            status_at__lt=now_utc,
+            status__in=[c.PSYCHIC_STATUS_ONCALL, c.PSYCHIC_STATUS_ONLINE],
+        )
+        .annotate(
+            hour_utc=ExtractHour('status_at'),
+            dow_utc=ExtractWeekDay('status_at'),  # 1=Sunday .. 7=Saturday
+        )
+        .values('hour_utc', 'dow_utc', 'status')
+        .annotate(count=Count('id'))
+    )
+
+    # Build counts grid keyed by (sast_dow, sast_hour)
+    oncall_grid = {}
+    online_grid = {}
+
+    for row in statuses:
+        hour_utc = row['hour_utc']
+        dow_utc = row['dow_utc']  # 1=Sun..7=Sat
+        status = row['status']
+        count = row['count']
+
+        # Shift to SAST (UTC+2)
+        sast_hour = (hour_utc + 2) % 24
+        # If hour wraps past midnight, advance the day
+        day_offset = 1 if (hour_utc + 2) >= 24 else 0
+
+        # Convert Django's 1=Sun..7=Sat to 0=Mon..6=Sun
+        # Django: 1=Sun,2=Mon,3=Tue,4=Wed,5=Thu,6=Fri,7=Sat
+        py_dow = (dow_utc - 2) % 7  # 0=Mon..6=Sun
+        sast_dow = (py_dow + day_offset) % 7
+
+        if status == c.PSYCHIC_STATUS_ONCALL:
+            oncall_grid[(sast_dow, sast_hour)] = oncall_grid.get((sast_dow, sast_hour), 0) + count
+        else:
+            online_grid[(sast_dow, sast_hour)] = online_grid.get((sast_dow, sast_hour), 0) + count
+
+    days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+    hours = list(range(24))
+
+    data = []
+    for dow in range(7):
+        row = []
+        for h in range(24):
+            oncall = oncall_grid.get((dow, h), 0)
+            online = online_grid.get((dow, h), 0)
+            if online > 0:
+                ratio = round(oncall / online, 2)
+            elif oncall > 0:
+                ratio = round(oncall, 2)  # all oncall, no online
+            else:
+                ratio = 0
+            row.append(ratio)
+        data.append(row)
+
+    result = {"days": days, "hours": hours, "data": data}
     cache.set(cache_key, result, CACHE_TIMEOUT_1_HOUR)
     return result
 

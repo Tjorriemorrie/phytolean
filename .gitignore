@@ -138,3 +138,5 @@ logs/
 
 # static files
 /static
+
+db.sqlite3*

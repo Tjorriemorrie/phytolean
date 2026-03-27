@@ -284,6 +284,11 @@ video {
     min-height: 10rem;
 }
 
+.captcha {
+    display: block;
+    margin-bottom: 0.3rem;
+}
+
 #id_captcha_1 {
     width: 300px;
 }

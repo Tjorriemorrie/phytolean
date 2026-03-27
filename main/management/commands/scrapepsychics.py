@@ -1,5 +1,6 @@
 import logging
 import time
+from datetime import timedelta
 from typing import List, Tuple, Optional
 
 import requests
@@ -182,3 +183,8 @@ class Command(BaseCommand):
         logger.info("Starting SA-Psychics advisor scrape...")
         advisors = scrape_all()
         logger.info(f"Scraping complete. Total advisors scraped: {len(advisors)}")
+
+        cutoff = now() - timedelta(days=90)
+        deleted, _ = Status.objects.filter(status_at__lt=cutoff).delete()
+        if deleted:
+            logger.info(f"Deleted {deleted} status records older than 3 months")

@@ -3,63 +3,30 @@
 {% block content %}
     <h2>SA Psychics – Monthly Status Totals</h2>
 
-    <div class="histogram-container" style="margin-bottom: 2rem;">
-        <h3>Unique Psychics per Half-Hour - All Psychics (Last 30 Days)</h3>
-        <div class="histogram" style="display: flex; padding-bottom: 30px; padding-top: 10px; height: 240px; align-items: flex-end;">
-            {% for h in hourly_unique %}
-            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 10px; height: 100%;">
-                <div style="display: flex; flex-direction: column-reverse; height: 200px; width: 100%; justify-content: flex-start;">
-                    {% if h.online > 0 or h.oncall > 0 %}
-                    <div style="background-color: #28a745; height: {{ h.online_height_px }}px;" title="Online: {{ h.online }}"></div>
-                    <div style="background-color: #dc3545; height: {{ h.oncall_height_px }}px;" title="Oncall: {{ h.oncall }}"></div>
-                    {% else %}
-                    <div style="background-color: #ddd; height: 2px;"></div>
-                    {% endif %}
-                </div>
-                <!-- X-axis label for every bar, or every Nth bar for clarity -->
-                {% if forloop.counter0|divisibleby:4 or h.is_hour_start %}
-                <span style="position: absolute; bottom: -20px; font-size: 9px; white-space: nowrap;">{{ h.label|default:h.hour }}</span>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-        <div style="margin-top: 30px;">
-            <span style="display: inline-block; margin-right: 20px;">
-                <span style="display: inline-block; width: 20px; height: 12px; background-color: #28a745; margin-right: 5px; vertical-align: middle;"></span>
-                Online
-            </span>
-            <span style="display: inline-block;">
-                <span style="display: inline-block; width: 20px; height: 12px; background-color: #dc3545; margin-right: 5px; vertical-align: middle;"></span>
-                Oncall
-            </span>
+    <div style="margin-bottom: 2rem;">
+        <h3>Unique Psychics per Hour - All Psychics (Last 30 Days)</h3>
+        <div style="width: 100%; height: 300px;">
+            <canvas id="hourlyChart"></canvas>
         </div>
     </div>
 
-    <div class="histogram-container" style="margin-bottom: 2rem;">
+    <div style="margin-bottom: 2rem;">
+        <h3>Unique Psychics per Day of Month - All Psychics (Last 30 Days)</h3>
+        <div style="width: 100%; height: 300px;">
+            <canvas id="dailyUniqueChart"></canvas>
+        </div>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
         <h3>Daily Oncall Total - All Psychics (Last 60 Days)</h3>
-        <div class="histogram" style="display: flex; padding-bottom: 30px; padding-top: 10px; height: 240px; align-items: flex-end;">
-            {% for d in daily_oncall %}
-            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 8px; height: 100%;">
-                <div style="display: flex; flex-direction: column-reverse; height: 200px; width: 100%; justify-content: flex-start;">
-                    {% if d.oncall > 0 %}
-                    <div style="background-color: #ffc107; height: {{ d.oncall_height_px }}px;" title="{{ d.date }}: {{ d.oncall }}"></div>
-                    {% else %}
-                    <div style="background-color: #ddd; height: 2px;"></div>
-                    {% endif %}
-                </div>
-                <!-- X-axis label for every 7th bar (weekly), or every bar if desired -->
-                {% if forloop.counter0|divisibleby:7 %}
-                <span style="position: absolute; bottom: -20px; font-size: 8px; white-space: nowrap;">{{ d.date_short }}</span>
-                {% endif %}
-            </div>
-            {% endfor %}
+        <div style="width: 100%; height: 300px;">
+            <canvas id="dailyChart"></canvas>
         </div>
-        <div style="margin-top: 30px;">
-            <span style="display: inline-block;">
-                <span style="display: inline-block; width: 20px; height: 12px; background-color: #ffc107; margin-right: 5px; vertical-align: middle;"></span>
-                Oncall
-            </span>
-        </div>
+    </div>
+
+    <div style="margin-bottom: 2rem;">
+        <h3>Oncall / Online Ratio by Day &amp; Hour (Last 90 Days)</h3>
+        <div id="heatmapContainer" style="width: 100%; overflow-x: auto;"></div>
     </div>
 
     <div style="display: flex; gap: 2rem; align-items: flex-start;">
@@ -88,9 +55,9 @@
                             </a>
                         </td>
                         <td>{{ row.oncall|floatformat:1 }}</td>
-                        <td>{{ row.online|floatformat:1 }}</td>
+                        <td>{{ row.online|floatformat:0 }}</td>
                         <td>{{ row.fake_oncall|floatformat:1 }}</td>
-                        <td>{{ row.offline|floatformat:1 }}</td>
+                        <td>{{ row.offline|floatformat:0 }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -122,9 +89,42 @@
                             </a>
                         </td>
                         <td>{{ row.oncall|floatformat:1 }}</td>
-                        <td>{{ row.online|floatformat:1 }}</td>
+                        <td>{{ row.online|floatformat:0 }}</td>
                         <td>{{ row.fake_oncall|floatformat:1 }}</td>
-                        <td>{{ row.offline|floatformat:1 }}</td>
+                        <td>{{ row.offline|floatformat:0 }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Two Months Ago -->
+        <div style="flex: 1;">
+            <h3>Two Months Ago</h3>
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Psychic</th>
+                    <th>Oncall</th>
+                    <th>Online</th>
+                    <th>Fake Oncall</th>
+                    <th>Offline</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for row in psychics_two_months_ago %}
+                    <tr{% if row.psychic.name == "SEAH" %} style="background-color: #5c4d1a;"{% endif %}>
+                        <td>{{ forloop.counter }}</td>
+                        <td>
+                            <a href="{% url 'admin:psychic-detail' row.psychic.id %}">
+                                {{ row.psychic.name }}
+                            </a>
+                        </td>
+                        <td>{{ row.oncall|floatformat:1 }}</td>
+                        <td>{{ row.online|floatformat:0 }}</td>
+                        <td>{{ row.fake_oncall|floatformat:1 }}</td>
+                        <td>{{ row.offline|floatformat:0 }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>
@@ -132,4 +132,166 @@
         </div>
 
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+    <script>
+        const hourlyData = {{ hourly_chart_data|safe }};
+        const dailyUniqueData = {{ daily_unique_chart_data|safe }};
+        const dailyData = {{ daily_chart_data|safe }};
+        const heatmapData = {{ heatmap_data|safe }};
+
+        new Chart(document.getElementById('hourlyChart'), {
+            type: 'bar',
+            data: {
+                labels: hourlyData.labels,
+                datasets: [
+                    {
+                        label: 'Online',
+                        data: hourlyData.online,
+                        backgroundColor: '#28a745',
+                    },
+                    {
+                        label: 'Oncall',
+                        data: hourlyData.oncall,
+                        backgroundColor: '#dc3545',
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, beginAtZero: true },
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                },
+            },
+        });
+
+        new Chart(document.getElementById('dailyUniqueChart'), {
+            type: 'bar',
+            data: {
+                labels: dailyUniqueData.labels,
+                datasets: [
+                    {
+                        label: 'Online',
+                        data: dailyUniqueData.online,
+                        backgroundColor: '#28a745',
+                    },
+                    {
+                        label: 'Oncall',
+                        data: dailyUniqueData.oncall,
+                        backgroundColor: '#dc3545',
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true },
+                    y: { stacked: true, beginAtZero: true },
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                },
+            },
+        });
+
+        new Chart(document.getElementById('dailyChart'), {
+            type: 'bar',
+            data: {
+                labels: dailyData.labels,
+                datasets: [
+                    {
+                        label: 'Oncall',
+                        data: dailyData.oncall,
+                        backgroundColor: '#ffc107',
+                    },
+                ],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true },
+                },
+                plugins: {
+                    legend: { position: 'bottom' },
+                },
+            },
+        });
+        // Heatmap
+        (function() {
+            const container = document.getElementById('heatmapContainer');
+            const days = heatmapData.days;
+            const hours = heatmapData.hours;
+            const data = heatmapData.data;
+
+            // Find max value for color scaling
+            let maxVal = 0;
+            for (const row of data) {
+                for (const v of row) {
+                    if (v > maxVal) maxVal = v;
+                }
+            }
+            if (maxVal === 0) maxVal = 1;
+
+            const table = document.createElement('table');
+            table.style.borderCollapse = 'collapse';
+            table.style.fontFamily = 'monospace';
+            table.style.fontSize = '12px';
+            table.style.width = '100%';
+            table.style.tableLayout = 'fixed';
+
+            // Header row with hours
+            const thead = document.createElement('tr');
+            const corner = document.createElement('th');
+            corner.style.width = '50px';
+            thead.appendChild(corner);
+            for (const h of hours) {
+                const th = document.createElement('th');
+                th.textContent = h + ':00';
+                th.style.textAlign = 'center';
+                th.style.padding = '2px';
+                th.style.fontSize = '10px';
+                thead.appendChild(th);
+            }
+            table.appendChild(thead);
+
+            // Data rows
+            for (let d = 0; d < days.length; d++) {
+                const tr = document.createElement('tr');
+                const label = document.createElement('td');
+                label.textContent = days[d];
+                label.style.fontWeight = 'bold';
+                label.style.paddingRight = '8px';
+                tr.appendChild(label);
+
+                for (let h = 0; h < 24; h++) {
+                    const td = document.createElement('td');
+                    const val = data[d][h];
+                    const intensity = val / maxVal;
+
+                    // Color: low (green) -> high (red)
+                    const r = Math.round(220 * intensity + 30);
+                    const g = Math.round(180 * (1 - intensity) + 30);
+                    const b = 30;
+                    td.style.backgroundColor = `rgb(${r},${g},${b})`;
+                    td.style.color = intensity > 0.5 ? '#fff' : '#222';
+                    td.style.height = '32px';
+                    td.style.textAlign = 'center';
+                    td.style.border = '1px solid #444';
+                    td.style.cursor = 'default';
+                    td.title = `${days[d]} ${h}:00 — ratio: ${val.toFixed(2)}`;
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+
+            container.appendChild(table);
+        })();
+    </script>
 {% endblock %}
