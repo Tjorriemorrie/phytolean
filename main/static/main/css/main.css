@@ -283,3 +283,7 @@ video {
     font-size: 12px;
     min-height: 10rem;
 }
+
+#id_captcha_1 {
+    width: 300px;
+}
