@@ -1,3 +1,30 @@
-<div class="container-fluid footer text-center">
-  <p>PhytoLean &copy; {% now "Y" %}</p>
-</div>
+{% load static %}
+<footer class="phyto-footer">
+    <div class="container">
+        <div class="row align-items-start">
+            <div class="col-md-4 footer-brand">
+                <img class="footer-logo" src="{% static 'main/img/phytolean_logo.png' %}" alt="PhytoLean"/>
+                <p class="footer-tagline">Your journey to weight freedom starts here.</p>
+            </div>
+            <div class="col-md-4 footer-links">
+                <h6 class="footer-heading">Explore</h6>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="{% url 'events' %}">Events</a></li>
+                    <li><a href="{% url 'services' %}">Services</a></li>
+                    <li><a href="{% url 'foryou' %}">Why this is for you</a></li>
+                </ul>
+            </div>
+            <div class="col-md-4 footer-links">
+                <h6 class="footer-heading">Connect</h6>
+                <ul>
+                    <li><a href="{% url 'faq' %}">FAQ</a></li>
+                    <li><a href="{% url 'getintouch' %}">Get In Touch</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>PhytoLean &copy; {% now "Y" %}</p>
+        </div>
+    </div>
+</footer>

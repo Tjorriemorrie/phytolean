@@ -4,47 +4,126 @@
 {% block title %}Why this is for you - {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid foryou-page">
 
     {% include 'main/navbar.html' with nav=nav %}
 
-    <div class="container-fluid big-body">
+    <!-- ── Hero banner ── -->
+    <section class="foryou-hero">
+        <div class="foryou-hero-inner">
+            <span class="foryou-label">Your journey starts here</span>
+            <h1>Who Will Benefit from the PhytoLean Program</h1>
+        </div>
+    </section>
 
-        <div class="row py-5">
-            <div class="col-7">
-                <h2 class="pb-4">Who Will Benefit from the PhytoLean Program:</h2>
-                <ul>
-                    <li>Participants that want to learn how to lose weight and experience a more healthy lifestyle. All ages and genders are welcome. Children, professional athletes, adults and the elderly have all benefitted from our program.</li>
-                    <li>Everyone that want to slim down in a healthy way while boosting their immunity for optimal health and vitality.</li>
-                    <li>If you are currently suffering from chronic diseases like diabetes, heart disease, high blood pressure, high cholesterol, had surgery etc. you can participate in this program while continuing with your medication or other treatments.</li>
-                    <li>Anyone who want to lose weight and slim down or live a healthier lifestyle while retaining muscle mass but losing fat.</li>
-                </ul>
-                <br/>
-                <br/>
-                <p>Through adherence of this program you will start to notice a reduction of centimetres around your waistline first and you will appear more toned. Gradual weight loss and health improvement generally takes a little longer as is understandable. Measuring your weight might be deceptive. Many fad diets lose kilograms quick as they might cause a massive reduction in muscle and water loss in the body. The poor participants believe in the amazing instantaneous result, unaware that they are not achieving the lasting results they are after. Only to feel defeated once they regain the weight or to double their weight.</p>
-                <p>Rest assured, our program is committed at targeting the adipose tissue (fat) without water and muscle loss.</p>
-                <p>Requirements:</p>
-                <dl class="dd-ticks pl-3">
-                    <dd>Willingness to lose weight in a healthy natural way.</dd>
-                    <dd>This programme is ideal for all types of clients and situations.</dd>
-                    <dd>A teachable spirit open to new knowledge and information never considered before.</dd>
-                    <dd>A commitment and motivation to improving their way of life.</dd>
-                    <dd>A willingness to learn self-control or good healthy habits.</dd>
-                    <dd>Open to considering being part of a support group to work on possible emotional or mental blocks when it comes to eating. (Not compulsory)</dd>
-                    <dd>Willing to put into practice what is learned for the specified time period in order to get the desired results.</dd>
-                </dl>
+    <!-- ── Main content ── -->
+    <div class="container" style="max-width: 1140px;">
 
+        <!-- Audience cards -->
+        <section class="foryou-audience">
+            <div class="row g-4 align-items-stretch">
+                <div class="col-lg-7">
+                    <div class="foryou-cards">
+                        <div class="foryou-card">
+                            <span class="foryou-card-icon"><i class="bi bi-people-fill"></i></span>
+                            <div>
+                                <h3>All Ages &amp; Genders Welcome</h3>
+                                <p>Participants that want to learn how to lose weight and experience a more healthy lifestyle. Children, professional athletes, adults and the elderly have all benefitted from our program.</p>
+                            </div>
+                        </div>
+                        <div class="foryou-card">
+                            <span class="foryou-card-icon"><i class="bi bi-shield-check"></i></span>
+                            <div>
+                                <h3>Boost Immunity &amp; Vitality</h3>
+                                <p>Everyone that want to slim down in a healthy way while boosting their immunity for optimal health and vitality.</p>
+                            </div>
+                        </div>
+                        <div class="foryou-card">
+                            <span class="foryou-card-icon"><i class="bi bi-heart-pulse-fill"></i></span>
+                            <div>
+                                <h3>Safe with Existing Conditions</h3>
+                                <p>If you are currently suffering from chronic diseases like diabetes, heart disease, high blood pressure, high cholesterol, had surgery etc. you can participate in this program while continuing with your medication or other treatments.</p>
+                            </div>
+                        </div>
+                        <div class="foryou-card">
+                            <span class="foryou-card-icon"><i class="bi bi-lightning-charge-fill"></i></span>
+                            <div>
+                                <h3>Retain Muscle, Lose Fat</h3>
+                                <p>Anyone who want to lose weight and slim down or live a healthier lifestyle while retaining muscle mass but losing fat.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5 d-flex align-items-center">
+                    <div class="foryou-img-wrap">
+                        <img class="img-fluid" src="{% static 'main/img/foryou/pexels-monstera-6621227.jpg' %}" alt="Healthy lifestyle"/>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Divider -->
+        <div class="section-divider">
+            <span class="divider-icon"><i class="bi bi-flower2"></i></span>
+        </div>
+
+        <!-- How it works -->
+        <section class="foryou-how">
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <h2>How Our Approach Works</h2>
+                    <p>Through adherence of this program you will start to notice a reduction of centimetres around your waistline first and you will appear more toned. Gradual weight loss and health improvement generally takes a little longer as is understandable. Measuring your weight might be deceptive. Many fad diets lose kilograms quick as they might cause a massive reduction in muscle and water loss in the body. The poor participants believe in the amazing instantaneous result, unaware that they are not achieving the lasting results they are after. Only to feel defeated once they regain the weight or to double their weight.</p>
+                    <div class="foryou-callout">
+                        <i class="bi bi-patch-check-fill"></i>
+                        <p>Rest assured, our program is committed at targeting the adipose tissue (fat) without water and muscle loss.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <h2>Requirements</h2>
+                    <div class="foryou-req-list">
+                        <div class="foryou-req">
+                            <span class="foryou-req-check"><i class="bi bi-check-lg"></i></span>
+                            <span>Willingness to lose weight in a healthy natural way.</span>
+                        </div>
+                        <div class="foryou-req">
+                            <span class="foryou-req-check"><i class="bi bi-check-lg"></i></span>
+                            <span>This programme is ideal for all types of clients and situations.</span>
+                        </div>
+                        <div class="foryou-req">
+                            <span class="foryou-req-check"><i class="bi bi-check-lg"></i></span>
+                            <span>A teachable spirit open to new knowledge and information never considered before.</span>
+                        </div>
+                        <div class="foryou-req">
+                            <span class="foryou-req-check"><i class="bi bi-check-lg"></i></span>
+                            <span>A commitment and motivation to improving their way of life.</span>
+                        </div>
+                        <div class="foryou-req">
+                            <span class="foryou-req-check"><i class="bi bi-check-lg"></i></span>
+                            <span>A willingness to learn self-control or good healthy habits.</span>
+                        </div>
+                        <div class="foryou-req">
+                            <span class="foryou-req-check"><i class="bi bi-check-lg"></i></span>
+                            <span>Open to considering being part of a support group to work on possible emotional or mental blocks when it comes to eating. (Not compulsory)</span>
+                        </div>
+                        <div class="foryou-req">
+                            <span class="foryou-req-check"><i class="bi bi-check-lg"></i></span>
+                            <span>Willing to put into practice what is learned for the specified time period in order to get the desired results.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="foryou-cta">
+            <div class="foryou-cta-box">
                 {% with txt='Get started and book your free consultation here.' %}
                     {% include 'main/snippets/schedule_btn.html' with txt=txt %}
                 {% endwith %}
             </div>
-            <div class="col-5">
-                <img class="img-fluid" src="{% static 'main/img/foryou/pexels-monstera-6621227.jpg' %}"/>
-            </div>
-        </div>
+        </section>
 
     </div>
-    <br/>
 
     {% include 'main/footer.html' %}
 </div>

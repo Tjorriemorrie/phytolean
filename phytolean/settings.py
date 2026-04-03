@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     # external
     'crispy_forms',
-    'crispy_bootstrap4',
+    'crispy_bootstrap5',
     'captcha',
     'django_extensions',
     'import_export',
@@ -197,7 +197,7 @@ LOGGING = {
 }
 
 # crispy forms
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = 'bootstrap5'
 CRISPY_FAIL_SILENTLY = not DEBUG
 
 CAPTCHA_TEST_MODE = bool(len(sys.argv) > 1 and sys.argv[1] == 'test')

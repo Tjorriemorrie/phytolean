@@ -1,31 +1,86 @@
 {% extends 'main/base.html' %}
+{% load static %}
 
 {% block title %}What we do - {{ block.super }}{% endblock %}
 
 {% block content %}
-<div class="container-fluid">
+<div class="container-fluid services-page home-page">
 
     {% include 'main/navbar.html' with nav=nav %}
 
     <div class="container-fluid big-body">
 
-        <div class="jumbotron"  style="background: var(--clr-deepocean)">
-            <h2 class="display-5"> Medically proven and supported by Evidence based research our approach to weight loss is proudly one of the top four programs in the world to consider currently for weight loss. </h2>
+        <!-- Hero -->
+        <div class="services-hero reveal">
+            <div class="services-hero-inner">
+                <span class="services-hero-label">Our Approach</span>
+                <h1>Medically proven weight loss, backed by evidence-based research</h1>
+                <p class="services-hero-sub">Proudly one of the top four programs in the world to consider currently for weight loss.</p>
+            </div>
         </div>
 
-        {% include 'main/services_snippets/specialization.html' %}
+        <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
 
-        {% include 'main/services_snippets/food.html' %}
+        <div class="home-section reveal">
+            {% include 'main/services_snippets/specialization.html' %}
+        </div>
 
-        {% include 'main/services_snippets/support.html' %}
+        <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
 
-        {% include 'main/services_snippets/programs.html' %}
+        <div class="home-section reveal">
+            {% include 'main/services_snippets/food.html' %}
+        </div>
 
-        {% include 'main/services_snippets/changes.html' %}
+        <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
+
+        <div class="home-section reveal">
+            {% include 'main/services_snippets/support.html' %}
+        </div>
+
+        <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
+
+        <div class="home-section reveal">
+            {% include 'main/services_snippets/programs.html' %}
+        </div>
+
+        <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
+
+        <div class="home-section reveal">
+            {% include 'main/services_snippets/changes.html' %}
+        </div>
 
     </div>
-    <br/>
 
     {% include 'main/footer.html' %}
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('revealed');
+                observer.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(function(el) {
+        observer.observe(el);
+    });
+
+    document.querySelectorAll('.expand-toggle').forEach(function(btn) {
+        var original = btn.innerHTML;
+        var target = document.querySelector(btn.getAttribute('data-bs-target'));
+        if (target) {
+            target.addEventListener('shown.bs.collapse', function() {
+                btn.innerHTML = 'Show less <i class="bi bi-chevron-up"></i>';
+            });
+            target.addEventListener('hidden.bs.collapse', function() {
+                btn.innerHTML = original;
+            });
+        }
+    });
+});
+</script>
 {% endblock %}

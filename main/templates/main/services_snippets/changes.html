@@ -1,42 +1,45 @@
 {% load static %}
 
-<div class="row py-5">
-    <div class="col-7">
-        <h2>What changes might be noticed after as little as 10 days:</h2>
-        <h5 class="py-3">Our clients are delighted to see changes and report</h5>
-        <dl class="dd-ticks">
-            <dd>Clearer skin, less breakouts</dd>
-            <dd>Better concentration, clearer thinking, increased mental performance</dd>
-            <dd>Better spiritual awareness and connection have been reported</dd>
-            <dd>Reduced Sinus issues, allergies or rashes</dd>
-            <dd>Reduced abdominal cramps</dd>
-            <dd>More energy, better sleeping patterns</dd>
-            <dd>Cm loss around the waist area</dd>
-            <dd>Leaner more toned muscles even without exercise</dd>
-            <dd>Our programme promote fat loss, not water or muscle loss</dd>
-            <dd>Feeling less bloated, constipated or sluggish.</dd>
-            <dd>Not feeling “heavy or tired” after a meal.</dd>
-            <dd>Reduced cravings and unhealthy eating habits after 14 days.</dd>
-            <dd>Reduced aches and pains in joints, better mobility</dd>
-        </dl>
+<div class="svc-section svc-changes">
+    <div class="row align-items-start g-4 g-lg-5">
+        <div class="col-lg-7">
+            <h2>What changes might be noticed after as little as 10 days</h2>
+            <h5 class="svc-subhead">Our clients are delighted to see changes and report</h5>
 
-        <h4 class="pt-2">We are constantly hearing from those on the programme at an early stage, how they are noticing not just a weight loss but an improvement in their general health and well-being. They are delighted to share that their doctor has either reduced their medication or they are no longer in need of it. The most common improvements we hear on a daily basis are:</h4>
-        <br/>
-        <ul>
-            <li>Blood pressure and cholesterol in a normal range</li>
-            <li>Reduction or no need for certain medications</li>
-            <li>No longer pre-diabetic or type 2 diabetic</li>
-            <li>Improved sleep</li>
-            <li>Fewer aches and pains</li>
-            <li>Increased energy and fitness levels</li>
-        </ul>
+            <div class="svc-results-grid">
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Clearer skin, less breakouts</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Better concentration and mental performance</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Reduced sinus issues, allergies or rashes</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Reduced abdominal cramps</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> More energy, better sleeping patterns</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Cm loss around the waist area</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Leaner more toned muscles even without exercise</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Fat loss, not water or muscle loss</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Less bloating, constipation and sluggishness</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Reduced cravings after 14 days</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Reduced aches and pains, better mobility</div>
+                <div class="svc-result-item"><i class="bi bi-check-circle"></i> Better spiritual awareness and connection</div>
+            </div>
 
-        {% with txt='Don’t become a statistic! Do not wait, start losing weight!' %}
-            {% include 'main/snippets/schedule_btn.html' with txt=txt %}
-        {% endwith %}
+            <div class="svc-callout mt-4">
+                <h4>Medical improvements our clients report</h4>
+                <p>We are constantly hearing from those on the programme at an early stage how they are noticing not just weight loss but an improvement in their general health and well-being:</p>
+                <ul class="svc-list svc-list-highlight">
+                    <li>Blood pressure and cholesterol in a normal range</li>
+                    <li>Reduction or no need for certain medications</li>
+                    <li>No longer pre-diabetic or type 2 diabetic</li>
+                    <li>Improved sleep</li>
+                    <li>Fewer aches and pains</li>
+                    <li>Increased energy and fitness levels</li>
+                </ul>
+            </div>
 
-    </div>
-    <div class="col-5">
-        <img class="img-fluid" src="{% static 'main/img/services/dane-wetton-zdLdgGbi9Ow-unsplash.jpg' %}"/>
+            {% with txt="Don't become a statistic! Do not wait, start losing weight!" %}
+                {% include 'main/snippets/schedule_btn.html' with txt=txt %}
+            {% endwith %}
+        </div>
+        <div class="col-lg-5">
+            <img class="img-fluid svc-img svc-img-sticky" src="{% static 'main/img/services/dane-wetton-zdLdgGbi9Ow-unsplash.jpg' %}" alt="Transformation results"/>
+        </div>
     </div>
 </div>

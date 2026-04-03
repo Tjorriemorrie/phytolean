@@ -4,36 +4,68 @@
 {% block title %}Home of Weight Loss - {{ block.super }}{% endblock %}
 
 {% block content %}
-  <div class="container-fluid">
+  <div class="container-fluid home-page">
 
     {% include 'main/navbar.html' with nav=nav %}
 
     <div class="container-fluid big-body">
 
-      <div class="row mb-5">
-          <div class="col-lg-6">
-                <h4>A recent global study published in the Lancet, a London-based medical journal, suggests that 70% of adult South African women and nearly 40% of men are overweight or obese. Even among children, a quarter of girls and a fifth of boys are at greater risk of ill-health, from diabetes to heart disease. Don’t become a statistic! Take your power back and regain your desired weight and health today. Do not delay! Contact us today for a Health assessment and start your journey to a new you with absolute Weight freedom.</h4>
+      <div class="row home-hero mb-3 reveal">
+          <div class="col-lg-6 d-flex align-items-center">
+                <h4>A recent global study published in the Lancet, a London-based medical journal, suggests that 70% of adult South African women and nearly 40% of men are overweight or obese. Even among children, a quarter of girls and a fifth of boys are at greater risk of ill-health, from diabetes to heart disease. Don't become a statistic! Take your power back and regain your desired weight and health today. Do not delay! Contact us today for a Health assessment and start your journey to a new you with absolute Weight freedom.</h4>
           </div>
             <div class="col-lg-6">
                 <video src="{% static 'main/vid/phytolean.mp4' %}" type="video/mp4" controls></video>
             </div>
       </div>
 
-      {% include 'main/home_snippets/discover_the_power.html' %}
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
 
-      {% include 'main/home_snippets/summaries.html' %}
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/discover_the_power.html' %}
+      </div>
 
-      {% include 'main/home_snippets/different_and_unique.html' %}
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
 
-      {% include 'main/home_snippets/dedication.html' %}
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/summaries.html' %}
+      </div>
 
-      {% include 'main/home_snippets/our_approach.html' %}
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
 
-      {% include 'main/home_snippets/benefits.html' %}
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/different_and_unique.html' %}
+      </div>
 
-      {% include 'main/home_snippets/rejuvenation.html' %}
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
 
-      {% include 'main/home_snippets/desire.html' %}
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/dedication.html' %}
+      </div>
+
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
+
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/our_approach.html' %}
+      </div>
+
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
+
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/benefits.html' %}
+      </div>
+
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
+
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/rejuvenation.html' %}
+      </div>
+
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
+
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/desire.html' %}
+      </div>
 
       {% comment %}
       <div class="row py-5" style="background: var(--clr-lightbrown)">
@@ -45,8 +77,11 @@
       </div>
       {% endcomment %}
 
-      {% include 'main/home_snippets/setting_the_stage.html' %}
+      <div class="section-divider"><span class="divider-icon"><i class="bi bi-flower1"></i></span></div>
 
+      <div class="home-section reveal">
+        {% include 'main/home_snippets/setting_the_stage.html' %}
+      </div>
 
       <br/>
 
@@ -54,4 +89,35 @@
 
     {% include 'main/footer.html' %}
   </div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+      var observer = new IntersectionObserver(function(entries) {
+          entries.forEach(function(entry) {
+              if (entry.isIntersecting) {
+                  entry.target.classList.add('revealed');
+                  observer.unobserve(entry.target);
+              }
+          });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+      document.querySelectorAll('.reveal').forEach(function(el) {
+          observer.observe(el);
+      });
+
+      /* Toggle button text between Read more / Read less */
+      document.querySelectorAll('.expand-toggle').forEach(function(btn) {
+          var original = btn.innerHTML;
+          var target = document.querySelector(btn.getAttribute('data-bs-target'));
+          if (target) {
+              target.addEventListener('shown.bs.collapse', function() {
+                  btn.innerHTML = 'Show less <i class="bi bi-chevron-up"></i>';
+              });
+              target.addEventListener('hidden.bs.collapse', function() {
+                  btn.innerHTML = original;
+              });
+          }
+      });
+  });
+  </script>
 {% endblock %}

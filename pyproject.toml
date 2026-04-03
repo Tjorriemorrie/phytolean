@@ -1,11 +1,11 @@
 [project]
 name = "phytolean"
-version = "0.1.0"
-description = "PhytoLean - Nutritional health and wellness website"
-requires-python = ">=3.11"
+version = "1.0.0"
+description = "Nutritional health and wellness website"
+requires-python = "3.11"
 dependencies = [
     "beautifulsoup4",
-    "crispy-bootstrap4",
+    "crispy-bootstrap5",
     "django",
     "django-crispy-forms",
     "django-environ",

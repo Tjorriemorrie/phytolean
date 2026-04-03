@@ -23,7 +23,7 @@
         {% for slot in row %}
           <td>
             {% if slot.is_valid %}
-              <input id="{{ field.html_name }}_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" type="radio" class="" name="{{ field.html_name }}" value="{{ slot.slot|date:'U' }}" {% include "bootstrap4/layout/attrs.html" with widget=option %} required>
+              <input id="{{ field.html_name }}_{{ forloop.parentloop.counter }}_{{ forloop.counter }}" type="radio" class="" name="{{ field.html_name }}" value="{{ slot.slot|date:'U' }}" {% include "bootstrap5/layout/attrs.html" with widget=option %} required>
             {% endif %}
             <label class="{% if not slot.is_valid %}na{% endif %}" for="{{ field.html_name }}_{{ forloop.parentloop.counter }}_{{ forloop.counter }}">
               {% if slot.is_valid %}
@@ -39,5 +39,5 @@
     </tbody>
   </table>
 
-  {% include 'bootstrap4/layout/help_text.html' %}
+  {% include 'bootstrap5/layout/help_text.html' %}
 </div>
