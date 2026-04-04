@@ -2,7 +2,7 @@
 name = "phytolean"
 version = "1.0.0"
 description = "Nutritional health and wellness website"
-requires-python = "3.11"
+requires-python = "==3.11.*"
 dependencies = [
     "beautifulsoup4",
     "crispy-bootstrap5",
