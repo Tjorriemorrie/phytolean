@@ -8,6 +8,7 @@
         <div style="width: 100%; height: 300px;">
             <canvas id="hourlyChart"></canvas>
         </div>
+        <div id="hourlyChartStatus" style="color: #888; font-size: 12px;">Loading…</div>
     </div>
 
     <div style="margin-bottom: 2rem;">
@@ -15,6 +16,7 @@
         <div style="width: 100%; height: 300px;">
             <canvas id="dailyUniqueChart"></canvas>
         </div>
+        <div id="dailyUniqueChartStatus" style="color: #888; font-size: 12px;">Loading…</div>
     </div>
 
     <div style="margin-bottom: 2rem;">
@@ -22,19 +24,20 @@
         <div style="width: 100%; height: 300px;">
             <canvas id="dailyChart"></canvas>
         </div>
+        <div id="dailyChartStatus" style="color: #888; font-size: 12px;">Loading…</div>
     </div>
 
     <div style="margin-bottom: 2rem;">
         <h3>Oncall / Online Ratio by Day &amp; Hour (Last 90 Days)</h3>
         <div id="heatmapContainer" style="width: 100%; overflow-x: auto;"></div>
+        <div id="heatmapStatus" style="color: #888; font-size: 12px;">Loading…</div>
     </div>
 
     <div style="display: flex; gap: 2rem; align-items: flex-start;">
 
-        <!-- Current Month -->
         <div style="flex: 1;">
             <h3>Current Month</h3>
-            <table class="admin-table">
+            <table class="admin-table" id="tableCurrent">
                 <thead>
                 <tr>
                     <th>Rank</th>
@@ -45,30 +48,14 @@
                     <th>Offline</th>
                 </tr>
                 </thead>
-                <tbody>
-                {% for row in psychics_current_month %}
-                    <tr{% if row.psychic.name == "SEAH" %} style="background-color: #5c4d1a;"{% endif %}>
-                        <td>{{ forloop.counter }}</td>
-                        <td>
-                            <a href="{% url 'admin:psychic-detail' row.psychic.id %}">
-                                {{ row.psychic.name }}
-                            </a>
-                        </td>
-                        <td>{{ row.oncall|floatformat:1 }}</td>
-                        <td>{{ row.online|floatformat:0 }}</td>
-                        <td>{{ row.fake_oncall|floatformat:1 }}</td>
-                        <td>{{ row.offline|floatformat:0 }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                <tbody></tbody>
             </table>
-
+            <div id="tableCurrentStatus" style="color: #888; font-size: 12px;">Loading…</div>
         </div>
 
-        <!-- Previous Month -->
         <div style="flex: 1;">
             <h3>Previous Month</h3>
-            <table class="admin-table">
+            <table class="admin-table" id="tablePrevious">
                 <thead>
                 <tr>
                     <th>Rank</th>
@@ -79,29 +66,14 @@
                     <th>Offline</th>
                 </tr>
                 </thead>
-                <tbody>
-                {% for row in psychics_previous_month %}
-                    <tr{% if row.psychic.name == "SEAH" %} style="background-color: #5c4d1a;"{% endif %}>
-                        <td>{{ forloop.counter }}</td>
-                        <td>
-                            <a href="{% url 'admin:psychic-detail' row.psychic.id %}">
-                                {{ row.psychic.name }}
-                            </a>
-                        </td>
-                        <td>{{ row.oncall|floatformat:1 }}</td>
-                        <td>{{ row.online|floatformat:0 }}</td>
-                        <td>{{ row.fake_oncall|floatformat:1 }}</td>
-                        <td>{{ row.offline|floatformat:0 }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                <tbody></tbody>
             </table>
+            <div id="tablePreviousStatus" style="color: #888; font-size: 12px;">Loading…</div>
         </div>
 
-        <!-- Two Months Ago -->
         <div style="flex: 1;">
             <h3>Two Months Ago</h3>
-            <table class="admin-table">
+            <table class="admin-table" id="tableTwoMonthsAgo">
                 <thead>
                 <tr>
                     <th>Rank</th>
@@ -112,186 +84,235 @@
                     <th>Offline</th>
                 </tr>
                 </thead>
-                <tbody>
-                {% for row in psychics_two_months_ago %}
-                    <tr{% if row.psychic.name == "SEAH" %} style="background-color: #5c4d1a;"{% endif %}>
-                        <td>{{ forloop.counter }}</td>
-                        <td>
-                            <a href="{% url 'admin:psychic-detail' row.psychic.id %}">
-                                {{ row.psychic.name }}
-                            </a>
-                        </td>
-                        <td>{{ row.oncall|floatformat:1 }}</td>
-                        <td>{{ row.online|floatformat:0 }}</td>
-                        <td>{{ row.fake_oncall|floatformat:1 }}</td>
-                        <td>{{ row.offline|floatformat:0 }}</td>
-                    </tr>
-                {% endfor %}
-                </tbody>
+                <tbody></tbody>
             </table>
+            <div id="tableTwoMonthsAgoStatus" style="color: #888; font-size: 12px;">Loading…</div>
         </div>
 
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
     <script>
-        const hourlyData = {{ hourly_chart_data|safe }};
-        const dailyUniqueData = {{ daily_unique_chart_data|safe }};
-        const dailyData = {{ daily_chart_data|safe }};
-        const heatmapData = {{ heatmap_data|safe }};
+        const CHART_URLS = {
+            hourly: "{% url 'admin:sa-psychics-chart-hourly' %}",
+            dailyUnique: "{% url 'admin:sa-psychics-chart-daily-unique' %}",
+            daily: "{% url 'admin:sa-psychics-chart-daily' %}",
+            heatmap: "{% url 'admin:sa-psychics-chart-heatmap' %}",
+        };
 
-        new Chart(document.getElementById('hourlyChart'), {
-            type: 'bar',
-            data: {
-                labels: hourlyData.labels,
-                datasets: [
-                    {
-                        label: 'Online',
-                        data: hourlyData.online,
-                        backgroundColor: '#28a745',
-                    },
-                    {
-                        label: 'Oncall',
-                        data: hourlyData.oncall,
-                        backgroundColor: '#dc3545',
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { stacked: true },
-                    y: { stacked: true, beginAtZero: true },
-                },
-                plugins: {
-                    legend: { position: 'bottom' },
-                },
-            },
-        });
+        const TABLE_URLS = {
+            current: "{% url 'admin:sa-psychics-table-current' %}",
+            previous: "{% url 'admin:sa-psychics-table-previous' %}",
+            twoMonthsAgo: "{% url 'admin:sa-psychics-table-two-months-ago' %}",
+        };
 
-        new Chart(document.getElementById('dailyUniqueChart'), {
-            type: 'bar',
-            data: {
-                labels: dailyUniqueData.labels,
-                datasets: [
-                    {
-                        label: 'Online',
-                        data: dailyUniqueData.online,
-                        backgroundColor: '#28a745',
-                    },
-                    {
-                        label: 'Oncall',
-                        data: dailyUniqueData.oncall,
-                        backgroundColor: '#dc3545',
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    x: { stacked: true },
-                    y: { stacked: true, beginAtZero: true },
-                },
-                plugins: {
-                    legend: { position: 'bottom' },
-                },
-            },
-        });
+        function setStatus(id, text) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = text;
+        }
 
-        new Chart(document.getElementById('dailyChart'), {
-            type: 'bar',
-            data: {
-                labels: dailyData.labels,
-                datasets: [
-                    {
-                        label: 'Oncall',
-                        data: dailyData.oncall,
-                        backgroundColor: dailyData.is_weekend.map(w => w ? '#6f42c1' : '#ffc107'),
-                    },
-                ],
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true },
-                },
-                plugins: {
-                    legend: { position: 'bottom' },
-                },
-            },
-        });
-        // Heatmap
-        (function() {
-            const container = document.getElementById('heatmapContainer');
-            const days = heatmapData.days;
-            const hours = heatmapData.hours;
-            const data = heatmapData.data;
+        function clearStatus(id) {
+            const el = document.getElementById(id);
+            if (el) el.remove();
+        }
 
-            // Find max value for color scaling
-            let maxVal = 0;
-            for (const row of data) {
-                for (const v of row) {
-                    if (v > maxVal) maxVal = v;
+        async function loadJSON(url) {
+            const resp = await fetch(url, { credentials: 'same-origin' });
+            if (!resp.ok) throw new Error(`${resp.status} ${resp.statusText}`);
+            return resp.json();
+        }
+
+        async function renderHourly() {
+            try {
+                const hourlyData = await loadJSON(CHART_URLS.hourly);
+                new Chart(document.getElementById('hourlyChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: hourlyData.labels,
+                        datasets: [
+                            { label: 'Online', data: hourlyData.online, backgroundColor: '#28a745' },
+                            { label: 'Oncall', data: hourlyData.oncall, backgroundColor: '#dc3545' },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
+                        plugins: { legend: { position: 'bottom' } },
+                    },
+                });
+                clearStatus('hourlyChartStatus');
+            } catch (e) {
+                setStatus('hourlyChartStatus', 'Failed to load: ' + e.message);
+            }
+        }
+
+        async function renderDailyUnique() {
+            try {
+                const dailyUniqueData = await loadJSON(CHART_URLS.dailyUnique);
+                new Chart(document.getElementById('dailyUniqueChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: dailyUniqueData.labels,
+                        datasets: [
+                            { label: 'Online', data: dailyUniqueData.online, backgroundColor: '#28a745' },
+                            { label: 'Oncall', data: dailyUniqueData.oncall, backgroundColor: '#dc3545' },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
+                        plugins: { legend: { position: 'bottom' } },
+                    },
+                });
+                clearStatus('dailyUniqueChartStatus');
+            } catch (e) {
+                setStatus('dailyUniqueChartStatus', 'Failed to load: ' + e.message);
+            }
+        }
+
+        async function renderDaily() {
+            try {
+                const dailyData = await loadJSON(CHART_URLS.daily);
+                new Chart(document.getElementById('dailyChart'), {
+                    type: 'bar',
+                    data: {
+                        labels: dailyData.labels,
+                        datasets: [
+                            {
+                                label: 'Oncall',
+                                data: dailyData.oncall,
+                                backgroundColor: dailyData.is_weekend.map(w => w ? '#6f42c1' : '#ffc107'),
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: { y: { beginAtZero: true } },
+                        plugins: { legend: { position: 'bottom' } },
+                    },
+                });
+                clearStatus('dailyChartStatus');
+            } catch (e) {
+                setStatus('dailyChartStatus', 'Failed to load: ' + e.message);
+            }
+        }
+
+        async function renderHeatmap() {
+            try {
+                const heatmapData = await loadJSON(CHART_URLS.heatmap);
+                const container = document.getElementById('heatmapContainer');
+                const days = heatmapData.days;
+                const hours = heatmapData.hours;
+                const data = heatmapData.data;
+
+                let maxVal = 0;
+                for (const row of data) {
+                    for (const v of row) {
+                        if (v > maxVal) maxVal = v;
+                    }
                 }
-            }
-            if (maxVal === 0) maxVal = 1;
+                if (maxVal === 0) maxVal = 1;
 
-            const table = document.createElement('table');
-            table.style.borderCollapse = 'collapse';
-            table.style.fontFamily = 'monospace';
-            table.style.fontSize = '12px';
-            table.style.width = '100%';
-            table.style.tableLayout = 'fixed';
+                const table = document.createElement('table');
+                table.style.borderCollapse = 'collapse';
+                table.style.fontFamily = 'monospace';
+                table.style.fontSize = '12px';
+                table.style.width = '100%';
+                table.style.tableLayout = 'fixed';
 
-            // Header row with hours
-            const thead = document.createElement('tr');
-            const corner = document.createElement('th');
-            corner.style.width = '50px';
-            thead.appendChild(corner);
-            for (const h of hours) {
-                const th = document.createElement('th');
-                th.textContent = h + ':00';
-                th.style.textAlign = 'center';
-                th.style.padding = '2px';
-                th.style.fontSize = '10px';
-                thead.appendChild(th);
-            }
-            table.appendChild(thead);
-
-            // Data rows
-            for (let d = 0; d < days.length; d++) {
-                const tr = document.createElement('tr');
-                const label = document.createElement('td');
-                label.textContent = days[d];
-                label.style.fontWeight = 'bold';
-                label.style.paddingRight = '8px';
-                tr.appendChild(label);
-
-                for (let h = 0; h < 24; h++) {
-                    const td = document.createElement('td');
-                    const val = data[d][h];
-                    const intensity = val / maxVal;
-
-                    // Color: low (green) -> high (red)
-                    const r = Math.round(220 * intensity + 30);
-                    const g = Math.round(180 * (1 - intensity) + 30);
-                    const b = 30;
-                    td.style.backgroundColor = `rgb(${r},${g},${b})`;
-                    td.style.color = intensity > 0.5 ? '#fff' : '#222';
-                    td.style.height = '32px';
-                    td.style.textAlign = 'center';
-                    td.style.border = '1px solid #444';
-                    td.style.cursor = 'default';
-                    td.title = `${days[d]} ${h}:00 — ratio: ${val.toFixed(2)}`;
-                    tr.appendChild(td);
+                const thead = document.createElement('tr');
+                const corner = document.createElement('th');
+                corner.style.width = '50px';
+                thead.appendChild(corner);
+                for (const h of hours) {
+                    const th = document.createElement('th');
+                    th.textContent = h + ':00';
+                    th.style.textAlign = 'center';
+                    th.style.padding = '2px';
+                    th.style.fontSize = '10px';
+                    thead.appendChild(th);
                 }
-                table.appendChild(tr);
-            }
+                table.appendChild(thead);
 
-            container.appendChild(table);
-        })();
+                for (let d = 0; d < days.length; d++) {
+                    const tr = document.createElement('tr');
+                    const label = document.createElement('td');
+                    label.textContent = days[d];
+                    label.style.fontWeight = 'bold';
+                    label.style.paddingRight = '8px';
+                    tr.appendChild(label);
+
+                    for (let h = 0; h < 24; h++) {
+                        const td = document.createElement('td');
+                        const val = data[d][h];
+                        const intensity = val / maxVal;
+                        const r = Math.round(220 * intensity + 30);
+                        const g = Math.round(180 * (1 - intensity) + 30);
+                        const b = 30;
+                        td.style.backgroundColor = `rgb(${r},${g},${b})`;
+                        td.style.color = intensity > 0.5 ? '#fff' : '#222';
+                        td.style.height = '32px';
+                        td.style.textAlign = 'center';
+                        td.style.border = '1px solid #444';
+                        td.style.cursor = 'default';
+                        td.title = `${days[d]} ${h}:00 — ratio: ${val.toFixed(2)}`;
+                        tr.appendChild(td);
+                    }
+                    table.appendChild(tr);
+                }
+
+                container.appendChild(table);
+                clearStatus('heatmapStatus');
+            } catch (e) {
+                setStatus('heatmapStatus', 'Failed to load: ' + e.message);
+            }
+        }
+
+        function fmt(n, digits) {
+            return Number(n).toLocaleString(undefined, {
+                minimumFractionDigits: digits,
+                maximumFractionDigits: digits,
+            });
+        }
+
+        async function renderTable(tableId, statusId, url) {
+            try {
+                const payload = await loadJSON(url);
+                const tbody = document.querySelector(`#${tableId} tbody`);
+                tbody.innerHTML = '';
+                for (const row of payload.rows) {
+                    const tr = document.createElement('tr');
+                    if (row.name === 'SEAH') {
+                        tr.style.backgroundColor = '#5c4d1a';
+                    }
+                    const nameCell = `<a href="${row.url}">${row.name}</a>`;
+                    tr.innerHTML = `
+                        <td>${row.rank}</td>
+                        <td>${nameCell}</td>
+                        <td>${fmt(row.oncall, 1)}</td>
+                        <td>${fmt(row.online, 0)}</td>
+                        <td>${fmt(row.fake_oncall, 1)}</td>
+                        <td>${fmt(row.offline, 0)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+                clearStatus(statusId);
+            } catch (e) {
+                setStatus(statusId, 'Failed to load: ' + e.message);
+            }
+        }
+
+        window.addEventListener('load', () => {
+            renderHourly();
+            renderDailyUnique();
+            renderDaily();
+            renderHeatmap();
+            renderTable('tableCurrent', 'tableCurrentStatus', TABLE_URLS.current);
+            renderTable('tablePrevious', 'tablePreviousStatus', TABLE_URLS.previous);
+            renderTable('tableTwoMonthsAgo', 'tableTwoMonthsAgoStatus', TABLE_URLS.twoMonthsAgo);
+        });
     </script>
 {% endblock %}

@@ -9,12 +9,16 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
+import faulthandler
 import io
+import logging
 import os
+import signal
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import socket
 import sys
+import traceback
 from pathlib import Path
 
 import environ
@@ -154,6 +158,30 @@ LOG_DIR.mkdir(exist_ok=True)
 if sys.stdout.encoding != 'utf-8':
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8')
+
+# faulthandler catches segfaults / fatal signals that bypass Python logging
+_fault_log = open(LOG_DIR / 'fault.log', 'a', buffering=1)
+faulthandler.enable(file=_fault_log, all_threads=True)
+# gunicorn sends SIGTERM on worker timeout; dump every thread's stack first
+# faulthandler.register is POSIX-only; skip on Windows
+if hasattr(faulthandler, 'register'):
+    for _sig in (signal.SIGTERM, signal.SIGABRT):
+        try:
+            faulthandler.register(_sig, file=_fault_log, all_threads=True, chain=True)
+        except (ValueError, OSError):
+            pass
+
+# catch anything raised before/outside Django's request cycle (boot errors, threads)
+def _log_uncaught(exc_type, exc, tb):
+    msg = ''.join(traceback.format_exception(exc_type, exc, tb))
+    try:
+        logging.getLogger('uncaught').critical('Uncaught exception:\n%s', msg)
+    except Exception:
+        pass
+    _fault_log.write(f'UNCAUGHT {msg}\n')
+    _fault_log.flush()
+sys.excepthook = _log_uncaught
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -162,68 +190,68 @@ LOGGING = {
             'format': '%(asctime)s %(levelname)-8s %(name)s %(message)s {%(filename)s:%(lineno)d}',
         },
         'compact': {
-            'format': '%(asctime)s %(levelname)-8s %(message)s',
+            'format': '%(asctime)s %(levelname)-8s %(name)s %(message)s',
         },
     },
     'handlers': {
         'file': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
             'filename': str(LOG_DIR / 'app.log'),
             'when': 'midnight',
-            'backupCount': 7,
-            'delay': True,
-            'formatter': 'standard',
-        },
-        'error_file': {
-            'level': 'ERROR',
-            'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': str(LOG_DIR / 'error.log'),
-            'when': 'midnight',
-            'backupCount': 30,
-            'delay': True,
+            'backupCount': 14,
+            'delay': False,
             'formatter': 'standard',
         },
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'stream': sys.stdout,
+            'stream': sys.stderr,
             'formatter': 'compact',
         },
     },
     'root': {
-        'handlers': ['file', 'error_file', 'console'],
+        'handlers': ['file', 'console'],
         'level': 'INFO',
-        'propagate': False,
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'error_file', 'console'],
+            'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': False,
         },
         'django.request': {
-            'handlers': ['file', 'error_file', 'console'],
+            'handlers': ['file', 'console'],
             'level': 'DEBUG',
             'propagate': False,
         },
         'django.server': {
-            'handlers': ['file', 'error_file', 'console'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-        'django.security': {
-            'handlers': ['file', 'error_file', 'console'],
+            'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': False,
         },
-        'django.db.backends': {
-            'handlers': ['error_file'],
-            'level': 'ERROR',
+        'django.security': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'gunicorn.error': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
             'propagate': False,
         },
     },
 }
+
+# settings are imported before Django applies LOGGING, so write a boot marker
+# directly to the log file. If this line never appears, the worker didn't even
+# finish importing settings (check gunicorn/systemd stdout, not Django logs).
+with open(LOG_DIR / 'app.log', 'a', encoding='utf-8') as _boot:
+    import datetime as _dt
+    _boot.write(
+        f'{_dt.datetime.now().isoformat()} BOOT     settings imported '
+        f'pid={os.getpid()} argv={sys.argv} debug={DEBUG}\n'
+    )
 
 # crispy forms
 CRISPY_TEMPLATE_PACK = 'bootstrap5'

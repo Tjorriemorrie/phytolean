@@ -1,8 +1,9 @@
 import json
 
 from django.contrib import admin
+from django.http import JsonResponse
 from django.template.response import TemplateResponse
-from django.urls import path
+from django.urls import path, reverse
 from django.utils import timezone
 from django.views.decorators.cache import cache_page
 from import_export.admin import ImportExportModelAdmin, ExportActionMixin
@@ -85,94 +86,111 @@ class PayFastTransactionAdmin(admin.ModelAdmin):
     )
 
 
-@cache_page(60 * 60)
 def sa_psychics(request):
-    now = timezone.now()
-
-    current_month = now.replace(day=1)
-
-    if current_month.month == 1:
-        previous_month = current_month.replace(
-            year=current_month.year - 1,
-            month=12,
-        )
-    else:
-        previous_month = current_month.replace(
-            month=current_month.month - 1,
-        )
-
-    if previous_month.month == 1:
-        two_months_ago = previous_month.replace(
-            year=previous_month.year - 1,
-            month=12,
-        )
-    else:
-        two_months_ago = previous_month.replace(
-            month=previous_month.month - 1,
-        )
-
-    psychics_current_month = get_monthly_psychic_status_aggregates(
-        month=current_month
-    )
-    psychics_previous_month = get_monthly_psychic_status_aggregates(
-        month=previous_month
-    )
-
-    sort_key = lambda r: (
-        -r["oncall"],
-        -r["online"],
-        -r["fake_oncall"],
-        r["offline"],
-    )
-
-    psychics_current_month.sort(key=sort_key)
-    psychics_previous_month.sort(key=sort_key)
-
-    psychics_two_months_ago = get_monthly_psychic_status_aggregates(
-        month=two_months_ago
-    )
-    psychics_two_months_ago.sort(key=sort_key)
-
-    hourly_unique = get_all_psychics_hourly_unique_counts()
-    daily_unique = get_all_psychics_daily_unique_counts()
-    daily_oncall = get_daily_oncall_counts()
-    heatmap = get_oncall_online_ratio_heatmap()
-
-    # Serialize chart data as JSON for Chart.js
-    hourly_chart_data = json.dumps({
-        "labels": [f"{h['hour']}:00" for h in hourly_unique],
-        "online": [h["online"] for h in hourly_unique],
-        "oncall": [h["oncall"] for h in hourly_unique],
-    })
-    daily_unique_chart_data = json.dumps({
-        "labels": [str(d['day']) for d in daily_unique],
-        "online": [d["online"] for d in daily_unique],
-        "oncall": [d["oncall"] for d in daily_unique],
-    })
-    daily_chart_data = json.dumps({
-        "labels": [d["date_short"] for d in daily_oncall],
-        "oncall": [d["oncall"] for d in daily_oncall],
-        "is_weekend": [d["is_weekend"] for d in daily_oncall],
-    })
-    heatmap_data = json.dumps(heatmap)
-
     context = {
         **admin.site.each_context(request),
         "title": "SA Psychics",
-        "psychics_current_month": psychics_current_month,
-        "psychics_previous_month": psychics_previous_month,
-        "psychics_two_months_ago": psychics_two_months_ago,
-        "hourly_chart_data": hourly_chart_data,
-        "daily_unique_chart_data": daily_unique_chart_data,
-        "daily_chart_data": daily_chart_data,
-        "heatmap_data": heatmap_data,
     }
-
     return TemplateResponse(
         request,
         "admin/sa_psychics.html",
         context,
     )
+
+
+TABLE_CURRENT_CACHE_SECONDS = 5 * 60
+TABLE_HISTORICAL_CACHE_SECONDS = 20 * 60 * 60
+
+
+def _month_offset(offset):
+    now = timezone.now()
+    month = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    for _ in range(offset):
+        if month.month == 1:
+            month = month.replace(year=month.year - 1, month=12)
+        else:
+            month = month.replace(month=month.month - 1)
+    return month
+
+
+_TABLE_SORT_KEY = lambda r: (
+    -r["oncall"],
+    -r["online"],
+    -r["fake_oncall"],
+    r["offline"],
+)
+
+
+def _monthly_table_payload(month):
+    rows = get_monthly_psychic_status_aggregates(month=month)
+    rows.sort(key=_TABLE_SORT_KEY)
+    return {
+        "rows": [
+            {
+                "rank": i + 1,
+                "name": r["psychic"].name,
+                "url": reverse("admin:psychic-detail", args=[r["psychic"].id]),
+                "oncall": r["oncall"],
+                "online": r["online"],
+                "fake_oncall": r["fake_oncall"],
+                "offline": r["offline"],
+            }
+            for i, r in enumerate(rows)
+        ],
+    }
+
+
+@cache_page(TABLE_CURRENT_CACHE_SECONDS)
+def sa_psychics_table_current(request):
+    return JsonResponse(_monthly_table_payload(_month_offset(0)))
+
+
+@cache_page(TABLE_HISTORICAL_CACHE_SECONDS)
+def sa_psychics_table_previous(request):
+    return JsonResponse(_monthly_table_payload(_month_offset(1)))
+
+
+@cache_page(TABLE_HISTORICAL_CACHE_SECONDS)
+def sa_psychics_table_two_months_ago(request):
+    return JsonResponse(_monthly_table_payload(_month_offset(2)))
+
+
+CHART_CACHE_SECONDS = 20 * 60 * 60
+
+
+@cache_page(CHART_CACHE_SECONDS)
+def sa_psychics_hourly_chart(request):
+    hourly_unique = get_all_psychics_hourly_unique_counts()
+    return JsonResponse({
+        "labels": [f"{h['hour']}:00" for h in hourly_unique],
+        "online": [h["online"] for h in hourly_unique],
+        "oncall": [h["oncall"] for h in hourly_unique],
+    })
+
+
+@cache_page(CHART_CACHE_SECONDS)
+def sa_psychics_daily_unique_chart(request):
+    daily_unique = get_all_psychics_daily_unique_counts()
+    return JsonResponse({
+        "labels": [str(d['day']) for d in daily_unique],
+        "online": [d["online"] for d in daily_unique],
+        "oncall": [d["oncall"] for d in daily_unique],
+    })
+
+
+@cache_page(CHART_CACHE_SECONDS)
+def sa_psychics_daily_chart(request):
+    daily_oncall = get_daily_oncall_counts()
+    return JsonResponse({
+        "labels": [d["date_short"] for d in daily_oncall],
+        "oncall": [d["oncall"] for d in daily_oncall],
+        "is_weekend": [d["is_weekend"] for d in daily_oncall],
+    })
+
+
+@cache_page(CHART_CACHE_SECONDS)
+def sa_psychics_heatmap_chart(request):
+    return JsonResponse(get_oncall_online_ratio_heatmap())
 
 
 def psychic_detail_view(request, psychic_id):
@@ -225,6 +243,41 @@ def get_urls():
     urls = original_get_urls()
     custom_urls = [
         path('sa-psychics/', admin.site.admin_view(sa_psychics), name='sa-psychics'),
+        path(
+            'sa-psychics/charts/hourly.json',
+            admin.site.admin_view(sa_psychics_hourly_chart),
+            name='sa-psychics-chart-hourly',
+        ),
+        path(
+            'sa-psychics/charts/daily-unique.json',
+            admin.site.admin_view(sa_psychics_daily_unique_chart),
+            name='sa-psychics-chart-daily-unique',
+        ),
+        path(
+            'sa-psychics/charts/daily.json',
+            admin.site.admin_view(sa_psychics_daily_chart),
+            name='sa-psychics-chart-daily',
+        ),
+        path(
+            'sa-psychics/charts/heatmap.json',
+            admin.site.admin_view(sa_psychics_heatmap_chart),
+            name='sa-psychics-chart-heatmap',
+        ),
+        path(
+            'sa-psychics/tables/current.json',
+            admin.site.admin_view(sa_psychics_table_current),
+            name='sa-psychics-table-current',
+        ),
+        path(
+            'sa-psychics/tables/previous.json',
+            admin.site.admin_view(sa_psychics_table_previous),
+            name='sa-psychics-table-previous',
+        ),
+        path(
+            'sa-psychics/tables/two-months-ago.json',
+            admin.site.admin_view(sa_psychics_table_two_months_ago),
+            name='sa-psychics-table-two-months-ago',
+        ),
         path('psychic/<int:psychic_id>/', admin.site.admin_view(psychic_detail_view), name='psychic-detail'),
     ]
     return custom_urls + urls
