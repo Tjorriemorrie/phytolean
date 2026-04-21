@@ -152,6 +152,7 @@ def sa_psychics(request):
     daily_chart_data = json.dumps({
         "labels": [d["date_short"] for d in daily_oncall],
         "oncall": [d["oncall"] for d in daily_oncall],
+        "is_weekend": [d["is_weekend"] for d in daily_oncall],
     })
     heatmap_data = json.dumps(heatmap)
 
@@ -178,16 +179,35 @@ def psychic_detail_view(request, psychic_id):
     from main.models import Psychic
     psychic = Psychic.objects.get(id=psychic_id)
 
-    stats = get_psychic_monthly_stats(psychic_id)
+    now = timezone.now()
+    month = now.replace(day=1)
+
+    monthly_stats = []
+    for _ in range(6):
+        monthly_stats.append({
+            "label": month.strftime("%b %Y"),
+            "stats": get_psychic_monthly_stats(psychic_id, month=month),
+        })
+        if month.month == 1:
+            month = month.replace(year=month.year - 1, month=12)
+        else:
+            month = month.replace(month=month.month - 1)
+
     hourly = get_psychic_hourly_activity_aggregates(psychic_id)
-    sessions = get_psychic_sessions(psychic_id)
+    hourly_chart_data = json.dumps({
+        "labels": [f"{h['hour']}:00" for h in hourly],
+        "online": [h["online"] for h in hourly],
+        "oncall": [h["oncall"] for h in hourly],
+    })
+
+    sessions = get_psychic_sessions(psychic_id, days=7)
 
     context = {
         **admin.site.each_context(request),
         "title": f"Psychic: {psychic.name}",
         "psychic": psychic,
-        "stats": stats,
-        "hourly": hourly,
+        "monthly_stats": monthly_stats,
+        "hourly_chart_data": hourly_chart_data,
         "sessions": sessions,
     }
 

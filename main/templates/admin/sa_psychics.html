@@ -4,21 +4,21 @@
     <h2>SA Psychics – Monthly Status Totals</h2>
 
     <div style="margin-bottom: 2rem;">
-        <h3>Unique Psychics per Hour - All Psychics (Last 30 Days)</h3>
+        <h3>Unique Psychics per Hour - All Psychics (Last 90 Days)</h3>
         <div style="width: 100%; height: 300px;">
             <canvas id="hourlyChart"></canvas>
         </div>
     </div>
 
     <div style="margin-bottom: 2rem;">
-        <h3>Unique Psychics per Day of Month - All Psychics (Last 30 Days)</h3>
+        <h3>Unique Psychics per Day of Month - All Psychics (Last 90 Days)</h3>
         <div style="width: 100%; height: 300px;">
             <canvas id="dailyUniqueChart"></canvas>
         </div>
     </div>
 
     <div style="margin-bottom: 2rem;">
-        <h3>Daily Oncall Total - All Psychics (Last 60 Days)</h3>
+        <h3>Daily Oncall Total - All Psychics (Last 90 Days)</h3>
         <div style="width: 100%; height: 300px;">
             <canvas id="dailyChart"></canvas>
         </div>
@@ -208,7 +208,7 @@
                     {
                         label: 'Oncall',
                         data: dailyData.oncall,
-                        backgroundColor: '#ffc107',
+                        backgroundColor: dailyData.is_weekend.map(w => w ? '#6f42c1' : '#ffc107'),
                     },
                 ],
             },

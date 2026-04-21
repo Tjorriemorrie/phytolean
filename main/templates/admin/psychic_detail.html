@@ -2,13 +2,9 @@
 
 {% block content %}
 <style>
-    .stats-container {
-        display: flex;
-        gap: 2rem;
-        margin-bottom: 2rem;
-    }
     .stats-table {
         border-collapse: collapse;
+        margin-bottom: 2rem;
     }
     .stats-table th, .stats-table td {
         border: 1px solid #ddd;
@@ -18,42 +14,6 @@
     .stats-table th {
         background-color: #79aec8;
         color: white;
-    }
-    .histogram {
-        display: flex;
-        align-items: flex-end;
-        height: 200px;
-        gap: 2px;
-        padding: 10px;
-        background: #f5f5f5;
-        border: 1px solid #ddd;
-    }
-    .histogram-bar {
-        flex: 1;
-        background-color: #79aec8;
-        min-width: 20px;
-        position: relative;
-    }
-    .histogram-bar:hover {
-        background-color: #417690;
-    }
-    .histogram-label {
-        position: absolute;
-        bottom: -20px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 10px;
-        color: black;
-    }
-    .histogram-value {
-        position: absolute;
-        top: -18px;
-        left: 50%;
-        transform: translateX(-50%);
-        font-size: 10px;
-    }
-    .histogram-container {
-        margin-top: 2rem;
     }
     .back-link {
         margin-bottom: 1rem;
@@ -66,71 +26,49 @@
 <h2>{{ psychic.name }}</h2>
 <p><a href="{{ psychic.url }}" target="_blank">View Profile &rarr;</a></p>
 
-<div class="stats-container">
-    <div>
-        <h3>Last 30 Days Stats (minutes)</h3>
-        <table class="stats-table">
-            <tr>
-                <th>Status</th>
-                <th>Minutes</th>
-            </tr>
-            <tr>
-                <td>Oncall</td>
-                <td>{{ stats.oncall|floatformat:1 }}</td>
-            </tr>
-            <tr>
-                <td>Online</td>
-                <td>{{ stats.online|floatformat:1 }}</td>
-            </tr>
-            <tr>
-                <td>Fake Oncall</td>
-                <td>{{ stats.fake_oncall|floatformat:1 }}</td>
-            </tr>
-            <tr>
-                <td>Offline</td>
-                <td>{{ stats.offline|floatformat:1 }}</td>
-            </tr>
-            <tr>
-                <th>Total</th>
-                <th>{{ stats.total|floatformat:1 }}</th>
-            </tr>
-        </table>
-    </div>
-</div>
+<h3>Monthly Stats (minutes) - Last 6 Months</h3>
+<table class="stats-table">
+    <thead>
+        <tr>
+            <th>Status</th>
+            {% for m in monthly_stats %}
+            <th>{{ m.label }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Oncall</td>
+            {% for m in monthly_stats %}<td>{{ m.stats.oncall|floatformat:1 }}</td>{% endfor %}
+        </tr>
+        <tr>
+            <td>Online</td>
+            {% for m in monthly_stats %}<td>{{ m.stats.online|floatformat:1 }}</td>{% endfor %}
+        </tr>
+        <tr>
+            <td>Fake Oncall</td>
+            {% for m in monthly_stats %}<td>{{ m.stats.fake_oncall|floatformat:1 }}</td>{% endfor %}
+        </tr>
+        <tr>
+            <td>Offline</td>
+            {% for m in monthly_stats %}<td>{{ m.stats.offline|floatformat:1 }}</td>{% endfor %}
+        </tr>
+        <tr>
+            <th>Total</th>
+            {% for m in monthly_stats %}<th>{{ m.stats.total|floatformat:1 }}</th>{% endfor %}
+        </tr>
+    </tbody>
+</table>
 
-<div class="histogram-container">
-    <h3>Hourly Activity (Last 30 Days)</h3>
-    <div class="histogram" style="padding-bottom: 30px;">
-        {% for h in hourly %}
-        {% with total=h.online|add:h.oncall %}
-        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; min-width: 20px;">
-            <div style="display: flex; flex-direction: column-reverse; height: 200px; width: 100%; justify-content: flex-start;">
-                {% if total > 0 %}
-                <div style="background-color: #28a745; height: {{ h.online }}px;" title="Online: {{ h.online }}"></div>
-                <div style="background-color: #ffc107; height: {{ h.oncall }}px;" title="Oncall: {{ h.oncall }}"></div>
-                {% else %}
-                <div style="background-color: #ddd; height: 2px;"></div>
-                {% endif %}
-            </div>
-            <span class="histogram-label">{{ h.hour }}</span>
-        </div>
-        {% endwith %}
-        {% endfor %}
-    </div>
-    <div style="margin-top: 30px;">
-        <span style="display: inline-block; margin-right: 20px;">
-            <span style="display: inline-block; width: 20px; height: 12px; background-color: #28a745; margin-right: 5px; vertical-align: middle;"></span>
-            Online
-        </span>
-        <span style="display: inline-block;">
-            <span style="display: inline-block; width: 20px; height: 12px; background-color: #ffc107; margin-right: 5px; vertical-align: middle;"></span>
-            Oncall
-        </span>
+<div style="margin-bottom: 2rem;">
+    <h3>Hourly Activity (Last 90 Days)</h3>
+    <div style="width: 100%; height: 300px;">
+        <canvas id="hourlyChart"></canvas>
     </div>
 </div>
 
 <div class="sessions-container" style="margin-top: 2rem;">
-    <h3>Sessions (Last 30 Days)</h3>
+    <h3>Sessions (Last 7 Days)</h3>
     <table class="stats-table">
         <thead>
             <tr>
@@ -158,12 +96,46 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="4">No sessions found in the last 30 days.</td>
+                <td colspan="4">No sessions found in the last 7 days.</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+    const hourlyData = {{ hourly_chart_data|safe }};
+
+    new Chart(document.getElementById('hourlyChart'), {
+        type: 'bar',
+        data: {
+            labels: hourlyData.labels,
+            datasets: [
+                {
+                    label: 'Online',
+                    data: hourlyData.online,
+                    backgroundColor: '#28a745',
+                },
+                {
+                    label: 'Oncall',
+                    data: hourlyData.oncall,
+                    backgroundColor: '#dc3545',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: { stacked: true },
+                y: { stacked: true, beginAtZero: true },
+            },
+            plugins: {
+                legend: { position: 'bottom' },
+            },
+        },
+    });
+</script>
 
 {% endblock %}

@@ -136,11 +136,11 @@ def get_monthly_psychic_status_aggregates(month=None):
 
 def get_psychic_hourly_activity_aggregates(psychic_id):
     """
-    Returns a list of dicts, one per hour (0-23), with counts of online and oncall statuses for the past 30 days.
+    Returns a list of dicts, one per hour (0-23), with counts of online and oncall statuses for the past 90 days.
     All hours are in SAST (GMT+2).
     """
     now_utc = timezone.now()
-    start_utc = now_utc - timedelta(days=30)
+    start_utc = now_utc - timedelta(days=90)
 
     # Extract hour in UTC, then shift to SAST in Python
     statuses = (
@@ -176,17 +176,23 @@ def get_psychic_hourly_activity_aggregates(psychic_id):
     ]
 
 
-def get_psychic_monthly_stats(psychic_id):
+def get_psychic_monthly_stats(psychic_id, month=None):
     """
-    Returns status counts for a specific psychic.
-    Uses a rolling 30-day window from now.
+    Returns status counts (in minutes) for a specific psychic for the given calendar month.
+    Defaults to the current month.
     """
     now = timezone.now()
-    start = now - timedelta(days=30)
+    month = month or now
+
+    start = month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if start.month == 12:
+        end = start.replace(year=start.year + 1, month=1)
+    else:
+        end = start.replace(month=start.month + 1)
 
     result = (
         Status.objects
-        .filter(psychic_id=psychic_id, status_at__gte=start, status_at__lt=now)
+        .filter(psychic_id=psychic_id, status_at__gte=start, status_at__lt=end)
         .aggregate(
             online=Count("id", filter=Q(status=c.PSYCHIC_STATUS_ONLINE)),
             offline=Count("id", filter=Q(status=c.PSYCHIC_STATUS_OFFLINE)),
@@ -208,7 +214,7 @@ def get_psychic_monthly_stats(psychic_id):
 def get_daily_oncall_counts():
     """
     Returns daily total oncall counts for all psychics.
-    Uses a rolling 60-day window from now.
+    Uses a rolling 90-day window from now.
     This is an absolute sum (not unique psychics).
 
     Output shape:
@@ -221,7 +227,7 @@ def get_daily_oncall_counts():
     from django.db.models.functions import TruncDate
 
     now = timezone.now()
-    start = now - timedelta(days=60)
+    start = now - timedelta(days=90)
 
     statuses = (
         Status.objects
@@ -248,6 +254,7 @@ def get_daily_oncall_counts():
             "date": current_date.strftime("%Y-%m-%d"),
             "date_short": current_date.strftime("%m/%d"),
             "oncall": date_counts.get(current_date, 0),
+            "is_weekend": current_date.weekday() >= 5,
         })
         current_date += timedelta(days=1)
 
@@ -264,16 +271,16 @@ def get_daily_oncall_counts():
 
 def get_all_psychics_hourly_unique_counts():
     """
-    Returns a list of dicts, one per hour (0-23), with unique counts of online and oncall psychics for the past 30 days.
+    Returns a list of dicts, one per hour (0-23), with unique counts of online and oncall psychics for the past 90 days.
     All hours are in SAST (GMT+2).
     """
-    cache_key = "all_psychics_halfhourly_unique_counts_v2"
+    cache_key = "all_psychics_halfhourly_unique_counts_v3"
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
     now_utc = timezone.now()
-    start_utc = now_utc - timedelta(days=30)
+    start_utc = now_utc - timedelta(days=90)
 
     online_statuses = (
         Status.objects
@@ -332,15 +339,15 @@ def get_all_psychics_hourly_unique_counts():
 def get_all_psychics_daily_unique_counts():
     """
     Returns a list of dicts, one per day of month (1-31), with unique counts of online and oncall psychics
-    for the past 30 days. All times are in SAST (GMT+2).
+    for the past 90 days. All times are in SAST (GMT+2).
     """
-    cache_key = "all_psychics_daily_unique_counts_v1"
+    cache_key = "all_psychics_daily_unique_counts_v2"
     cached = cache.get(cache_key)
     if cached is not None:
         return cached
 
     now_utc = timezone.now()
-    start_utc = now_utc - timedelta(days=30)
+    start_utc = now_utc - timedelta(days=90)
 
     online_statuses = (
         Status.objects
