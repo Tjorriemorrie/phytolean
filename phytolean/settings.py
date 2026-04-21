@@ -162,14 +162,14 @@ if sys.stdout.encoding != 'utf-8':
 # faulthandler catches segfaults / fatal signals that bypass Python logging
 _fault_log = open(LOG_DIR / 'fault.log', 'a', buffering=1)
 faulthandler.enable(file=_fault_log, all_threads=True)
-# gunicorn sends SIGTERM on worker timeout; dump every thread's stack first
-# faulthandler.register is POSIX-only; skip on Windows
+# gunicorn sends SIGTERM on worker timeout; dump every thread's stack first.
+# SIGABRT is already handled by faulthandler.enable() above.
+# faulthandler.register is POSIX-only; skip on Windows.
 if hasattr(faulthandler, 'register'):
-    for _sig in (signal.SIGTERM, signal.SIGABRT):
-        try:
-            faulthandler.register(_sig, file=_fault_log, all_threads=True, chain=True)
-        except (ValueError, OSError):
-            pass
+    try:
+        faulthandler.register(signal.SIGTERM, file=_fault_log, all_threads=True, chain=True)
+    except (ValueError, OSError, RuntimeError):
+        pass
 
 # catch anything raised before/outside Django's request cycle (boot errors, threads)
 def _log_uncaught(exc_type, exc, tb):
