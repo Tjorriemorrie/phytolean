@@ -159,7 +159,7 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'standard': {
-            'format': '%(asctime)s %(levelname)-8s %(message)s {%(filename)s:%(lineno)d}',
+            'format': '%(asctime)s %(levelname)-8s %(name)s %(message)s {%(filename)s:%(lineno)d}',
         },
         'compact': {
             'format': '%(asctime)s %(levelname)-8s %(message)s',
@@ -175,6 +175,15 @@ LOGGING = {
             'delay': True,
             'formatter': 'standard',
         },
+        'error_file': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': str(LOG_DIR / 'error.log'),
+            'when': 'midnight',
+            'backupCount': 30,
+            'delay': True,
+            'formatter': 'standard',
+        },
         'console': {
             'level': 'INFO',
             'class': 'logging.StreamHandler',
@@ -183,14 +192,34 @@ LOGGING = {
         },
     },
     'root': {
-        'handlers': ['file', 'console'],
+        'handlers': ['file', 'error_file', 'console'],
         'level': 'INFO',
         'propagate': False,
     },
     'loggers': {
         'django': {
-            'handlers': ['file'],
+            'handlers': ['file', 'error_file', 'console'],
             'level': 'INFO',
+            'propagate': False,
+        },
+        'django.request': {
+            'handlers': ['file', 'error_file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.server': {
+            'handlers': ['file', 'error_file', 'console'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'django.security': {
+            'handlers': ['file', 'error_file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        'django.db.backends': {
+            'handlers': ['error_file'],
+            'level': 'ERROR',
             'propagate': False,
         },
     },
