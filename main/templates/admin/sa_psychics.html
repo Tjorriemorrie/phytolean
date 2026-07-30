@@ -36,6 +36,24 @@
     <div style="display: flex; gap: 2rem; align-items: flex-start;">
 
         <div style="flex: 1;">
+            <h3>Last 120 Days</h3>
+            <table class="admin-table" id="tableRolling">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Psychic</th>
+                    <th>Oncall</th>
+                    <th>Online</th>
+                    <th>Fake Oncall</th>
+                    <th>Offline</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+            <div id="tableRollingStatus" style="color: #888; font-size: 12px;">Loading…</div>
+        </div>
+
+        <div style="flex: 1;">
             <h3>Current Month</h3>
             <table class="admin-table" id="tableCurrent">
                 <thead>
@@ -101,6 +119,7 @@
         };
 
         const TABLE_URLS = {
+            rolling: "{% url 'admin:sa-psychics-table-rolling' %}",
             current: "{% url 'admin:sa-psychics-table-current' %}",
             previous: "{% url 'admin:sa-psychics-table-previous' %}",
             twoMonthsAgo: "{% url 'admin:sa-psychics-table-two-months-ago' %}",
@@ -294,7 +313,7 @@
                         <td>${nameCell}</td>
                         <td>${fmt(row.oncall, 1)}</td>
                         <td>${fmt(row.online, 0)}</td>
-                        <td>${fmt(row.fake_oncall, 1)}</td>
+                        <td>${fmt(row.fake_oncall, 0)}</td>
                         <td>${fmt(row.offline, 0)}</td>
                     `;
                     tbody.appendChild(tr);
@@ -310,6 +329,7 @@
             renderDailyUnique();
             renderDaily();
             renderHeatmap();
+            renderTable('tableRolling', 'tableRollingStatus', TABLE_URLS.rolling);
             renderTable('tableCurrent', 'tableCurrentStatus', TABLE_URLS.current);
             renderTable('tablePrevious', 'tablePreviousStatus', TABLE_URLS.previous);
             renderTable('tableTwoMonthsAgo', 'tableTwoMonthsAgoStatus', TABLE_URLS.twoMonthsAgo);

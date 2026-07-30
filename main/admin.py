@@ -12,6 +12,7 @@ from import_export.resources import ModelResource
 from main.models import Discovery, Booking, Survey, Psychic, Status, Role, PayFastTransaction
 from main.selectors import (
     get_monthly_psychic_status_aggregates,
+    get_rolling_psychic_status_aggregates,
     get_psychic_hourly_activity_aggregates,
     get_psychic_monthly_stats,
     get_all_psychics_hourly_unique_counts,
@@ -121,8 +122,7 @@ _TABLE_SORT_KEY = lambda r: (
 )
 
 
-def _monthly_table_payload(month):
-    rows = get_monthly_psychic_status_aggregates(month=month)
+def _table_payload(rows):
     rows.sort(key=_TABLE_SORT_KEY)
     return {
         "rows": [
@@ -138,6 +138,15 @@ def _monthly_table_payload(month):
             for i, r in enumerate(rows)
         ],
     }
+
+
+def _monthly_table_payload(month):
+    return _table_payload(get_monthly_psychic_status_aggregates(month=month))
+
+
+@cache_page(TABLE_CURRENT_CACHE_SECONDS)
+def sa_psychics_table_rolling(request):
+    return JsonResponse(_table_payload(get_rolling_psychic_status_aggregates(days=120)))
 
 
 @cache_page(TABLE_CURRENT_CACHE_SECONDS)
@@ -262,6 +271,11 @@ def get_urls():
             'sa-psychics/charts/heatmap.json',
             admin.site.admin_view(sa_psychics_heatmap_chart),
             name='sa-psychics-chart-heatmap',
+        ),
+        path(
+            'sa-psychics/tables/rolling-120-days.json',
+            admin.site.admin_view(sa_psychics_table_rolling),
+            name='sa-psychics-table-rolling',
         ),
         path(
             'sa-psychics/tables/current.json',

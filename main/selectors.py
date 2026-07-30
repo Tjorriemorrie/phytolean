@@ -83,6 +83,30 @@ def get_monthly_psychic_status_aggregates(month=None):
     """
     Returns per-psychic status counts for the given month.
     Defaults to the current month.
+    """
+    now = timezone.now()
+    month = month or now
+
+    start = month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    if start.month == 12:
+        end = start.replace(year=start.year + 1, month=1)
+    else:
+        end = start.replace(month=start.month + 1)
+
+    return get_psychic_status_aggregates(start, end)
+
+
+def get_rolling_psychic_status_aggregates(days=120):
+    """
+    Returns per-psychic status counts for a rolling window of the past `days` days.
+    """
+    now = timezone.now()
+    return get_psychic_status_aggregates(now - timedelta(days=days), now)
+
+
+def get_psychic_status_aggregates(start, end):
+    """
+    Returns per-psychic status counts between start (inclusive) and end (exclusive).
 
     Output shape:
     [
@@ -97,15 +121,6 @@ def get_monthly_psychic_status_aggregates(month=None):
         ...
     ]
     """
-    now = timezone.now()
-    month = month or now
-
-    start = month.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    if start.month == 12:
-        end = start.replace(year=start.year + 1, month=1)
-    else:
-        end = start.replace(month=start.month + 1)
-
     statuses = (
         Status.objects
         .filter(status_at__gte=start, status_at__lt=end)
